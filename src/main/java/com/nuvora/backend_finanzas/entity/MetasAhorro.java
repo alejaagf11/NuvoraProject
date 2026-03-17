@@ -26,6 +26,9 @@ public class MetasAhorro {
     @Column(name = "fechaLimite", nullable=false)
     private LocalDate fechaLimite;
 
+    @Column(name = "ahorro_mensual")
+    private Double ahorroMensual;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;

@@ -17,6 +17,9 @@ public class Usuario {
     @Column(name = "usuario_id")
     private Long usuarioId;
 
+    @Column(name = "usuario_rol", nullable = false)
+    private String rolUsuario;
+
     @Column(name = "usuario_nombre", nullable = false)
     private String nombreUsuario;
 
