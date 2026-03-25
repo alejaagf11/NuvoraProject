@@ -1,0 +1,85 @@
+<div class="container-fluid vh-100 p-0">
+  <div class="row h-100 m-0">
+
+    <div class="col-md-6 d-flex align-items-center justify-content-center"
+         style="background-color: #2b1b3a; color: white;">
+
+      <div style="width: 80%; max-width: 400px;">
+
+        <h2 class="mb-3 fw-bold text-center">¡Has vuelto!</h2>
+        <p class="mb-4 text-center">
+          Bienvenido! Ingresa tus datos para acceder a tu cuenta
+        </p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Correo</label>
+            <input type="email" class="form-control"
+                   formControlName="correoUsuario"
+                   placeholder="Ingresa tu correo">
+
+            <div *ngIf="loginForm.get('correoUsuario')?.touched && loginForm.get('correoUsuario')?.invalid"
+                 class="text-danger mt-1 small">
+              Correo válido obligatorio
+            </div>
+          </div>
+
+        
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Contraseña</label>
+            <input type="password" class="form-control"
+                   formControlName="contrasenaUsuario"
+                   placeholder="Ingresa tu contraseña">
+
+            <div *ngIf="loginForm.get('contrasenaUsuario')?.touched && loginForm.get('contrasenaUsuario')?.invalid"
+                 class="text-danger mt-1 small">
+              Mínimo 6 caracteres
+            </div>
+          </div>
+
+    
+          <div *ngIf="loginError" class="alert alert-danger">
+            {{ loginError }}
+          </div>
+
+    
+          <div class="d-grid mb-3">
+            <button type="submit"
+                    class="btn"
+                    style="background-color: #8a5d7f; color: black; font-weight: bold;">
+              Iniciar Sesión
+            </button>
+          </div>
+
+        </form>
+
+     
+        <p class="text-center small">Puedes ingresar con:</p>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-light d-flex align-items-center justify-content-center"
+                  style="gap: 8px; width:48%;">
+            <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" style="height:20px;">
+            Google
+          </button>
+
+          <button class="btn btn-primary d-flex align-items-center justify-content-center"
+                  style="gap: 8px; width:48%;">
+            <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" style="height:20px;">
+            Facebook
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+   
+    <div class="col-md-6 d-none d-md-block p-0">
+      <img src="assets/login-illustration.png"
+           class="w-100 h-100"
+           style="object-fit: cover;">
+    </div>
+
+  </div>
+</div>
