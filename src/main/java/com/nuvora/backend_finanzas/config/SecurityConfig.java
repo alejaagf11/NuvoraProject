@@ -25,7 +25,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints públicos
                         .requestMatchers("/api/auth/**").permitAll()          // register / login
-                        .requestMatchers("/api/metasAhorro/**").permitAll()  // CRUD MetasAhorro sin auth
+                        .requestMatchers("/api/metasAhorro/**").permitAll()
+                        .requestMatchers("/api/usuario/**").permitAll()// CRUD MetasAhorro sin auth
 
                         // Cualquier otro endpoint requiere autenticación (por si agregas más adelante)
                         .anyRequest().authenticated()

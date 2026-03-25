@@ -1,0 +1,34 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { MetasAhorro } from '../models/metas_ahorro';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MetasAhorroService {
+
+  private baseUrl = 'http://localhost:8080/api/metasAhorro';
+
+  constructor(private http: HttpClient) { }
+
+  getAll(): Observable<MetasAhorro[]> {
+    return this.http.get<MetasAhorro[]>(`${this.baseUrl}/list`);
+  }
+
+  getById(id: number): Observable<MetasAhorro> {
+    return this.http.get<MetasAhorro>(`${this.baseUrl}/list/${id}`);
+  }
+
+  create(meta: MetasAhorro): Observable<MetasAhorro> {
+    return this.http.post<MetasAhorro>(`${this.baseUrl}/register`, meta);
+  }
+
+  update(id: number, meta: MetasAhorro): Observable<MetasAhorro> {
+    return this.http.put<MetasAhorro>(`${this.baseUrl}/update/${id}`, meta);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
+  }
+}

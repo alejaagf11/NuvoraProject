@@ -1,0 +1,61 @@
+<div class="container-fluid main-vh-100 p-0">
+  <div class="row h-100 m-0">
+
+    <div class="col-md-3 p-4 sidebar">
+      <h3 class="mb-4 fw-bold">Menu</h3>
+
+      <ul class="list-unstyled">
+        <li class="mb-3">Mis movimientos</li>
+        <li class="mb-3">Tips financieros</li>
+        <li class="mb-3">Metas de ahorro</li>
+        <li class="mb-3">Configuración</li>
+      </ul>
+    </div>
+
+    <div class="col-md-9 p-5 main-content">
+
+      <div class="d-flex justify-content-between align-items-start">
+        
+        <div>
+          <h2 class="fw-bold mb-3">
+            Hola, así van tus metas
+          </h2>
+
+          <p class="mb-4">
+            Administra tus metas de ahorro fácilmente
+          </p>
+
+          <button class="btn btn-custom mb-3">
+            + Agregar meta
+          </button>
+        </div>
+
+        <div class="profile-icon">
+          👤
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <h5 class="fw-bold mb-3">Metas registradas</h5>
+
+        <div *ngFor="let meta of metas" class="meta-item d-flex justify-content-between align-items-center">
+
+          <div>
+            <strong>{{ meta.nombreMeta }}</strong><br>
+            <small>Meta: {{ meta.montoObjetivo | currency }}</small>
+          </div>
+
+          <div>
+            <button class="btn btn-sm btn-danger" (click)="deleteMeta(meta.metaAhorroId!)">
+              Eliminar
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

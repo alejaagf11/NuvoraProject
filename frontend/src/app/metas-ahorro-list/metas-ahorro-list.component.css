@@ -1,0 +1,29 @@
+.sidebar {
+  background-color: #2b1b3a;
+  color: white;
+  height: 100hv;
+}
+
+.main-content {
+  background-color: #1f0f2f;
+  color: white;
+  height: 100hv;
+}
+
+.btn-custom {
+  background-color: #8a5d7f;
+  color: black;
+  font-weight: bold;
+}
+
+.meta-item {
+  border-bottom: 1px solid #555;
+  padding: 15px 0;
+}
+
+.profile-icon {
+  font-size: 30px;
+  background-color: #ccc;
+  border-radius: 50%;
+  padding: 10px;
+}
