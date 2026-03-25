@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -37,6 +38,5 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario")
     private List<MetasAhorro> metaAhorros;
-
 
 }

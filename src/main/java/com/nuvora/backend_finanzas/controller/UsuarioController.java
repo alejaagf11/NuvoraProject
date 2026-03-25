@@ -48,4 +48,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception);
         }
     }
+
+
 }
