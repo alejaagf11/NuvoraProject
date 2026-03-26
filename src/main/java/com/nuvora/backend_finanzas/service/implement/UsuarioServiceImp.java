@@ -90,4 +90,9 @@ public class UsuarioServiceImp implements UsuarioService {
 
         usuarioRepository.delete(usuario);
     }
+
+    @Override
+    public Usuario saveUsuario(Usuario usuario) {
+        return registerUsuario(usuario);
+    }
 }

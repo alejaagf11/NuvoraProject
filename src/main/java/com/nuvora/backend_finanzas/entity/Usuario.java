@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -46,6 +47,5 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     @JsonManagedReference
     private List<MetasAhorro> metaAhorros;
-
 
 }

@@ -19,4 +19,7 @@ public interface UsuarioService {
 
      Usuario getUsuarioById (Long usuarioId);
 
+    Usuario saveUsuario(Usuario usuario);
+
+    
 }

@@ -1,0 +1,28 @@
+<div class="container mt-4">
+  <h2>Lista de Usuarios</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.nombreUsuario }}</td>
+        <td>{{ usuario.correoUsuario }}</td>
+        <td>{{ usuario.rolUsuario || 'USER' }}</td>
+        <td>
+          <button type="button" class="btn btn-warning btn-sm me-2" [routerLink]="['/usuarios-form', usuario.usuarioId]">
+            Editar
+          </button>
+          <button type="button"  class="btn btn-danger btn-sm" (click)="deleteUsuario(usuario.usuarioId!)">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

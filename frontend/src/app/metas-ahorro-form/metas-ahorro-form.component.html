@@ -1,0 +1,43 @@
+<div class="container mt-5">
+  <h2 class="text-center mb-4"> Metas de Ahorro</h2>
+
+  <form (ngSubmit)="saveMeta()" class="card p-4 shadow">
+
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" class="form-control"
+             [(ngModel)]="meta.nombreMeta"
+             name="nombreMeta" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Monto objetivo</label>
+      <input type="number" class="form-control"
+             [(ngModel)]="meta.montoObjetivo"
+             name="montoObjetivo" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Fecha límite</label>
+      <input type="date" class="form-control"
+             [(ngModel)]="meta.fechaLimite"
+             name="fechaLimite" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Ahorro mensual</label>
+      <input type="number" class="form-control"
+             [(ngModel)]="meta.ahorroMensual"
+             name="ahorroMensual" required>
+    </div>
+
+    <div class="d-flex justify-content-between mt-3">
+  <button type="submit" class="btn btn-primary">
+    Guardar
+  </button>
+
+  <a routerLink="/metas-ahorro-list" class="btn btn-secondary">
+    Volver
+  </a>
+</div>
+</form>
