@@ -21,14 +21,18 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> {})
-                .csrf(csrf -> csrf.disable()) // Desactiva CSRF para APIs
+                .csrf(csrf -> csrf.disable())
+
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable())
+                // Desactiva CSRF para APIs
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints públicos
-                        .requestMatchers("/api/auth/**").permitAll()          // register / login
-                        .requestMatchers("/api/metasAhorro/**").permitAll()  // CRUD MetasAhorro sin auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/metasAhorro/**").permitAll()
+                        .requestMatchers("/api/usuario/**").permitAll()
+                        .anyRequest().permitAll()
 
-                        // Cualquier otro endpoint requiere autenticación (por si agregas más adelante)
-                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable()); // Desactiva login por formulario
 
