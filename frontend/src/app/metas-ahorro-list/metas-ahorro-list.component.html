@@ -25,7 +25,7 @@
             Administra tus metas de ahorro fácilmente
           </p>
 
-          <button class="btn btn-custom mb-3">
+          <button class="btn btn-custom mb-3" routerLink="/metas-ahorro-form">
             + Agregar meta
           </button>
         </div>
@@ -38,16 +38,55 @@
       <div class="mt-5">
         <h5 class="fw-bold mb-3">Metas registradas</h5>
 
-        <div *ngFor="let meta of metas" class="meta-item d-flex justify-content-between align-items-center">
+        <div *ngIf="metas.length === 0" class="text-center" style="color: #999;">
+          <p>No tienes metas aún. ¡Crea una para empezar!</p>
+        </div>
 
-          <div>
-            <strong>{{ meta.nombreMeta }}</strong><br>
-            <small>Meta: {{ meta.montoObjetivo | currency }}</small>
+        <div *ngFor="let meta of metas" class="card mb-4 p-4" style="background-color: #2b1b3a; border: 1px solid #555; color: white;">
+
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <strong class="d-block" style="font-size: 18px;">{{ meta.nombreMeta }}</strong>
+              <small style="color: #aaa;">Fecha límite: {{ meta.fechaLimite }}</small>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-danger" (click)="deleteMeta(meta.metaAhorroId!)">
+                Eliminar
+              </button>
+            </div>
           </div>
 
-          <div>
-            <button class="btn btn-sm btn-danger" (click)="deleteMeta(meta.metaAhorroId!)">
-              Eliminar
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <small style="color: #aaa;">Meta</small>
+              <div class="fw-bold">{{ meta.montoObjetivo | currency }}</div>
+            </div>
+            <div class="col-md-3">
+              <small style="color: #aaa;">Ahorrado</small>
+              <div class="fw-bold" style="color: #8a5d7f;">{{ meta.montoAhorrado || 0 | currency }}</div>
+            </div>
+            <div class="col-md-3">
+              <small style="color: #aaa;">Falta</small>
+              <div class="fw-bold" style="color: #ff6b6b;">{{ (meta.montoObjetivo! - (meta.montoAhorrado || 0)) | currency }}</div>
+            </div>
+            <div class="col-md-3">
+              <small style="color: #aaa;">Mensual</small>
+              <div class="fw-bold">{{ meta.ahorroMensual || 0 | currency }}</div>
+            </div>
+          </div>
+
+          <div class="progress mb-3" style="height: 20px;">
+            <div class="progress-bar" style="background-color: #8a5d7f; width: {{ ((meta.montoAhorrado || 0) / meta.montoObjetivo!) * 100 }}%;"></div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <input type="number" class="form-control form-control-sm" 
+                   placeholder="Monto a abonar"
+                   [(ngModel)]="abonoInput[meta.metaAhorroId!]"
+                   style="max-width: 150px;">
+            <button class="btn btn-sm btn-success" 
+                    (click)="abonar(meta.metaAhorroId!, abonoInput[meta.metaAhorroId!])">
+              + Abonar
             </button>
           </div>
 

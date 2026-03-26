@@ -31,17 +31,23 @@ export class UsuarioLoginComponent {
       return;
     }
 
+    console.log('Enviando login con:', this.loginForm.value);
+
     this.usuarioService.login(this.loginForm.value).subscribe({
       next: (res) => {
-        console.log('Usuario logueado:', res);
+        console.log('Respuesta del login:', res);
+        console.log('Token guardado:', this.usuarioService.getToken());
         this.loginError = null;
-
-        // Aquí es donde va el token
-
-        this.router.navigate(['/usuarios-list']); // redirige después de login
+        
+        // Redirige después de login
+        setTimeout(() => {
+          this.router.navigate(['/metas-ahorro-list']);
+        }, 500);
       },
       error: (err) => {
-        console.error('Error de login', err);
+        console.error('Error de login:', err);
+        console.error('Status:', err.status);
+        console.error('Mensaje:', err.error?.message || err.message);
         this.loginError = 'Correo o contraseña incorrectos';
       }
     });
