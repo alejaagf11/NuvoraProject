@@ -1,5 +1,6 @@
 package com.nuvora.backend_finanzas.controller;
 
+import com.nuvora.backend_finanzas.dto.UsuarioDTO;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.security.JwtService;
 import com.nuvora.backend_finanzas.service.UsuarioService;
@@ -24,16 +25,16 @@ public class AuthController {
     private JwtService jwtService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUsuario(@Valid @RequestBody Usuario usuario){
-        Usuario newUsuario = usuarioService.registerUsuario(usuario);
+    public ResponseEntity<UsuarioDTO> registerUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO){
+        UsuarioDTO newUsuario = usuarioService.registerUsuario(usuarioDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUsuario);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUsuario(@Valid @RequestBody Usuario usuario){
-        Usuario usuarioLogin = usuarioService.loginUsuario(
-                usuario.getCorreoUsuario(),
-                usuario.getContrasenaUsuario()
+    public ResponseEntity<?> loginUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO){
+        UsuarioDTO usuarioLogin = usuarioService.loginUsuario(
+                usuarioDTO.getCorreoUsuario(),
+                usuarioDTO.getContrasenaUsuario()
         );
 
         if(usuarioLogin != null){
