@@ -1,5 +1,6 @@
 package com.nuvora.backend_finanzas.service.implement;
 
+import com.nuvora.backend_finanzas.dto.MetasAhorroDTO;
 import com.nuvora.backend_finanzas.entity.Abono;
 import com.nuvora.backend_finanzas.entity.MetasAhorro;
 import com.nuvora.backend_finanzas.entity.Usuario;
@@ -24,76 +25,94 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
     private AbonoRepository abonoRepository;
 
     @Override
-    public MetasAhorro createMeta(MetasAhorro metasAhorro, Usuario usuario) {
+    public MetasAhorroDTO createMeta(MetasAhorroDTO metasAhorroDTO, Usuario usuario) {
 
-        metasAhorro.setUsuario(usuario);
+        MetasAhorro meta = metasAhorroDTO.toEntity();
+        meta.setUsuario(usuario);
 
         //creacion variables de tiempo
         LocalDate hoy = LocalDate.now();
-        long meses = ChronoUnit.MONTHS.between(hoy, metasAhorro.getFechaLimite());
+        long meses = ChronoUnit.MONTHS.between(hoy, meta.getFechaLimite());
 
         if(meses <= 0){
             throw new RuntimeException("La fecha limite para la meta debe der mayor a hoy");
         }
 
         //Calculo de dinero a ahorrar
-        double ahorroMensual = metasAhorro.getMontoObjetivo() / meses;
+        double ahorroMensual = meta.getMontoObjetivo() / meses;
 
         //redondear numeros a 2 decimales
         ahorroMensual = Math.round(ahorroMensual * 100.0) / 100.0;
 
-        metasAhorro.setAhorroMensual(ahorroMensual);
-        metasAhorro.setMontoAhorrado(0.0);
-        return metasAhorroRepository.save(metasAhorro);
+        meta.setAhorroMensual(ahorroMensual);
+        meta.setMontoAhorrado(0.0);
+
+        MetasAhorro saved = metasAhorroRepository.save(meta);
+        return metasAhorroDTO.fromEntity(saved);
 
     }
 
     @Override
-    public List<MetasAhorro> listMeta(Usuario usuario) {
-        return metasAhorroRepository.findByUsuario(usuario);
+    public List<MetasAhorroDTO> listMeta(Usuario usuario) {
+
+        return metasAhorroRepository.findByUsuario(usuario)
+                .stream()
+                .map(MetasAhorroDTO::fromEntity)
+                .toList();
     }
 
     @Override
     @SneakyThrows
-    public MetasAhorro getMetaById(Long metaAhorroId, Usuario usuario) {
-        return metasAhorroRepository.findByMetaAhorroIdAndUsuario(metaAhorroId, usuario)
-        .orElseThrow(() -> new Exception("Meta no Encontrada"));
+    public MetasAhorroDTO getMetaById(Long metaAhorroId, Usuario usuario) {
+        return MetasAhorroDTO.fromEntity(getMetaEntityById(metaAhorroId, usuario));
     }
 
     @Override
     @SneakyThrows
-    public MetasAhorro updateMeta(Long metaAhorroId, MetasAhorro metasAhorro, Usuario usuario) {
-        MetasAhorro metasAhorroExistente = getMetaById(metaAhorroId, usuario);
+    public MetasAhorroDTO updateMeta(Long metaAhorroId, MetasAhorroDTO metasAhorroDTO, Usuario usuario) {
+        MetasAhorro meta = getMetaEntityById(metaAhorroId, usuario);
 
-        metasAhorroExistente.setNombreMeta(metasAhorro.getNombreMeta());
-        metasAhorroExistente.setMontoObjetivo(metasAhorro.getMontoObjetivo());
-        metasAhorroExistente.setFechaLimite(metasAhorro.getFechaLimite());
+        if (metasAhorroDTO.getNombreMeta() != null)
+            meta.setNombreMeta(metasAhorroDTO.getNombreMeta());
+
+        if (metasAhorroDTO.getMontoObjetivo() != null)
+            meta.setMontoObjetivo(metasAhorroDTO.getMontoObjetivo());
+
+        if (metasAhorroDTO.getFechaLimite() != null)
+            meta.setFechaLimite(metasAhorroDTO.getFechaLimite());
 
         LocalDate hoy = LocalDate.now();
-        long meses = ChronoUnit.MONTHS.between(hoy, metasAhorroExistente.getFechaLimite());
-        double ahorroMensual = Math.round((metasAhorroExistente.getMontoObjetivo()/ meses) * 100.0) / 100.0;
+        long meses = ChronoUnit.MONTHS.between(hoy, meta.getFechaLimite());
 
-        metasAhorroExistente.setAhorroMensual(ahorroMensual);
-        return metasAhorroRepository.save(metasAhorroExistente);
+        if(meses <= 0){
+            throw new RuntimeException("Fecha inválida");
+        }
+
+        double ahorroMensual = Math.round(
+                (meta.getMontoObjetivo()/ meses) * 100.0
+        ) / 100.0;
+
+        meta.setAhorroMensual(ahorroMensual);
+
+        MetasAhorro updated = metasAhorroRepository.save(meta);
+         return MetasAhorroDTO.fromEntity(updated);
+
+
     }
 
     @Override
     @SneakyThrows
     public void deleteMeta(Long metaAhorroId, Usuario usuario) {
-        MetasAhorro metasAhorroExistente = getMetaById(metaAhorroId, usuario);
-        metasAhorroRepository.delete(metasAhorroExistente);
+        MetasAhorro meta = getMetaEntityById(metaAhorroId, usuario);
+        metasAhorroRepository.delete(meta);
     }
 
     @Override
-    public MetasAhorro abonar(Long metaAhorroId,Double monto ,Usuario usuario){
-        MetasAhorro meta = getMetaById(metaAhorroId, usuario);
+    public MetasAhorroDTO abonar(Long metaAhorroId,Double monto ,Usuario usuario){
+        MetasAhorro meta = getMetaEntityById(metaAhorroId, usuario);
 
         if (monto<= 0){
             throw new RuntimeException("El monto debe de ser mayor a 0");
-        }
-
-        if (meta.getMontoAhorrado() == null) {
-            meta.setMontoAhorrado(0.0);
         }
 
         double newMonto = meta.getMontoAhorrado() + monto;
@@ -110,6 +129,13 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
         abonoRepository.save(abono);
 
         meta.setMontoAhorrado(newMonto);
-        return metasAhorroRepository.save(meta);
+        MetasAhorro saved = metasAhorroRepository.save(meta);
+        return MetasAhorroDTO.fromEntity(meta);
+    }
+
+    private MetasAhorro getMetaEntityById(Long id, Usuario usuario){
+        return metasAhorroRepository
+                .findByMetaAhorroIdAndUsuario(id, usuario)
+                .orElseThrow(() -> new RuntimeException("Meta no encontrada"));
     }
 }

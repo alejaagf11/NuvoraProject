@@ -1,15 +1,15 @@
 package com.nuvora.backend_finanzas.controller;
 
+import com.nuvora.backend_finanzas.dto.MetasAhorroDTO;
 import com.nuvora.backend_finanzas.entity.MetasAhorro;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.MetasAhorroService;
 import com.nuvora.backend_finanzas.service.UsuarioService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Meta;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,69 +23,66 @@ public class MetasAhorroController {
     @Autowired
     private UsuarioService usuarioService;
 
+    private Usuario getUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = Long.parseLong(auth.getName());
+        return usuarioService.getUsuarioEntityById(userId);
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<?> createMeta(@RequestBody MetasAhorro metasAhorro, HttpServletRequest request){
-        long usuarioId = (Long) request.getAttribute("userId");
-        Usuario usuario = usuarioService.getUsuarioById(usuarioId);
-        MetasAhorro newMetaAhorro = metasAhorroService.createMeta(metasAhorro, usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newMetaAhorro);
+    public ResponseEntity<MetasAhorroDTO> createMeta(@RequestBody MetasAhorroDTO metasAhorroDTO){
+
+        Usuario usuario = getUsuarioAutenticado();
+        return ResponseEntity.ok(
+                metasAhorroService.createMeta(metasAhorroDTO, usuario));
+
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<MetasAhorro>> listMeta(HttpServletRequest request){
-        long usuarioId = (Long) request.getAttribute("userId");
-        Usuario usuario = usuarioService.getUsuarioById(usuarioId);
-
-        List<MetasAhorro> metasAhorros = metasAhorroService.listMeta(usuario);
-        return ResponseEntity.ok(metasAhorros);
+    public ResponseEntity<List<MetasAhorroDTO>> listMeta(){
+        Usuario usuario = getUsuarioAutenticado();
+        return ResponseEntity.ok(
+                metasAhorroService.listMeta(usuario));
     }
 
     @GetMapping("/list/{metaAhorroId}")
-    public ResponseEntity<MetasAhorro> getMetaById(@PathVariable Long metaAhorroId,
-                                                   HttpServletRequest request)throws Exception{
+    public ResponseEntity<MetasAhorroDTO> getMetaById(@PathVariable Long metaAhorroId)throws Exception{
 
-            Long usuarioId = (Long) request.getAttribute("userId");
-            Usuario usuario = usuarioService.getUsuarioById(usuarioId);
-            MetasAhorro metasAhorro = metasAhorroService.getMetaById(metaAhorroId, usuario);
-
-            return ResponseEntity.ok(metasAhorro);
+        Usuario usuario = getUsuarioAutenticado();
+        return ResponseEntity.ok(
+                metasAhorroService.getMetaById(metaAhorroId,usuario));
 
     }
 
     @PutMapping("/update/{metaAhorroId}")
-    public ResponseEntity<?> updateMeta(@PathVariable Long metaAhorroId, @RequestBody MetasAhorro metasAhorro, HttpServletRequest request){
+    public ResponseEntity<MetasAhorroDTO> updateMeta(@PathVariable Long metaAhorroId, @RequestBody MetasAhorroDTO metasAhorroDTO){
         try{
-            long usuarioId = (Long) request.getAttribute("userId");
-            Usuario usuario = usuarioService.getUsuarioById(usuarioId);
+            Usuario usuario = getUsuarioAutenticado();
+            return ResponseEntity.ok(metasAhorroService.updateMeta(metaAhorroId, metasAhorroDTO, usuario));
+        }catch (Exception exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
-            MetasAhorro metasAhorrodb = metasAhorroService.updateMeta(metaAhorroId, metasAhorro, usuario);
-            return ResponseEntity.ok(metasAhorrodb);
+    @DeleteMapping("/delete/{metaAhorroId}")
+        public ResponseEntity deleteMeta (@PathVariable Long metaAhorroId){
+
+        try{
+            Usuario usuario = getUsuarioAutenticado();
+
+            metasAhorroService.deleteMeta(metaAhorroId, usuario);
+
+            return ResponseEntity.ok("Eliminado correctamente");
         }catch (Exception exception){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         }
     }
 
-    @DeleteMapping("/delete/{metaAhorroId}")
-        public ResponseEntity deleteMeta (@PathVariable Long metaAhorroId, HttpServletRequest request){
-
-        try{
-            long usuarioId = (Long) request.getAttribute("userId");
-            Usuario usuario = usuarioService.getUsuarioById(usuarioId);
-
-            metasAhorroService.deleteMeta(metaAhorroId, usuario);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception);
-        }
-    }
-
     @PutMapping("/abonar/{metaAhorroId}")
-    public ResponseEntity<MetasAhorro> abonar(@PathVariable Long metaAhorroId,
-                                              @RequestParam Double monto,
-                                              HttpServletRequest request) throws Exception{
+    public ResponseEntity<MetasAhorroDTO> abonar(@PathVariable Long metaAhorroId,
+                                              @RequestParam Double monto) throws Exception{
 
-        Long usuarioId = (Long) request.getAttribute("userId");
-        Usuario usuario = usuarioService.getUsuarioById(usuarioId);
+        Usuario usuario = getUsuarioAutenticado();
 
         return ResponseEntity.ok(
                 metasAhorroService.abonar(metaAhorroId, monto, usuario)
