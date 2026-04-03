@@ -23,8 +23,7 @@ export class UsuariosFormComponent implements OnInit {
     this.form = this.fb.group({
       nombreUsuario: ['', [Validators.required, Validators.minLength(3)]],
       correoUsuario: ['', [Validators.required, Validators.email]],
-      contrasenaUsuario: ['', [Validators.required, Validators.minLength(6)]],
-      rolUsuario: ['USER'] // siempre inicializado
+      contrasenaUsuario: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -35,8 +34,7 @@ export class UsuariosFormComponent implements OnInit {
         this.form.patchValue({
           nombreUsuario: data.nombreUsuario,
           correoUsuario: data.correoUsuario,
-          contrasenaUsuario: data.contrasenaUsuario,
-          rolUsuario: data.rolUsuario || 'USER'
+          contrasenaUsuario: data.contrasenaUsuario
         });
       });
     }
@@ -48,17 +46,38 @@ export class UsuariosFormComponent implements OnInit {
       return;
     }
 
-    const usuario = this.form.value;
+    // Envía solo los campos necesarios (sin rolUsuario)
+    const usuario = {
+      nombreUsuario: this.form.value.nombreUsuario,
+      correoUsuario: this.form.value.correoUsuario,
+      contrasenaUsuario: this.form.value.contrasenaUsuario
+    };
 
     if (this.id) {
       // editar
-      this.usuarioService.update(this.id, usuario).subscribe(() => {
-        this.router.navigate(['/usuario-list']);
+      this.usuarioService.update(this.id, usuario).subscribe({
+        next: () => {
+          console.log('Usuario actualizado');
+          this.router.navigate(['/metas-ahorro-list']);
+        },
+        error: (err) => {
+          console.error('Error al actualizar usuario', err);
+          console.log('Detalles del error:', err.error);
+          alert('Error al actualizar la cuenta: ' + (err.error?.message || err.message || 'Error desconocido'));
+        }
       });
     } else {
       // crear
-      this.usuarioService.create(usuario).subscribe(() => {
-        this.router.navigate(['/usuario-list']);
+      this.usuarioService.create(usuario).subscribe({
+        next: () => {
+          console.log('Usuario creado');
+          this.router.navigate(['/metas-ahorro-list']);
+        },
+        error: (err) => {
+          console.error('Error al crear usuario', err);
+          console.log('Detalles del error:', err.error);
+          alert('Error al crear la cuenta: ' + (err.error?.message || err.message || 'Error desconocido'));
+        }
       });
     }
   }

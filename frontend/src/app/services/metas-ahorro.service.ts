@@ -31,4 +31,9 @@ export class MetasAhorroService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
+
+  abonar(id: number, monto: number): Observable<MetasAhorro> {
+    return this.http.put<MetasAhorro>(`${this.baseUrl}/abonar/${id}?monto=${monto}`, {});
+  }
 }
+

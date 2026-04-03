@@ -1,43 +1,69 @@
-<div class="container mt-5">
-  <h2 class="text-center mb-4"> Metas de Ahorro</h2>
+<div class="container-fluid main-vh-100 p-0">
+  <div class="row h-100 m-0">
 
-  <form (ngSubmit)="saveMeta()" class="card p-4 shadow">
+    <div class="col-md-3 p-4 sidebar">
+      <h3 class="mb-4 fw-bold">Menu</h3>
 
-    <div class="mb-3">
-      <label class="form-label">Nombre</label>
-      <input type="text" class="form-control"
-             [(ngModel)]="meta.nombreMeta"
-             name="nombreMeta" required>
+      <ul class="list-unstyled">
+        <li class="mb-3">Mis movimientos</li>
+        <li class="mb-3">Tips financieros</li>
+        <li class="mb-3">Metas de ahorro</li>
+        <li class="mb-3">Configuración</li>
+      </ul>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Monto objetivo</label>
-      <input type="number" class="form-control"
-             [(ngModel)]="meta.montoObjetivo"
-             name="montoObjetivo" required>
+    <div class="col-md-9 p-5 main-content d-flex flex-column">
+
+      <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+          <h2 class="fw-bold mb-3">Nueva Meta de Ahorro</h2>
+          <p class="mb-0">Crea una nueva meta para ahorrar</p>
+        </div>
+        <div class="profile-icon">👤</div>
+      </div>
+
+      <div class="row w-100 justify-content-center">
+        <!-- FORMULARIO -->
+        <div class="col-md-6">
+          <form (ngSubmit)="saveMeta()"
+                class="card p-4 shadow" style="background-color: #2b1b3a; border: none; color: white;">
+
+            <div class="mb-3">
+              <label class="form-label">Nombre de la meta</label>
+              <input type="text" class="form-control"
+                     [(ngModel)]="meta.nombreMeta"
+                     name="nombreMeta" required
+                     placeholder="Ej: Viaje a Europa">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Monto objetivo</label>
+              <input type="number" class="form-control"
+                     [(ngModel)]="meta.montoObjetivo"
+                     name="montoObjetivo" required
+                     placeholder="Ej: 5000">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Fecha límite</label>
+              <input type="date" class="form-control"
+                     [(ngModel)]="meta.fechaLimite"
+                     name="fechaLimite" required>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <button type="submit" class="btn btn-custom">
+                Guardar Meta
+              </button>
+              <a routerLink="/metas-ahorro-list" class="btn btn-secondary">
+                Volver
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Fecha límite</label>
-      <input type="date" class="form-control"
-             [(ngModel)]="meta.fechaLimite"
-             name="fechaLimite" required>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Ahorro mensual</label>
-      <input type="number" class="form-control"
-             [(ngModel)]="meta.ahorroMensual"
-             name="ahorroMensual" required>
-    </div>
-
-    <div class="d-flex justify-content-between mt-3">
-  <button type="submit" class="btn btn-primary">
-    Guardar
-  </button>
-
-  <a routerLink="/metas-ahorro-list" class="btn btn-secondary">
-    Volver
-  </a>
+  </div>
 </div>
-</form>

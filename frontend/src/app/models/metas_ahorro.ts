@@ -3,6 +3,7 @@ export interface MetasAhorro{
     nombreMeta : string;
     montoObjetivo : number;
     fechaLimite: string;
-    ahorroMensual: number;
+    ahorroMensual?: number;
+    montoAhorrado?: number;
     usuarioId?: number;
 }

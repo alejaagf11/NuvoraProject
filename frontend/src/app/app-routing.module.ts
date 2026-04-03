@@ -9,10 +9,10 @@ import { UsuarioLoginComponent } from './usuario-login/usuario-login.component';
 const routes: Routes = [
   { path: 'usuario-list', component: UsuariosListComponent },
   { path: 'usuario-form', component: UsuariosFormComponent },
-   {path: 'usuario-login', component: UsuarioLoginComponent},
+  { path: 'usuario-login', component: UsuarioLoginComponent },
   { path: 'metas-ahorro-list', component: MetasAhorroListComponent },
   { path: 'metas-ahorro-form', component: MetasAhorroFormComponent },
-  { path: '', redirectTo: '/usuario-list', pathMatch: 'full' } // redirige al abrir /
+  { path: '', redirectTo: '/usuario-login', pathMatch: 'full' } // redirige a login inicialmente
 ];
 
 @NgModule({
