@@ -1,5 +1,6 @@
 package com.nuvora.backend_finanzas.entity;
 
+import com.nuvora.backend_finanzas.enums.TipoTransaccion;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,12 @@ public class Categoria {
     private String nombreCategoria;
 
     @Column(name = "tipo_categoria", nullable = false)
-    private String tipoCategoria; // Ingreso o Gasto
+    @Enumerated(EnumType.STRING)
+    private TipoTransaccion tipoCategoria; // Ingreso o Gasto
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "categoria")
     private List<Transaccion> transacciones;
