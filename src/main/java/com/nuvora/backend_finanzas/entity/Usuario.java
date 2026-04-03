@@ -36,6 +36,9 @@ public class Usuario {
     @Column(name = "usuario_contrasena", nullable = false)
     private String contrasenaUsuario;
 
+    @Column(name = "usuario_montoMensual", nullable = false)
+    private Double montoMensual;
+
     @OneToMany(mappedBy = "usuario")// mapped referencia la relacion ya creada
     @JsonIgnore
     private List<Transaccion> transacciones;

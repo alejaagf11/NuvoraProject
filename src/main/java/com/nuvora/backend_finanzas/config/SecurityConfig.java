@@ -2,40 +2,45 @@ package com.nuvora.backend_finanzas.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class SecurityConfig {
 
-    // Permite usar BCrypt en todo el proyecto
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
-                .cors(cors -> {})
-                .csrf(csrf -> csrf.disable()) // Desactiva CSRF para APIs
+                .cors(cors -> {}) // habilitar CORS
+                .csrf(csrf -> csrf.disable()) // desactivar CSRF para APIs
                 .authorizeHttpRequests(auth -> auth
+                        // Permitir preflight OPTIONS
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Endpoints públicos
-                        .requestMatchers("/api/auth/**").permitAll()          // register / login
-                        .requestMatchers("/api/metasAhorro/**").permitAll()  // CRUD MetasAhorro sin auth
-
-                        // Cualquier otro endpoint requiere autenticación (por si agregas más adelante)
+                        .requestMatchers("/api/auth/**").permitAll()
+                        // Endpoints protegidos
+                        .requestMatchers("/api/metasAhorro/**").authenticated()
+                        // Cualquier otro requiere autenticación
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.disable()); // Desactiva login por formulario
+                // Agregar JwtFilter antes de UsernamePasswordAuthenticationFilter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin(form -> form.disable()); // desactivar login por formulario
 
         return http.build();
     }
 
-    // config CORS Angular
+    // Configuración CORS Angular
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -44,7 +49,8 @@ public class SecurityConfig {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }

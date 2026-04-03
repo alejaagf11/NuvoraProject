@@ -1,5 +1,6 @@
 package com.nuvora.backend_finanzas.service.implement;
 
+import com.nuvora.backend_finanzas.dto.UsuarioDTO;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.repository.UsuarioRepository;
 import com.nuvora.backend_finanzas.service.UsuarioService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioServiceImp implements UsuarioService {
@@ -25,74 +27,95 @@ public class UsuarioServiceImp implements UsuarioService {
     }
 
     @Override
-    public Usuario registerUsuario (Usuario usuario){
+    public UsuarioDTO registerUsuario (UsuarioDTO usuarioDTO){
+
+        Usuario usuario = usuarioDTO.toEntity();
 
         usuario.setContrasenaUsuario(
-                passwordEncoder.encode(usuario.getContrasenaUsuario())
+                passwordEncoder.encode(usuarioDTO.getContrasenaUsuario())
         );
         usuario.setRolUsuario("USER");
-        return usuarioRepository.save(usuario);
+
+       Usuario saved = usuarioRepository.save(usuario);
+       return UsuarioDTO.fromEntity(saved);
     }
 
     @Override
-    public Usuario loginUsuario ( String correoUsuario, String contrasenaUsuario){
-        Optional<Usuario> usuarioOptional =
-                usuarioRepository.findByCorreoUsuario(correoUsuario);
-        if (usuarioOptional.isPresent()) {
+    public UsuarioDTO loginUsuario ( String correoUsuario, String contrasenaUsuario){
+        Usuario usuario = usuarioRepository.findByCorreoUsuario(correoUsuario)
+                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
 
-            Usuario usuario = usuarioOptional.get();
-            if (passwordEncoder.matches(contrasenaUsuario,
-                    usuario.getContrasenaUsuario())) {
-
-                return usuario;
-            }
+        if (!passwordEncoder.matches(contrasenaUsuario, usuario.getContrasenaUsuario())){
+            throw new RuntimeException("Contraseña incorrecta");
         }
 
-        throw new RuntimeException("Informacion Incorrecta");
+        return UsuarioDTO.fromEntity(usuario);
     }
 
     @Override
-    public List<Usuario> listUsuario(){
-        return usuarioRepository.findAll();
+    public List<UsuarioDTO> listUsuario(){
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     @SneakyThrows
-    public Usuario getUsuarioById(Long usuarioId){
-      return usuarioRepository.findById(usuarioId)
+    public UsuarioDTO getUsuarioById(Long usuarioId){
+      Usuario usuario = usuarioRepository.findById(usuarioId)
               .orElseThrow(() -> new Exception ("Usuario no Encontrado"));
+
+      return UsuarioDTO.fromEntity(usuario);
     }
 
     @Override
-    @SneakyThrows
-    public Usuario updateUsuario(Long usuarioId, Usuario usuario){
-        Usuario usuarioExistente = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new Exception ("Usuario con Id " + usuarioId +"no encontrado"));
-        usuarioExistente.setNombreUsuario(usuario.getNombreUsuario());
-        usuarioExistente.setCorreoUsuario(usuario.getCorreoUsuario());
+    public UsuarioDTO updateUsuario(Usuario usuarioAutenticado, UsuarioDTO datosNuevos){
 
-        // actualizar si se envia una nueva contraseña
+        Usuario usuarioBD = usuarioRepository.findById(usuarioAutenticado.getUsuarioId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (usuario.getContrasenaUsuario() != null && !usuario.getContrasenaUsuario().isEmpty()){
-            usuarioExistente.setContrasenaUsuario(
-                    passwordEncoder.encode(usuario.getContrasenaUsuario())
-            );
+        if (datosNuevos.getNombreUsuario() != null && !datosNuevos.getNombreUsuario().isEmpty()) {
+            usuarioBD.setNombreUsuario(datosNuevos.getNombreUsuario());
         }
 
-        return usuarioRepository.save(usuarioExistente);
+        if (datosNuevos.getCorreoUsuario() != null && !datosNuevos.getCorreoUsuario().isEmpty()) {
+            usuarioBD.setCorreoUsuario(datosNuevos.getCorreoUsuario());
+        }
+
+        if (datosNuevos.getMontoMensual() != null) {
+            usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
+        }
+
+        if (datosNuevos.getContrasenaUsuario() != null && !datosNuevos.getContrasenaUsuario().isEmpty()) {
+            usuarioBD.setContrasenaUsuario(passwordEncoder.encode(datosNuevos.getContrasenaUsuario()));
+        }
+
+        Usuario update = usuarioRepository.save(usuarioBD);
+
+        return UsuarioDTO.fromEntity(update);
     }
 
     @Override
     @SneakyThrows
-    public void deleteUsuario( Long usuarioId){
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new Exception("Usuario con el Id" + usuarioId + "no encontrado"));
-
-        usuarioRepository.delete(usuario);
+    public void deleteUsuario(Usuario usuarioAutenticado) {
+        usuarioRepository.delete(usuarioAutenticado);
     }
 
     @Override
-    public Usuario saveUsuario(Usuario usuario) {
-        return registerUsuario(usuario);
+    public UsuarioDTO saveUsuario(Usuario usuario) {
+        return UsuarioDTO.fromEntity(usuarioRepository.save(usuario));
+    }
+
+    @Override
+    public Usuario getUsuarioByCorreo(String correoUsuario) {
+        return usuarioRepository.findByCorreoUsuario(correoUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    @Override
+    public Usuario getUsuarioEntityById(Long usuarioId){
+        return usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 }

@@ -1,10 +1,11 @@
 package com.nuvora.backend_finanzas.controller;
 
+import com.nuvora.backend_finanzas.dto.UsuarioDTO;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,37 +18,51 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+
+    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        return usuarioService.getUsuarioById(userId).toEntity();
+    }
+
+
     @GetMapping("/list")
-    public ResponseEntity<List<Usuario>> listUsuario(){
-        List<Usuario> usuarios = usuarioService.listUsuario();
+    public ResponseEntity<List<UsuarioDTO>> listUsuario() {
+        List<UsuarioDTO> usuarios = usuarioService.listUsuario();
         return ResponseEntity.ok(usuarios);
     }
 
-    @GetMapping("/list/{usuarioId}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long usuarioId){
-        Usuario usuario = usuarioService.getUsuarioById(usuarioId);
-        return ResponseEntity.ok(usuario);
+
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioDTO> getMiUsuario(HttpServletRequest request) {
+        Usuario usuario = getUsuarioAutenticado(request);
+        return ResponseEntity.ok(UsuarioDTO.fromEntity(usuario));
     }
 
-    @PutMapping("/update/{usuarioId}")
-    public ResponseEntity<?> updateUsuario ( @PathVariable Long usuarioId, @RequestBody Usuario usuario) {
-        try{
-            Usuario usuariodb = usuarioService.updateUsuario(usuarioId, usuario);
-            return ResponseEntity.ok(usuariodb);
-        }catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-        }
-    }
 
-    @DeleteMapping("/delete/{usuarioId}")
-    public ResponseEntity deleteUsuario (@PathVariable Long usuarioId){
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUsuario(@RequestBody UsuarioDTO datosNuevos, HttpServletRequest request) {
         try {
-            usuarioService.deleteUsuario(usuarioId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception);
+            Usuario usuarioAutenticado = getUsuarioAutenticado(request);
+
+            UsuarioDTO actualizado = usuarioService.updateUsuario(
+                    usuarioAutenticado,
+                    datosNuevos
+            );
+            return ResponseEntity.ok(actualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteMiUsuario(HttpServletRequest request) {
+        try {
+            Usuario usuario = getUsuarioAutenticado(request);
+            usuarioService.deleteUsuario(usuario);
+            return ResponseEntity.ok("Usuario eliminado correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }

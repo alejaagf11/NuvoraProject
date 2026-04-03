@@ -1,6 +1,8 @@
 package com.nuvora.backend_finanzas.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nuvora.backend_finanzas.enums.TipoTransaccion;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,11 +30,12 @@ public class Transaccion {
     private LocalDate fechaTransaccion;
 
     @Column(name = "tipo_transaccion", nullable = false)
-    private String tipo;
+    @Enumerated(EnumType.STRING)
+    private TipoTransaccion tipo;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    @JsonBackReference
+    @JsonIgnore
     private Usuario usuario;
 
     @ManyToOne

@@ -1,5 +1,6 @@
 package com.nuvora.backend_finanzas.service;
 
+import com.nuvora.backend_finanzas.dto.UsuarioDTO;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import org.springframework.stereotype.Service;
 
@@ -7,19 +8,22 @@ import java.util.List;
 
 @Service
 public interface UsuarioService {
-     Usuario registerUsuario (Usuario usuario);
+     UsuarioDTO registerUsuario (UsuarioDTO usuarioDTO);
 
-     Usuario loginUsuario ( String correoUsuario, String contrasenaUsuario);
+     UsuarioDTO loginUsuario ( String correoUsuario, String contrasenaUsuario);
 
-     List<Usuario> listUsuario ();
+     List<UsuarioDTO> listUsuario ();
 
-     Usuario updateUsuario (Long usuarioId, Usuario usuario);
+     UsuarioDTO updateUsuario ( Usuario usuarioAutenticado, UsuarioDTO datosNuevos);
 
-     void deleteUsuario (Long usuarioId) throws Exception;
+     void deleteUsuario (Usuario usuarioAutenticado) throws Exception;
 
-     Usuario getUsuarioById (Long usuarioId);
+     UsuarioDTO getUsuarioById (Long usuarioId);
 
-    Usuario saveUsuario(Usuario usuario);
+    UsuarioDTO saveUsuario(Usuario usuario);
 
-    
+    Usuario getUsuarioByCorreo(String correoUsuario);
+
+    Usuario getUsuarioEntityById(Long usuarioId);
+
 }
