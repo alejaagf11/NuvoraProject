@@ -8,8 +8,9 @@ import { UsuariosFormComponent } from './usuarios-form/usuarios-form.component';
 import { MetasAhorroListComponent } from './metas-ahorro-list/metas-ahorro-list.component';
 import { MetasAhorroFormComponent } from './metas-ahorro-form/metas-ahorro-form.component';
 import { CategoriasComponent } from './categorias/categorias.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { UsuarioLoginComponent } from './usuario-login/usuario-login.component';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 
 @NgModule({
@@ -31,7 +32,12 @@ import { UsuarioLoginComponent } from './usuario-login/usuario-login.component';
     
   ],
   providers: [
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

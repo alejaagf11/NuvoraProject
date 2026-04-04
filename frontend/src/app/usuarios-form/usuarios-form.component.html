@@ -1,12 +1,11 @@
-<div class="container-fluid vh-100 p-0">
+<div class="container-fluid vh-100 p-0" style="background: linear-gradient(135deg, #2b1b3a 0%, #3d2451 100%);">
   <div class="row h-100 m-0">
 
     <!-- FORMULARIO -->
-    <div class="col-md-6 d-flex align-items-center justify-content-center"
-         style="background-color: #2b1b3a; color: white;">
+    <div class="col-12 d-flex align-items-center justify-content-center" style="color: white;">
 
       <div style="width: 80%; max-width: 400px;">
-        <h2 class="mb-4 text-center"><em>Bienvenido a Nuvosa</em></h2>
+        <h2 class="mb-4 text-center"><em>Bienvenido a Nuvora</em></h2>
 
         <form [formGroup]="form" (ngSubmit)="saveUsuario()" class="w-100">
 
@@ -75,13 +74,6 @@
         </div>
 
       </div>
-    </div>
-
-    <!-- IMAGEN -->
-    <div class="col-md-6 d-none d-md-block p-0">
-      <img src="/assets/ilustracion-nuvosa.png"
-        class="w-100 h-100"
-        style="object-fit: cover;">
     </div>
 
   </div>

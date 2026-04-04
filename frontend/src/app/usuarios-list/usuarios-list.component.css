@@ -1,0 +1,36 @@
+.sidebar {
+  background-color: #2b1b3a;
+  color: white;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.main-content {
+  background-color: #1f0f2f;
+  color: white;
+  height: 100vh;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.main-vh-100 {
+  height: 100vh;
+}
+
+.profile-icon {
+  font-size: 30px;
+  background-color: #ccc;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.table-responsive {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
