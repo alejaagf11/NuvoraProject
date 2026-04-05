@@ -26,7 +26,7 @@
   background: #1f111d;
 }
 
-.category-card {
+.budget-card {
   background: #7f4c68;
   border: none;
   color: white;
@@ -47,24 +47,34 @@
   background-color: #572052;
 }
 
-.category-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.15);
-}
-
 .text-muted-custom {
   color: rgba(255,255,255,0.72);
 }
 
-.badge-income {
-  background-color: #3c8b63;
-  color: white;
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
-.badge-expense {
-  background-color: #8b3c55;
-  color: white;
+.result-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.result-item span {
+  color: rgba(255,255,255,0.75);
+  font-size: 14px;
+}
+
+.result-item strong {
+  font-size: 20px;
+}
+
+.result-item.highlight {
+  background: #3f173d;
 }

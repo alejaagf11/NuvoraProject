@@ -5,14 +5,27 @@ import { UsuariosFormComponent } from './usuarios-form/usuarios-form.component';
 import { MetasAhorroFormComponent } from './metas-ahorro-form/metas-ahorro-form.component';
 import { MetasAhorroListComponent } from './metas-ahorro-list/metas-ahorro-list.component';
 import { UsuarioLoginComponent } from './usuario-login/usuario-login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { TransaccionesComponent } from './transacciones/transacciones.component';
+import { CategoriasComponent } from './categorias/categorias.component';
+import { PresupuestoComponent } from './presupuesto/presupuesto.component';
 
 const routes: Routes = [
-  { path: 'usuario-list', component: UsuariosListComponent },
-  { path: 'usuario-form', component: UsuariosFormComponent },
   { path: 'usuario-login', component: UsuarioLoginComponent },
+  { path: 'usuario-form', component: UsuariosFormComponent },
+
+  { path: 'dashboard', component: DashboardComponent },
   { path: 'metas-ahorro-list', component: MetasAhorroListComponent },
   { path: 'metas-ahorro-form', component: MetasAhorroFormComponent },
-  { path: '', redirectTo: '/usuario-login', pathMatch: 'full' } // redirige a login inicialmente
+  { path: 'metas-ahorro-form/:id', component: MetasAhorroFormComponent },
+  { path: 'transacciones', component: TransaccionesComponent },
+  { path: 'categorias', component: CategoriasComponent },
+  { path: 'presupuesto', component: PresupuestoComponent },
+
+  { path: 'usuario-list', component: UsuariosListComponent },
+
+  { path: '', redirectTo: '/usuario-login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/usuario-login' }
 ];
 
 @NgModule({

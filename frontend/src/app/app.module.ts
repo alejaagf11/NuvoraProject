@@ -11,6 +11,10 @@ import { CategoriasComponent } from './categorias/categorias.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { UsuarioLoginComponent } from './usuario-login/usuario-login.component';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { PresupuestoComponent } from './presupuesto/presupuesto.component';
+import { TransaccionesComponent } from './transacciones/transacciones.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
 
 
 @NgModule({
@@ -21,7 +25,10 @@ import { AuthInterceptor } from './services/auth.interceptor';
     MetasAhorroListComponent,
     MetasAhorroFormComponent,
     CategoriasComponent,
-    UsuarioLoginComponent
+    UsuarioLoginComponent,
+    PresupuestoComponent,
+    TransaccionesComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

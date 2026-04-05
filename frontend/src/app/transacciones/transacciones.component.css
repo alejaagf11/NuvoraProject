@@ -26,7 +26,7 @@
   background: #1f111d;
 }
 
-.category-card {
+.trans-card {
   background: #7f4c68;
   border: none;
   color: white;
@@ -47,7 +47,7 @@
   background-color: #572052;
 }
 
-.category-row {
+.movement-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -59,12 +59,14 @@
   color: rgba(255,255,255,0.72);
 }
 
-.badge-income {
-  background-color: #3c8b63;
-  color: white;
+.amount-expense {
+  color: #ffd1d1;
 }
 
-.badge-expense {
-  background-color: #8b3c55;
-  color: white;
+.amount-income {
+  color: #d6ffe3;
+}
+
+.filter-select {
+  max-width: 180px;
 }

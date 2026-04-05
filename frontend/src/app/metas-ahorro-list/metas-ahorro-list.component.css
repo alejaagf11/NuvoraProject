@@ -33,3 +33,22 @@
   border-radius: 50%;
   padding: 10px;
 }
+
+
+.sidebar {
+  background: #2a0f3a;
+  color: white;
+  min-height: 100vh;
+}
+
+.menu-links li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.menu-links li:hover {
+  color: #f2bdd3;
+  padding-left: 6px;
+}

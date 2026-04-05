@@ -46,7 +46,7 @@ export class UsuariosFormComponent implements OnInit {
       return;
     }
 
-    // Envía solo los campos necesarios (sin rolUsuario)
+
     const usuario = {
       nombreUsuario: this.form.value.nombreUsuario,
       correoUsuario: this.form.value.correoUsuario,
@@ -70,8 +70,23 @@ export class UsuariosFormComponent implements OnInit {
       // crear
       this.usuarioService.create(usuario).subscribe({
         next: () => {
-          console.log('Usuario creado');
-          this.router.navigate(['/metas-ahorro-list']);
+          console.log('Usuario creado, iniciando login automático...');
+
+          this.usuarioService.login({
+            correoUsuario: usuario.correoUsuario,
+            contrasenaUsuario: usuario.contrasenaUsuario
+          }).subscribe({
+            next: (res) => {
+              console.log('Login automático exitoso:', res);
+              console.log('Token guardado después del login:', this.usuarioService.getToken());
+              this.router.navigate(['/dashboard']);
+            },
+            error: (err) => {
+              console.error('Usuario creado, pero falló el login automático', err);
+              alert('La cuenta se creó, pero no se pudo iniciar sesión automáticamente.');
+              this.router.navigate(['/usuario-login']);
+            }
+          });
         },
         error: (err) => {
           console.error('Error al crear usuario', err);
@@ -79,6 +94,7 @@ export class UsuariosFormComponent implements OnInit {
           alert('Error al crear la cuenta: ' + (err.error?.message || err.message || 'Error desconocido'));
         }
       });
+
     }
   }
 

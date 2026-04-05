@@ -1,14 +1,15 @@
 <div class="container-fluid main-vh-100 p-0">
   <div class="row h-100 m-0">
 
-    <div class="col-md-3 p-4 sidebar">
+     <div class="col-md-3 p-4 sidebar">
       <h3 class="mb-4 fw-bold">Menu</h3>
 
-      <ul class="list-unstyled">
-        <li class="mb-3">Mis movimientos</li>
-        <li class="mb-3">Tips financieros</li>
-        <li class="mb-3">Metas de ahorro</li>
-        <li class="mb-3">Configuración</li>
+      <ul class="list-unstyled menu-links">
+        <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
+        <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
+        <li class="mb-3" routerLink="/transacciones">Transacciones</li>
+        <li class="mb-3" routerLink="/categorias">Categorías</li>
+        <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
       </ul>
     </div>
 
@@ -16,45 +17,45 @@
 
       <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-          <h2 class="fw-bold mb-3">Nueva Meta de Ahorro</h2>
-          <p class="mb-0">Crea una nueva meta para ahorrar</p>
+          <h2 class="fw-bold mb-3">
+            {{ isEditMode ? 'Editar Meta de Ahorro' : 'Nueva Meta de Ahorro' }}
+          </h2>
+          <p class="mb-0">
+            {{ isEditMode ? 'Actualiza los datos de tu meta' : 'Crea una nueva meta para ahorrar' }}
+          </p>
         </div>
         <div class="profile-icon">👤</div>
       </div>
 
+
       <div class="row w-100 justify-content-center">
         <!-- FORMULARIO -->
         <div class="col-md-6">
-          <form (ngSubmit)="saveMeta()"
-                class="card p-4 shadow" style="background-color: #2b1b3a; border: none; color: white;">
+          <form (ngSubmit)="saveMeta()" class="card p-4 shadow"
+            style="background-color: #2b1b3a; border: none; color: white;">
 
             <div class="mb-3">
               <label class="form-label">Nombre de la meta</label>
-              <input type="text" class="form-control"
-                     [(ngModel)]="meta.nombreMeta"
-                     name="nombreMeta" required
-                     placeholder="Ej: Viaje a Europa">
+              <input type="text" class="form-control" [(ngModel)]="meta.nombreMeta" name="nombreMeta" required
+                placeholder="Ej: Viaje a Europa">
             </div>
 
             <div class="mb-3">
               <label class="form-label">Monto objetivo</label>
-              <input type="number" class="form-control"
-                     [(ngModel)]="meta.montoObjetivo"
-                     name="montoObjetivo" required
-                     placeholder="Ej: 5000">
+              <input type="number" class="form-control" [(ngModel)]="meta.montoObjetivo" name="montoObjetivo" required
+                placeholder="Ej: 5000">
             </div>
 
             <div class="mb-3">
               <label class="form-label">Fecha límite</label>
-              <input type="date" class="form-control"
-                     [(ngModel)]="meta.fechaLimite"
-                     name="fechaLimite" required>
+              <input type="date" class="form-control" [(ngModel)]="meta.fechaLimite" name="fechaLimite" required>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
               <button type="submit" class="btn btn-custom">
-                Guardar Meta
+                {{ isEditMode ? 'Actualizar Meta' : 'Guardar Meta' }}
               </button>
+
               <a routerLink="/metas-ahorro-list" class="btn btn-secondary">
                 Volver
               </a>

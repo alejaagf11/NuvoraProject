@@ -41,7 +41,7 @@ export class UsuarioLoginComponent {
         
         // Redirige después de login
         setTimeout(() => {
-          this.router.navigate(['/metas-ahorro-list']);
+          this.router.navigate(['/dashboard']);
         }, 500);
       },
       error: (err) => {
