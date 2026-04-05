@@ -6,6 +6,7 @@ import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.CategoriaService;
 import com.nuvora.backend_finanzas.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class CategoriaController {
 
     private Usuario getUsuarioAutenticado() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(auth.getName());
+        Long userId = (Long) auth.getPrincipal();
         return usuarioService.getUsuarioEntityById(userId);
     }
 
@@ -48,10 +49,16 @@ public class CategoriaController {
     }
 
     @DeleteMapping("/delete/{categoriaId}")
-    public ResponseEntity<String> deleteCategoria(@PathVariable Long categoriaId) throws Exception{
-        Usuario usuario = getUsuarioAutenticado();
-        categoriaService.deleteCategoria(categoriaId, usuario);
-        return ResponseEntity.ok("Categoria Eliminada");
+    public ResponseEntity<Void> deleteCategoria(@PathVariable Long categoriaId) throws Exception{
+
+        try {
+            Usuario usuario = getUsuarioAutenticado();
+            categoriaService.deleteCategoria(categoriaId, usuario);
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
 
     }
 }

@@ -6,6 +6,7 @@ import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.TransaccionService;
 import com.nuvora.backend_finanzas.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class TransaccionController {
 
     private Usuario getUsuarioAutenticado() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(auth.getName());
+        Long userId = (Long) auth.getPrincipal();
         return usuarioService.getUsuarioEntityById(userId);
     }
 
@@ -66,12 +67,20 @@ public class TransaccionController {
     }
 
     @DeleteMapping("/delete/{transaccionId}")
-    public ResponseEntity<String> deleteTransaccion(@PathVariable Long transaccionId){
-        Usuario usuario = getUsuarioAutenticado();
+    public ResponseEntity<Void> deleteTransaccion(@PathVariable Long transaccionId){
 
-        transaccionService.deleteTransaccion(transaccionId, usuario);
+        try {
+            Usuario usuario = getUsuarioAutenticado();
 
-        return ResponseEntity.ok("Eliminado correctamente");
+            transaccionService.deleteTransaccion(transaccionId, usuario);
+
+            return ResponseEntity.noContent().build();
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+
     }
 
     @PutMapping("/saldo")

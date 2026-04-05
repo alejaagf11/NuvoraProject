@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +21,10 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
 
-    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        return usuarioService.getUsuarioById(userId).toEntity();
+    private Usuario getUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        return usuarioService.getUsuarioEntityById(userId);
     }
 
 
@@ -34,7 +37,7 @@ public class UsuarioController {
 
     @GetMapping("/me")
     public ResponseEntity<UsuarioDTO> getMiUsuario(HttpServletRequest request) {
-        Usuario usuario = getUsuarioAutenticado(request);
+        Usuario usuario = getUsuarioAutenticado();
         return ResponseEntity.ok(UsuarioDTO.fromEntity(usuario));
     }
 
@@ -42,7 +45,7 @@ public class UsuarioController {
     @PutMapping("/update")
     public ResponseEntity<?> updateUsuario(@RequestBody UsuarioDTO datosNuevos, HttpServletRequest request) {
         try {
-            Usuario usuarioAutenticado = getUsuarioAutenticado(request);
+            Usuario usuarioAutenticado = getUsuarioAutenticado();
 
             UsuarioDTO actualizado = usuarioService.updateUsuario(
                     usuarioAutenticado,
@@ -56,13 +59,13 @@ public class UsuarioController {
 
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteMiUsuario(HttpServletRequest request) {
+    public ResponseEntity<Void> deleteMiUsuario(HttpServletRequest request) {
         try {
-            Usuario usuario = getUsuarioAutenticado(request);
+            Usuario usuario = getUsuarioAutenticado();
             usuarioService.deleteUsuario(usuario);
-            return ResponseEntity.ok("Usuario eliminado correctamente");
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

@@ -25,7 +25,7 @@ public class MetasAhorroController {
 
     private Usuario getUsuarioAutenticado() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(auth.getName());
+        Long userId = (Long) auth.getPrincipal();
         return usuarioService.getUsuarioEntityById(userId);
     }
 
@@ -65,16 +65,16 @@ public class MetasAhorroController {
     }
 
     @DeleteMapping("/delete/{metaAhorroId}")
-        public ResponseEntity deleteMeta (@PathVariable Long metaAhorroId){
+        public ResponseEntity<Void> deleteMeta (@PathVariable Long metaAhorroId){
 
         try{
             Usuario usuario = getUsuarioAutenticado();
 
             metasAhorroService.deleteMeta(metaAhorroId, usuario);
 
-            return ResponseEntity.ok("Eliminado correctamente");
+            return ResponseEntity.noContent().build();
         }catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
