@@ -47,7 +47,14 @@ public class CategoriaServiceImp implements CategoriaService {
         if (categoriaDTO.getNombreCategoria() != null && !categoriaDTO.getNombreCategoria().isEmpty()) {
             categoria.setNombreCategoria(categoriaDTO.getNombreCategoria());
         }
-        if (categoriaDTO.getTipoCategoria() != null) {
+
+        if (categoriaDTO.getTipoCategoria() != null &&
+                !categoriaDTO.getTipoCategoria().equals(categoria.getTipoCategoria())) {
+
+            if (!categoria.getTransacciones().isEmpty()) {
+                throw new RuntimeException("No se puede cambiar el tipo de una categoría con transacciones");
+            }
+
             categoria.setTipoCategoria(categoriaDTO.getTipoCategoria());
         }
 
@@ -58,9 +65,15 @@ public class CategoriaServiceImp implements CategoriaService {
     @Override
     @SneakyThrows
     public void deleteCategoria(Long categoriaId, Usuario usuario){
+
         Categoria categoria = categoriaRepository
                 .findByCategoriaIdAndUsuario(categoriaId, usuario)
                 .orElseThrow(()-> new RuntimeException(" Categoria no encontrada"));
+
+        if (!categoria.getTransacciones().isEmpty()) {
+            throw new RuntimeException("No se puede eliminar una categoría con transacciones");
+        }
+        categoriaRepository.delete(categoria);
 
     }
 
