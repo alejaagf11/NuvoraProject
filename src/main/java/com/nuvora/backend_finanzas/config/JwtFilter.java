@@ -26,10 +26,19 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
+
+        //dejar pasar si no hay token
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             if (header != null && header.startsWith("Bearer ")) {
                 String token = header.substring(7); // quitar "Bearer "
                 Long userId = jwtService.validateTokenAndGetUserId(token);
+
+                request.setAttribute("userId", userId);
 
                 // Crear autenticación y colocar en SecurityContext
                 UsernamePasswordAuthenticationToken auth =

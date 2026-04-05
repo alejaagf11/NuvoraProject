@@ -21,9 +21,11 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
 
-    private Usuario getUsuarioAutenticado() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) auth.getPrincipal();
+    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null){
+            throw new RuntimeException("Usuario no autenticado");
+        }
         return usuarioService.getUsuarioEntityById(userId);
     }
 
@@ -37,7 +39,7 @@ public class UsuarioController {
 
     @GetMapping("/me")
     public ResponseEntity<UsuarioDTO> getMiUsuario(HttpServletRequest request) {
-        Usuario usuario = getUsuarioAutenticado();
+        Usuario usuario = getUsuarioAutenticado(request);
         return ResponseEntity.ok(UsuarioDTO.fromEntity(usuario));
     }
 
@@ -45,7 +47,7 @@ public class UsuarioController {
     @PutMapping("/update")
     public ResponseEntity<?> updateUsuario(@RequestBody UsuarioDTO datosNuevos, HttpServletRequest request) {
         try {
-            Usuario usuarioAutenticado = getUsuarioAutenticado();
+            Usuario usuarioAutenticado = getUsuarioAutenticado(request);
 
             UsuarioDTO actualizado = usuarioService.updateUsuario(
                     usuarioAutenticado,
@@ -61,7 +63,7 @@ public class UsuarioController {
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteMiUsuario(HttpServletRequest request) {
         try {
-            Usuario usuario = getUsuarioAutenticado();
+            Usuario usuario = getUsuarioAutenticado(request);
             usuarioService.deleteUsuario(usuario);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {

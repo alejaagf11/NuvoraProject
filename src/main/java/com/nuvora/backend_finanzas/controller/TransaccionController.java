@@ -5,6 +5,7 @@ import com.nuvora.backend_finanzas.entity.Transaccion;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.TransaccionService;
 import com.nuvora.backend_finanzas.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,53 +25,55 @@ public class TransaccionController {
     @Autowired
     private UsuarioService usuarioService;
 
-    private Usuario getUsuarioAutenticado() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) auth.getPrincipal();
+    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null){
+            throw new RuntimeException("Usuario no autenticado");
+        }
         return usuarioService.getUsuarioEntityById(userId);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TransaccionDTO> createTransaccion(@RequestBody TransaccionDTO transaccionDTO){
-        Usuario usuario = getUsuarioAutenticado();
+    public ResponseEntity<TransaccionDTO> createTransaccion(@RequestBody TransaccionDTO transaccionDTO, HttpServletRequest request){
+        Usuario usuario = getUsuarioAutenticado(request);
         TransaccionDTO created = transaccionService.createTransaccion(transaccionDTO, usuario);
         return ResponseEntity.ok(created);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<TransaccionDTO>> listTransaccion(){
-        Usuario usuario = getUsuarioAutenticado();
+    public ResponseEntity<List<TransaccionDTO>> listTransaccion(HttpServletRequest request){
+        Usuario usuario = getUsuarioAutenticado(request);
         List<TransaccionDTO> transacciones = transaccionService.listTransaccion(usuario);
         return ResponseEntity.ok(transacciones);
     }
 
     @GetMapping("/tipo/{tipo}")
-    public ResponseEntity<List<TransaccionDTO>> filterByType(@PathVariable String tipo){
-        Usuario usuario = getUsuarioAutenticado();
+    public ResponseEntity<List<TransaccionDTO>> filterByType(@PathVariable String tipo, HttpServletRequest request){
+        Usuario usuario = getUsuarioAutenticado(request);
         List<TransaccionDTO> transacciones = transaccionService.filterByType(tipo, usuario);
         return ResponseEntity.ok(transacciones);
     }
 
     @GetMapping("/categoria/{categoriaId}")
-    public ResponseEntity <List<TransaccionDTO>> filterByCategoria(@PathVariable Long categoriaId){
-        Usuario usuario = getUsuarioAutenticado();
+    public ResponseEntity <List<TransaccionDTO>> filterByCategoria(@PathVariable Long categoriaId, HttpServletRequest request){
+        Usuario usuario = getUsuarioAutenticado(request);
         List<TransaccionDTO> transacciones = transaccionService.filterByCategoria(categoriaId, usuario);
         return ResponseEntity.ok(transacciones);
 
     }
 
     @PutMapping("/update/{transaccionId}")
-    public ResponseEntity<TransaccionDTO> updateTransaccion(@PathVariable Long transaccionId, @RequestBody TransaccionDTO transaccionDTO){
-        Usuario usuario = getUsuarioAutenticado();
+    public ResponseEntity<TransaccionDTO> updateTransaccion(@PathVariable Long transaccionId, @RequestBody TransaccionDTO transaccionDTO, HttpServletRequest request){
+        Usuario usuario = getUsuarioAutenticado(request);
         TransaccionDTO update = transaccionService.updateTransaccion(transaccionId, transaccionDTO, usuario);
         return ResponseEntity.ok(update);
     }
 
     @DeleteMapping("/delete/{transaccionId}")
-    public ResponseEntity<Void> deleteTransaccion(@PathVariable Long transaccionId){
+    public ResponseEntity<Void> deleteTransaccion(@PathVariable Long transaccionId, HttpServletRequest request){
 
         try {
-            Usuario usuario = getUsuarioAutenticado();
+            Usuario usuario = getUsuarioAutenticado(request);
 
             transaccionService.deleteTransaccion(transaccionId, usuario);
 
@@ -84,8 +87,8 @@ public class TransaccionController {
     }
 
     @PutMapping("/saldo")
-    public ResponseEntity<Double> calcularSaldoUsuario(){
-        Usuario usuario = getUsuarioAutenticado();
+    public ResponseEntity<Double> calcularSaldoUsuario(HttpServletRequest request){
+        Usuario usuario = getUsuarioAutenticado(request);
         double saldo = transaccionService.calcularSaldoUsuario(usuario);
         return ResponseEntity.ok(saldo);
     }

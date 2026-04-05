@@ -4,9 +4,8 @@ import com.nuvora.backend_finanzas.dto.BudgetDTO;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.PresupuestoService;
 import com.nuvora.backend_finanzas.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,15 +21,17 @@ public class PresupuestoController {
     @Autowired
     private PresupuestoService presupuestoService;
 
-    private Usuario getUsuarioAutenticado() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) auth.getPrincipal();
+    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null){
+            throw new RuntimeException("Usuario no autenticado");
+        }
         return usuarioService.getUsuarioEntityById(userId);
     }
 
     @PostMapping("/generate")
-    public BudgetDTO.Response generarPresupuesto(@RequestBody BudgetDTO.Request request){
-        Usuario usuario = getUsuarioAutenticado();
+    public BudgetDTO.Response generarPresupuesto(@RequestBody BudgetDTO.Request request, HttpServletRequest req){
+        Usuario usuario = getUsuarioAutenticado(req);
         return presupuestoService.generarPresupuesto(request, usuario);
     }
 
