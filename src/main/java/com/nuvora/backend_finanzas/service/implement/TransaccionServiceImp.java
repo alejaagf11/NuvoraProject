@@ -38,6 +38,12 @@ public class TransaccionServiceImp implements TransaccionService {
             throw new RuntimeException("El tipo de la transaccion no coincide con la categoria");
 
         }
+
+        // tipo no puede ser nulo
+        if (transaccionDTO.getTipo() == null) {
+            throw new RuntimeException("El tipo de transacción es obligatorio");
+        }
+
         Transaccion transaccion = new Transaccion();
         transaccion.setMontoTransaccion(transaccionDTO.getMontoTransaccion());
         transaccion.setDescTransaccion(transaccionDTO.getDescTransaccion());
@@ -99,27 +105,38 @@ public class TransaccionServiceImp implements TransaccionService {
         }
 
         //actualizacion
-        actual.setMontoTransaccion(nuevaDTO.getMontoTransaccion());
-        actual.setDescTransaccion(nuevaDTO.getDescTransaccion());
+        if (nuevaDTO.getMontoTransaccion() != null){
+            actual.setMontoTransaccion(nuevaDTO.getMontoTransaccion());
+        }
+
+        if(nuevaDTO.getDescTransaccion() != null){
+            actual.setDescTransaccion(nuevaDTO.getDescTransaccion());
+        }
 
         //fecha
         if (nuevaDTO.getFechaTransaccion() != null){
             actual.setFechaTransaccion(nuevaDTO.getFechaTransaccion());
         }
 
-        //categoria
-        Categoria categoria = categoriaRepository.findByCategoriaIdAndUsuario(
-                nuevaDTO.getCategoriaId(), usuario
-        ).orElseThrow(()-> new RuntimeException("Categoria no encontrada"));
+        if (nuevaDTO.getCategoriaId() != null) {
+            //categoria
+            Categoria categoria = categoriaRepository.findByCategoriaIdAndUsuario(
+                    nuevaDTO.getCategoriaId(), usuario
+            ).orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
 
 
-        if (!nuevaDTO.getTipo().equals(categoria.getTipoCategoria())){
-            throw new RuntimeException("Tipo no coincide con la categoria");
+            if (!nuevaDTO.getTipo().equals(categoria.getTipoCategoria())) {
+                throw new RuntimeException("Tipo no coincide con la categoria");
+            }
+
+            if (nuevaDTO.getTipo() == null) {
+                throw new RuntimeException("El tipo de transacción es obligatorio cuando se cambia la categoria");
+            }
+
+
+            actual.setCategoria(categoria);
+            actual.setTipo(nuevaDTO.getTipo());
         }
-
-        actual.setCategoria(categoria);
-        actual.setTipo(nuevaDTO.getTipo());
-
         Transaccion update = transaccionRepository.save(actual);
         return TransaccionDTO.fromEntity(update);
     }
