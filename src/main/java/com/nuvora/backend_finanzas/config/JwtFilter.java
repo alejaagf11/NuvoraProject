@@ -33,11 +33,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 // Crear autenticación y colocar en SecurityContext
                 UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(userId.toString(), null, List.of());
+                        new UsernamePasswordAuthenticationToken(userId, null, List.of());
                 SecurityContextHolder.getContext().setAuthentication(auth);
-
-                // Guardar userId en request para controllers
-                request.setAttribute("userId", userId);
 
                 System.out.println("JwtFilter: Usuario autenticado con ID = " + userId);
             }
