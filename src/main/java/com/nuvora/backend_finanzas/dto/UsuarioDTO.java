@@ -24,7 +24,9 @@ public class UsuarioDTO {
         usuario.setRolUsuario(this.rolUsuario);
         usuario.setNombreUsuario(this.nombreUsuario);
         usuario.setCorreoUsuario(this.correoUsuario);
-        usuario.setContrasenaUsuario(this.contrasenaUsuario);
+        if (this.contrasenaUsuario != null) {
+            usuario.setContrasenaUsuario(this.contrasenaUsuario);
+        }
         usuario.setMontoMensual(this.montoMensual != null ? this.montoMensual : 0);
         return usuario;
     }
