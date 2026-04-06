@@ -20,6 +20,8 @@ export class CategoriasComponent implements OnInit {
     nombreCategoria: '',
     tipoCategoria: 'GASTO'
   };
+  router: any;
+  usuarioService: any;
 
   constructor(private categoriaService: CategoriaService) {}
 
@@ -118,5 +120,10 @@ export class CategoriasComponent implements OnInit {
 
   esIngreso(tipo: string): boolean {
     return tipo === 'INGRESO';
+  }
+
+  logout() {
+    this.usuarioService.logout();
+    this.router.navigate(['/usuario-login']);
   }
 }

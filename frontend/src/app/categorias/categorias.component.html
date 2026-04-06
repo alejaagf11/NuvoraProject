@@ -1,102 +1,123 @@
 <div class="container-fluid main-vh-100 p-0">
-    <div class="row h-100 m-0">
+  <div class="row h-100 m-0">
+    <div class="col-md-3 p-4 sidebar d-flex flex-column">
+      <div>
+        <h3 class="mb-4 fw-bold">Menu</h3>
 
-        <div class="col-md-3 p-4 sidebar">
-            <h3 class="mb-4 fw-bold">Menu</h3>
+        <ul class="list-unstyled menu-links">
+          <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
+          <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
+          <li class="mb-3" routerLink="/transacciones">Transacciones</li>
+          <li class="mb-3" routerLink="/categorias">Categorías</li>
+          <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
+        </ul>
+      </div>
 
-            <ul class="list-unstyled menu-links">
-                <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
-                <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
-                <li class="mb-3" routerLink="/transacciones">Transacciones</li>
-                <li class="mb-3" routerLink="/categorias">Categorías</li>
-                <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
-            </ul>
+      <div class="mt-auto pt-4">
+        <button class="btn btn-logout w-100" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
 
-        </div>
+    <div class="col-md-9 p-5 main-content">
+      <div class="section-header mb-4">
+        <p class="eyebrow mb-2">Clasifica tus movimientos</p>
+        <h2 class="fw-bold mb-2">Categorías</h2>
+        <p class="text-muted-custom mb-0">
+          Crea categorías para entender mejor tus ingresos y gastos y mantener tu historial organizado.
+        </p>
+      </div>
 
-        <div class="col-md-9 p-5 main-content">
-            <div class="row g-4">
-                <div class="col-lg-5">
-                    <div class="card category-card p-4">
-                        <h3 class="fw-bold mb-3">
-                            {{ isEditMode ? 'Editar categoría' : 'Nueva categoría' }}
-                        </h3>
-
-                        <p class="mb-4 text-muted-custom">
-                            Las categorías te ayudan a organizar tus ingresos y gastos. Por ejemplo: salario,
-                            transporte, comida o arriendo.
-                        </p>
-
-                        <div *ngIf="errorMensaje" class="alert alert-danger">
-                            {{ errorMensaje }}
-                        </div>
-
-                        <div *ngIf="mensajeExito" class="alert alert-success">
-                            {{ mensajeExito }}
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" [(ngModel)]="nuevaCategoria.nombreCategoria"
-                                name="nombreCategoria" placeholder="Ej: Transporte">
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Tipo</label>
-                            <select class="form-select" [(ngModel)]="nuevaCategoria.tipoCategoria" name="tipoCategoria">
-                                <option value="GASTO">Gasto</option>
-                                <option value="INGRESO">Ingreso</option>
-                            </select>
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-custom flex-fill" (click)="guardarCategoria()">
-                                {{ isEditMode ? 'Actualizar categoría' : 'Guardar categoría' }}
-                            </button>
-
-                            <button *ngIf="isEditMode" class="btn btn-secondary" (click)="cancelarEdicion()">
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-7">
-                    <div class="card category-card p-4">
-                        <h3 class="fw-bold mb-4">Tus categorías</h3>
-
-                        <p class="mb-4 text-muted-custom">
-                            Primero crea una categoría y luego podrás usarla al registrar transacciones.
-                        </p>
-
-
-                        <div *ngIf="categorias.length === 0" class="text-muted-custom">
-                            No tienes categorías registradas.
-                        </div>
-
-                        <div *ngFor="let categoria of categorias" class="category-row">
-                            <div>
-                                <div class="fw-semibold">{{ categoria.nombreCategoria }}</div>
-                                <span class="badge mt-1"
-                                    [ngClass]="esIngreso(categoria.tipoCategoria) ? 'badge-income' : 'badge-expense'">
-                                    {{ categoria.tipoCategoria }}
-                                </span>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-light" (click)="editarCategoria(categoria)">
-                                    Editar
-                                </button>
-
-                                <button class="btn btn-sm btn-danger"
-                                    (click)="eliminarCategoria(categoria.categoriaId!)">
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="card category-card form-card p-4">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+              <div>
+                <h3 class="fw-bold mb-2">
+                  {{ isEditMode ? 'Editar categoría' : 'Nueva categoría' }}
+                </h3>
+                <p class="text-muted-custom small mb-0">
+                  Ejemplos: salario, transporte, arriendo o comida.
+                </p>
+              </div>
+              <span class="pill-label">{{ nuevaCategoria.tipoCategoria }}</span>
             </div>
 
+            <div *ngIf="errorMensaje" class="alert alert-danger custom-alert">
+              {{ errorMensaje }}
+            </div>
+
+            <div *ngIf="mensajeExito" class="alert alert-success custom-alert">
+              {{ mensajeExito }}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control custom-input" [(ngModel)]="nuevaCategoria.nombreCategoria"
+                name="nombreCategoria" placeholder="Ej: Transporte">
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Tipo</label>
+              <select class="form-select custom-input" [(ngModel)]="nuevaCategoria.tipoCategoria" name="tipoCategoria">
+                <option value="GASTO">Gasto</option>
+                <option value="INGRESO">Ingreso</option>
+              </select>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="btn btn-custom flex-fill" (click)="guardarCategoria()">
+                {{ isEditMode ? 'Actualizar categoría' : 'Guardar categoría' }}
+              </button>
+
+              <button *ngIf="isEditMode" class="btn btn-soft" (click)="cancelarEdicion()">
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
+
+        <div class="col-lg-7">
+          <div class="card category-card list-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h3 class="fw-bold mb-1">Tus categorías</h3>
+                <p class="text-muted-custom small mb-0">
+                  Primero crea una categoría y luego úsala al registrar transacciones.
+                </p>
+              </div>
+            </div>
+
+            <div *ngIf="categorias.length === 0" class="empty-state">
+              <div class="empty-icon">#</div>
+              <p class="mb-1 fw-semibold">No tienes categorías registradas</p>
+              <small class="text-muted-custom">Crea una para empezar a organizar tus movimientos.</small>
+            </div>
+
+            <div *ngFor="let categoria of categorias" class="category-entry">
+              <div>
+                <div class="fw-semibold category-name">{{ categoria.nombreCategoria }}</div>
+                <span class="badge mt-1"
+                  [ngClass]="esIngreso(categoria.tipoCategoria) ? 'badge-income' : 'badge-expense'">
+                  {{ categoria.tipoCategoria }}
+                </span>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light" (click)="editarCategoria(categoria)">
+                  Editar
+                </button>
+
+                <button class="btn btn-sm btn-danger" (click)="eliminarCategoria(categoria.categoriaId!)">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
+</div>

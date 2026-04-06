@@ -5,58 +5,185 @@
 }
 
 .sidebar {
-  background: #2a0f3a;
+  background: linear-gradient(180deg, #281038 0%, #200c2d 100%);
   color: white;
   min-height: 100vh;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .menu-links li {
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
   cursor: pointer;
   transition: 0.2s ease;
+  border-radius: 10px;
 }
 
 .menu-links li:hover {
   color: #f2bdd3;
-  padding-left: 6px;
+  background: rgba(255,255,255,0.06);
+  padding-left: 14px;
 }
 
 .main-content {
-  background: #1f111d;
+  background:
+    radial-gradient(circle at top right, rgba(181, 115, 159, 0.16), transparent 25%),
+    #1b0f18;
+}
+
+.section-header .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  color: #f0bfd3;
 }
 
 .trans-card {
-  background: #7f4c68;
-  border: none;
+  background: linear-gradient(180deg, #7f4c68 0%, #71455e 100%);
+  border: 1px solid rgba(255,255,255,0.08);
   color: white;
-  border-radius: 18px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  border-radius: 22px;
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.28);
+}
+
+.form-card,
+.list-card {
+  backdrop-filter: blur(6px);
+}
+
+.custom-input {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: white;
+  border-radius: 14px;
+  min-height: 48px;
+}
+
+.custom-input:focus {
+  background: rgba(255,255,255,0.16);
+  color: white;
+  border-color: #efc2d5;
+  box-shadow: 0 0 0 0.2rem rgba(239, 194, 213, 0.2);
+}
+
+.custom-input::placeholder {
+  color: rgba(255,255,255,0.56);
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-block {
+  position: relative;
 }
 
 .btn-custom {
-  background-color: #3f173d;
+  background: linear-gradient(135deg, #3f173d 0%, #5a2255 100%);
   color: white;
   border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  padding: 10px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  padding: 12px 18px;
 }
 
 .btn-custom:hover {
-  background-color: #572052;
+  background: linear-gradient(135deg, #52204f 0%, #6f2b68 100%);
 }
 
-.movement-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.15);
+.btn-soft {
+  background: rgba(255,255,255,0.14);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  font-weight: 600;
+  padding: 12px 18px;
+}
+
+.btn-soft:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.custom-alert {
+  border-radius: 14px;
+  border: none;
 }
 
 .text-muted-custom {
   color: rgba(255,255,255,0.72);
+}
+
+.pill-label {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.filter-select {
+  max-width: 190px;
+  color: rgba(255,255,255,0.72);
+}
+
+.custom-input,
+.custom-input:focus {
+  background-color: rgba(255,255,255,0.12);
+  color: white;
+}
+
+.custom-input option {
+  background-color: #2b1b3a;
+  color: white;
+}
+
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 18px;
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.12);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.movement-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.movement-title {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.movement-meta {
+  color: rgba(255,255,255,0.68);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.movement-side {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .amount-expense {
@@ -67,6 +194,21 @@
   color: #d6ffe3;
 }
 
-.filter-select {
-  max-width: 180px;
+.action-link {
+  color: #53204e;
+  font-weight: 700;
+}
+
+.btn-logout {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 14px;
+  font-weight: 700;
+  padding: 12px 18px;
+}
+
+.btn-logout:hover {
+  background: rgba(255,255,255,0.2);
+  color: white;
 }

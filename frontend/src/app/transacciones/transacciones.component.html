@@ -1,143 +1,159 @@
 <div class="container-fluid main-vh-100 p-0">
-    <div class="row h-100 m-0">
+  <div class="row h-100 m-0">
+    <div class="col-md-3 p-4 sidebar d-flex flex-column">
+      <div>
+        <h3 class="mb-4 fw-bold">Menu</h3>
 
-        <div class="col-md-3 p-4 sidebar">
-            <h3 class="mb-4 fw-bold">Menu</h3>
+        <ul class="list-unstyled menu-links">
+          <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
+          <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
+          <li class="mb-3" routerLink="/transacciones">Transacciones</li>
+          <li class="mb-3" routerLink="/categorias">Categorías</li>
+          <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
+        </ul>
+      </div>
 
-            <ul class="list-unstyled menu-links">
-                <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
-                <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
-                <li class="mb-3" routerLink="/categorias">Categorías</li>
-                <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
-            </ul>
-        </div>
-
-        <div class="col-md-9 p-5 main-content">
-            <div class="row g-4">
-                <div class="col-lg-5">
-                    <div class="card trans-card p-4">
-                        <h3 class="fw-bold mb-3">
-                            {{ isEditMode ? 'Editar transacción' : 'Registrar transacción' }}
-                        </h3>
-
-
-                        <p class="mb-4 text-muted-custom">
-                            Las categorías te ayudan a organizar tus ingresos y gastos, por ejemplo: salario,
-                            transporte, comida o arriendo.
-                        </p>
-
-
-                        <div *ngIf="errorMensaje" class="alert alert-danger">
-                            {{ errorMensaje }}
-                        </div>
-
-                        <div *ngIf="mensajeExito" class="alert alert-success">
-                            {{ mensajeExito }}
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Tipo</label>
-                            <select class="form-select" [(ngModel)]="nuevaTransaccion.tipo" (change)="onTipoChange()"
-                                name="tipo">
-                                <option value="INGRESO">Ingreso</option>
-                                <option value="GASTO">Gasto</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Monto</label>
-                            <input type="number" class="form-control" [(ngModel)]="nuevaTransaccion.montoTransaccion"
-                                name="montoTransaccion" placeholder="Ej: 120000">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Descripción</label>
-                            <input type="text" class="form-control" [(ngModel)]="nuevaTransaccion.descTransaccion"
-                                name="descTransaccion" placeholder="Ej: Pago de transporte">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Fecha</label>
-                            <input type="date" class="form-control" [(ngModel)]="nuevaTransaccion.fechaTransaccion"
-                                name="fechaTransaccion">
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Categoría</label>
-                            <select class="form-select" [(ngModel)]="nuevaTransaccion.categoriaId" name="categoriaId">
-                                <option [ngValue]="0">Selecciona una categoría</option>
-                                <option *ngFor="let categoria of categoriasFiltradas" [ngValue]="categoria.categoriaId">
-                                    {{ categoria.nombreCategoria }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div *ngIf="categoriasFiltradas.length === 0" class="alert alert-warning">
-                            Primero debes crear una categoría de tipo {{ nuevaTransaccion.tipo }} antes de registrar
-                            esta transacción.
-                            <a routerLink="/categorias" class="ms-2">Crear categoría</a>
-                        </div>
-
-
-                        <div class="d-flex gap-2">
-
-
-                            <button *ngIf="isEditMode" class="btn btn-secondary" (click)="cancelarEdicion()">
-                                Cancelar
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="col-lg-7">
-                    <div class="card trans-card p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="fw-bold mb-0">Tus movimientos</h3>
-
-                            <select class="form-select filter-select" [(ngModel)]="filtroTipo" (change)="onTipoChange()"
-                                name="filtroTipo">
-                                <option value="">Todos</option>
-                                <option value="INGRESO">Ingresos</option>
-                                <option value="GASTO">Gastos</option>
-                            </select>
-                        </div>
-
-                        <div *ngIf="transacciones.length === 0" class="text-muted-custom">
-                            No hay transacciones registradas.
-                        </div>
-
-                        <div *ngFor="let transaccion of transacciones" class="movement-row">
-                            <div>
-                                <div class="fw-semibold">{{ transaccion.descTransaccion }}</div>
-                                <small class="text-muted-custom">
-                                    {{ transaccion.fechaTransaccion }} • {{ transaccion.tipo }}
-                                </small>
-                            </div>
-
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="fw-bold"
-                                    [ngClass]="esGasto(transaccion.tipo) ? 'amount-expense' : 'amount-income'">
-                                    {{ esGasto(transaccion.tipo) ? '-' : '+' }}{{ transaccion.montoTransaccion |
-                                    currency }}
-                                </div>
-
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-light"
-                                        (click)="editarTransaccion(transaccion)">
-                                        Editar
-                                    </button>
-
-                                    <button class="btn btn-sm btn-danger"
-                                        (click)="eliminarTransaccion(transaccion.transaccionId!)">
-                                        Eliminar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+      <div class="mt-auto pt-4">
+        <button class="btn btn-logout w-100" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </div>
     </div>
+
+    <div class="col-md-9 p-5 main-content">
+      <div class="section-header mb-4">
+        <p class="eyebrow mb-2">Organiza tus movimientos</p>
+        <h2 class="fw-bold mb-2">Transacciones</h2>
+        <p class="text-muted-custom mb-0">
+          Registra ingresos y gastos con una categoría para mantener tu historial claro y ordenado.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="card trans-card form-card p-4">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+              <div>
+                <h3 class="fw-bold mb-2">
+                  {{ isEditMode ? 'Editar transacción' : 'Registrar transacción' }}
+                </h3>
+                <p class="text-muted-custom small mb-0">
+                  Completa los datos del movimiento y asígnalo a una categoría.
+                </p>
+              </div>
+              <span class="pill-label">{{ nuevaTransaccion.tipo }}</span>
+            </div>
+
+            <div *ngIf="errorMensaje" class="alert alert-danger custom-alert">
+              {{ errorMensaje }}
+            </div>
+
+            <div *ngIf="mensajeExito" class="alert alert-success custom-alert">
+              {{ mensajeExito }}
+            </div>
+
+            <div class="form-block mb-3">
+              <label class="form-label">Tipo</label>
+              <select class="form-select custom-input" [(ngModel)]="nuevaTransaccion.tipo" (change)="onTipoChange()" name="tipo">
+                <option value="INGRESO">Ingreso</option>
+                <option value="GASTO">Gasto</option>
+              </select>
+            </div>
+
+            <div class="form-block mb-3">
+              <label class="form-label">Monto</label>
+              <input type="number" class="form-control custom-input" [(ngModel)]="nuevaTransaccion.montoTransaccion"
+                name="montoTransaccion" placeholder="Ej: 120.000">
+            </div>
+
+            <div class="form-block mb-3">
+              <label class="form-label">Descripción</label>
+              <input type="text" class="form-control custom-input" [(ngModel)]="nuevaTransaccion.descTransaccion"
+                name="descTransaccion" placeholder="Ej: Pago de transporte">
+            </div>
+
+            <div class="form-block mb-3">
+              <label class="form-label">Fecha</label>
+              <input type="date" class="form-control custom-input" [(ngModel)]="nuevaTransaccion.fechaTransaccion"
+                name="fechaTransaccion">
+            </div>
+
+            <div class="form-block mb-4">
+              <label class="form-label">Categoría</label>
+              <select class="form-select custom-input" [(ngModel)]="nuevaTransaccion.categoriaId" name="categoriaId">
+                <option [ngValue]="0">Selecciona una categoría</option>
+                <option *ngFor="let categoria of categoriasFiltradas" [ngValue]="categoria.categoriaId">
+                  {{ categoria.nombreCategoria }}
+                </option>
+              </select>
+            </div>
+
+            <div *ngIf="categoriasFiltradas.length === 0" class="alert alert-warning custom-alert">
+              Primero debes crear una categoría de tipo {{ nuevaTransaccion.tipo }} antes de registrar esta transacción.
+              <a routerLink="/categorias" class="ms-2 action-link">Crear categoría</a>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+              <button class="btn btn-custom flex-fill" (click)="guardarTransaccion()" [disabled]="categoriasFiltradas.length === 0">
+                {{ isEditMode ? 'Actualizar transacción' : 'Guardar transacción' }}
+              </button>
+
+              <button *ngIf="isEditMode" class="btn btn-soft" (click)="cancelarEdicion()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="card trans-card list-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+              <div>
+                <h3 class="fw-bold mb-1">Tus movimientos</h3>
+                <p class="text-muted-custom small mb-0">Consulta, edita o elimina tus registros recientes.</p>
+              </div>
+
+              <select class="form-select filter-select custom-input" [(ngModel)]="filtroTipo" (change)="onTipoChange()" name="filtroTipo">
+                <option value="">Todos</option>
+                <option value="INGRESO">Ingresos</option>
+                <option value="GASTO">Gastos</option>
+              </select>
+            </div>
+
+            <div *ngIf="transacciones.length === 0" class="empty-state">
+              <div class="empty-icon">+</div>
+              <p class="mb-1 fw-semibold">No hay transacciones registradas</p>
+              <small class="text-muted-custom">Empieza creando tu primer ingreso o gasto.</small>
+            </div>
+
+            <div *ngFor="let transaccion of transacciones" class="movement-card">
+              <div class="movement-main">
+                <div class="movement-title">{{ transaccion.descTransaccion }}</div>
+                <div class="movement-meta">
+                  {{ transaccion.fechaTransaccion }} · {{ transaccion.tipo }}
+                </div>
+              </div>
+
+              <div class="movement-side">
+                <div class="fw-bold"
+                  [ngClass]="esGasto(transaccion.tipo) ? 'amount-expense' : 'amount-income'">
+                  {{ esGasto(transaccion.tipo) ? '-' : '+' }}{{ transaccion.montoTransaccion | currency }}
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-light" (click)="editarTransaccion(transaccion)">
+                    Editar
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="eliminarTransaccion(transaccion.transaccionId!)">
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

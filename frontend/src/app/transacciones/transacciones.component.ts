@@ -30,6 +30,8 @@ export class TransaccionesComponent implements OnInit {
     tipo: 'INGRESO',
     categoriaId: 0
   };
+  usuarioService: any;
+  router: any;
 
   constructor(
     private transaccionService: TransaccionService,
@@ -192,5 +194,10 @@ export class TransaccionesComponent implements OnInit {
 
   esGasto(tipo: string): boolean {
     return tipo === 'GASTO';
+  }
+
+  logout() {
+    this.usuarioService.logout();
+    this.router.navigate(['/usuario-login']);
   }
 }
