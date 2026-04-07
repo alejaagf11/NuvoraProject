@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Categoria } from '../models/categoria';
 import { Transaccion } from '../models/transaccion';
 import { CategoriaService } from '../services/categoria.service';
 import { TransaccionService } from '../services/transaccion.service';
+import { UsuarioService } from '../services/usuario.service';
 
 @Component({
   selector: 'app-transacciones',
@@ -22,7 +23,6 @@ export class TransaccionesComponent implements OnInit {
   isEditMode = false;
   transaccionEditandoId: number | null = null;
 
-
   nuevaTransaccion: Transaccion = {
     montoTransaccion: 0,
     descTransaccion: '',
@@ -30,14 +30,14 @@ export class TransaccionesComponent implements OnInit {
     tipo: 'INGRESO',
     categoriaId: 0
   };
-  usuarioService: any;
-  router: any;
 
   constructor(
     private transaccionService: TransaccionService,
     private categoriaService: CategoriaService,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+    private usuarioService: UsuarioService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -94,50 +94,49 @@ export class TransaccionesComponent implements OnInit {
   }
 
   guardarTransaccion() {
-  if (this.categoriasFiltradas.length === 0) {
-    this.errorMensaje = `Primero debes crear una categoría de tipo ${this.nuevaTransaccion.tipo}`;
-    return;
-  }
+    if (this.categoriasFiltradas.length === 0) {
+      this.errorMensaje = `Primero debes crear una categoría de tipo ${this.nuevaTransaccion.tipo}`;
+      return;
+    }
 
-  if (
-    !this.nuevaTransaccion.montoTransaccion ||
-    !this.nuevaTransaccion.descTransaccion ||
-    !this.nuevaTransaccion.categoriaId
-  ) {
-    this.errorMensaje = 'Completa todos los campos obligatorios';
-    return;
-  }
+    if (
+      !this.nuevaTransaccion.montoTransaccion ||
+      !this.nuevaTransaccion.descTransaccion ||
+      !this.nuevaTransaccion.categoriaId
+    ) {
+      this.errorMensaje = 'Completa todos los campos obligatorios';
+      return;
+    }
 
-  if (this.isEditMode && this.transaccionEditandoId) {
-    this.transaccionService.update(this.transaccionEditandoId, this.nuevaTransaccion).subscribe({
+    if (this.isEditMode && this.transaccionEditandoId) {
+      this.transaccionService.update(this.transaccionEditandoId, this.nuevaTransaccion).subscribe({
+        next: () => {
+          this.mensajeExito = 'Transacción actualizada correctamente';
+          this.errorMensaje = null;
+          this.cancelarEdicion();
+          this.cargarTransacciones();
+        },
+        error: (err) => {
+          console.error('Error al actualizar transacción', err);
+          this.errorMensaje = err.error?.message || 'No se pudo actualizar la transacción';
+        }
+      });
+      return;
+    }
+
+    this.transaccionService.create(this.nuevaTransaccion).subscribe({
       next: () => {
-        this.mensajeExito = 'Transacción actualizada correctamente';
+        this.mensajeExito = 'Transacción registrada correctamente';
         this.errorMensaje = null;
-        this.cancelarEdicion();
+        this.resetFormulario();
         this.cargarTransacciones();
       },
       error: (err) => {
-        console.error('Error al actualizar transacción', err);
-        this.errorMensaje = err.error?.message || 'No se pudo actualizar la transacción';
+        console.error('Error al guardar transacción', err);
+        this.errorMensaje = err.error?.message || 'No se pudo guardar la transacción';
       }
     });
-    return;
   }
-
-  this.transaccionService.create(this.nuevaTransaccion).subscribe({
-    next: () => {
-      this.mensajeExito = 'Transacción registrada correctamente';
-      this.errorMensaje = null;
-      this.resetFormulario();
-      this.cargarTransacciones();
-    },
-    error: (err) => {
-      console.error('Error al guardar transacción', err);
-      this.errorMensaje = err.error?.message || 'No se pudo guardar la transacción';
-    }
-  });
-}
-
 
   editarTransaccion(transaccion: Transaccion) {
     this.isEditMode = true;
@@ -163,7 +162,6 @@ export class TransaccionesComponent implements OnInit {
     this.resetFormulario();
   }
 
-
   eliminarTransaccion(id: number) {
     this.transaccionService.delete(id).subscribe({
       next: () => {
@@ -179,18 +177,17 @@ export class TransaccionesComponent implements OnInit {
   }
 
   resetFormulario() {
-  this.isEditMode = false;
-  this.transaccionEditandoId = null;
-  this.nuevaTransaccion = {
-    montoTransaccion: 0,
-    descTransaccion: '',
-    fechaTransaccion: '',
-    tipo: this.filtroTipo || 'INGRESO',
-    categoriaId: 0
-  };
-  this.actualizarCategoriasFiltradas();
-}
-
+    this.isEditMode = false;
+    this.transaccionEditandoId = null;
+    this.nuevaTransaccion = {
+      montoTransaccion: 0,
+      descTransaccion: '',
+      fechaTransaccion: '',
+      tipo: this.filtroTipo || 'INGRESO',
+      categoriaId: 0
+    };
+    this.actualizarCategoriasFiltradas();
+  }
 
   esGasto(tipo: string): boolean {
     return tipo === 'GASTO';

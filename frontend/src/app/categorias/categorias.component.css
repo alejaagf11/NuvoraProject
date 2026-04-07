@@ -51,13 +51,7 @@
   backdrop-filter: blur(6px);
 }
 
-.custom-input {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: white;
-  border-radius: 14px;
-  min-height: 48px;
-}
+
 
 .custom-input:focus {
   background: rgba(255,255,255,0.16);
@@ -172,5 +166,16 @@
 
 .btn-logout:hover {
   background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.custom-input,
+.custom-input:focus {
+  background-color: rgba(255,255,255,0.12);
+  color: white;
+}
+
+.custom-input option {
+  background-color: #2b1b3a;
   color: white;
 }

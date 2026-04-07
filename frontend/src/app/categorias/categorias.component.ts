@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Categoria } from '../models/categoria';
 import { CategoriaService } from '../services/categoria.service';
+import { UsuarioService } from '../services/usuario.service';
 
 @Component({
   selector: 'app-categorias',
@@ -20,12 +22,13 @@ export class CategoriasComponent implements OnInit {
     nombreCategoria: '',
     tipoCategoria: 'GASTO'
   };
-  router: any;
-  usuarioService: any;
 
-  constructor(private categoriaService: CategoriaService) {}
-
-  ngOnInit(): void {
+  constructor(
+    private categoriaService: CategoriaService,
+    private usuarioService: UsuarioService,
+    private router: Router
+  ) {}
+ ngOnInit(): void {
     this.cargarCategorias();
   }
 
@@ -127,3 +130,8 @@ export class CategoriasComponent implements OnInit {
     this.router.navigate(['/usuario-login']);
   }
 }
+  
+
+
+
+ 
