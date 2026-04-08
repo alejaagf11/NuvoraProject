@@ -129,6 +129,24 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
         abonoRepository.save(abono);
 
         meta.setMontoAhorrado(newMonto);
+
+        LocalDate hoy = LocalDate.now();
+        long mesesRest = ChronoUnit.MONTHS.between(hoy, meta.getFechaLimite());
+
+        if (mesesRest <= 0){
+            mesesRest = 1;
+        }
+
+        double rest = meta.getMontoObjetivo() - meta.getMontoAhorrado();
+
+        double nuevoMensual = rest / mesesRest;
+        nuevoMensual = Math.round(nuevoMensual * 100.0) / 100.0;
+
+        if (rest <= 0){
+            nuevoMensual = 0;
+        }
+        meta.setAhorroMensual(nuevoMensual);
+
         MetasAhorro saved = metasAhorroRepository.save(meta);
         return MetasAhorroDTO.fromEntity(meta);
     }
