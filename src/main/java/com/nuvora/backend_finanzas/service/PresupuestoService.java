@@ -7,4 +7,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface PresupuestoService {
     BudgetDTO.Response generarPresupuesto(BudgetDTO.Request request, Usuario usuario);
+    String chatIA(String msj, Usuario usuario);
 }

@@ -35,4 +35,10 @@ public class PresupuestoController {
         return presupuestoService.generarPresupuesto(request, usuario);
     }
 
+    @PostMapping("/chat")
+    public String chat(@RequestBody String msj, HttpServletRequest req){
+        Usuario usuario = getUsuarioAutenticado(req);
+        return presupuestoService.chatIA(msj, usuario);
+    }
+
 }
