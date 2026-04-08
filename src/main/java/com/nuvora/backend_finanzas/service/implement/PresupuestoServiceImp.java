@@ -48,13 +48,35 @@ public class PresupuestoServiceImp implements PresupuestoService {
         double ahorro = request.getAhorroDeseado() != null ? request.getAhorroDeseado() : ingreso * 0.10;
         double imprevistos = ingreso * 0.05;
 
-        double restante = ingreso - (deudas + esenciales + variables + ahorro + imprevistos);
-        double estiloVida = Math.max(restante, 0);
+        double totalGastos = deudas + esenciales + variables;
+        if (totalGastos > ingreso) {
+            throw new RuntimeException(
+                    "Tus gastos y deudas superan tus ingresos. Debes reducir gastos antes de generar un presupuesto 😰."
+            );
+        }
+
+        double totalComprometido = totalGastos + ahorro + imprevistos;
+        if (totalComprometido > ingreso) {
+            throw new RuntimeException(
+                    "Con ahorro e imprevistos incluidos, el presupuesto supera tus ingresos. Ajusta los valores para continuar 😰."
+            );
+        }
 
         if ("estricto".equalsIgnoreCase(request.getEstiloVida())) {
             ahorro = ahorro * 1.20;
-            estiloVida = Math.max(ingreso - (deudas + esenciales + variables + ahorro + imprevistos), 0);
-        } else if ("flexible".equalsIgnoreCase(request.getEstiloVida())) {
+            totalComprometido = totalGastos + ahorro + imprevistos;
+
+            if (totalComprometido > ingreso) {
+                throw new RuntimeException(
+                        "Con estilo estricto, ahorro e imprevistos, el presupuesto supera tus ingresos 😰."
+                );
+            }
+        }
+
+        double restante = ingreso - totalComprometido;
+        double estiloVida = Math.max(restante, 0);
+
+        if ("flexible".equalsIgnoreCase(request.getEstiloVida())) {
             estiloVida = estiloVida * 1.10;
         }
 
@@ -77,6 +99,7 @@ public class PresupuestoServiceImp implements PresupuestoService {
 
         return response;
     }
+
 
 
     @Override
@@ -122,8 +145,17 @@ public class PresupuestoServiceImp implements PresupuestoService {
             double deudas = parseNumero(mensaje);
             req.setDeudas(deudas);
             sesiones.put(userId, req);
+
+            if (req.getIngreso() != null && req.getIngreso() > 0) {
+                try {
+                    generarPresupuesto(req, usuario);
+                } catch (RuntimeException e) {
+                    return e.getMessage();
+                }
+            }
+
             return "Deudas guardadas: $" + (long) deudas
-                    + "\n 💸 Ahora dime cuando dinero deseas ahorrar sino ahorro 0.";
+                    + "\n 💸 Ahora dime cuanto dinero deseas ahorrar, o escribe ahorro 0.";
         }
 
             if (mensaje.startsWith("ahorro")) {
@@ -174,16 +206,20 @@ public class PresupuestoServiceImp implements PresupuestoService {
             sesiones.put(userId, req);
 
             if (req.getIngreso() != null && req.getIngreso() > 0) {
-                BudgetDTO.Response res = generarPresupuesto(req, usuario);
-                return "Tu presupuesto esta listo:\n\n"
-                        + "Esenciales: $" + (long) res.getEsenciales() + "\n"
-                        + "Variables: $" + (long) res.getVariables() +"\n"
-                        + "Deudas: $" + (long) res.getDeudas() + "\n"
-                        + "Ahorro: $" + (long) res.getAhorro() + "\n"
-                        + "Dinero para Ocio: $" + (long) res.getEstiloVida() + "\n"
-                        + "Imprevistos: $" + (long) res.getImprevistos() + "\n"
-                        + "Disponible por semana: $" + (long) res.getDisponibleSemanal() + "\n"
-                        + "Disponible por quincena: " + res.getDisponibleQuincena();
+                try {
+                    BudgetDTO.Response res = generarPresupuesto(req, usuario);
+                    return "Tu presupuesto esta listo:\n\n"
+                            + "Esenciales: $" + (long) res.getEsenciales() + "\n"
+                            + "Variables: $" + (long) res.getVariables() + "\n"
+                            + "Deudas: $" + (long) res.getDeudas() + "\n"
+                            + "Ahorro: $" + (long) res.getAhorro() + "\n"
+                            + "Dinero para Ocio: $" + (long) res.getEstiloVida() + "\n"
+                            + "Imprevistos: $" + (long) res.getImprevistos() + "\n"
+                            + "Disponible por semana: $" + (long) res.getDisponibleSemanal() + "\n"
+                            + "Disponible por quincena: " + res.getDisponibleQuincena();
+                } catch (RuntimeException e) {
+                    return e.getMessage();
+                }
             }
 
             return "Gastos guardados. Ahora dime tu ingreso para calcular el presupuesto. ✉️";
@@ -194,16 +230,22 @@ public class PresupuestoServiceImp implements PresupuestoService {
                 return "Aun no tengo tu ingreso. Ejemplo: gano 2 millones 500 mil";
             }
 
-            BudgetDTO.Response res = generarPresupuesto(req, usuario);
-            return "Tu presupuesto actual es:\n\n"
-                    + "Esenciales: $" + (long) res.getEsenciales() + "\n"
-                    + "Deudas: $" + (long) res.getDeudas() + "\n"
-                    + "Ahorro: $" + (long) res.getAhorro() + "\n"
-                    + "Dinero para Ocio: $" + (long) res.getEstiloVida() + "\n"
-                    + "Imprevistos: $" + (long) res.getImprevistos() + "\n"
-                    + "Disponible por semana: $" + (long) res.getDisponibleSemanal() + "\n"
-                    + "Disponible por quincena: " + res.getDisponibleQuincena();
+            try {
+                BudgetDTO.Response res = generarPresupuesto(req, usuario);
+                return "Tu presupuesto actual es:\n\n"
+                        + "Esenciales: $" + (long) res.getEsenciales() + "\n"
+                        + "Variables: $" + (long) res.getVariables() + "\n"
+                        + "Deudas: $" + (long) res.getDeudas() + "\n"
+                        + "Ahorro: $" + (long) res.getAhorro() + "\n"
+                        + "Dinero para Ocio: $" + (long) res.getEstiloVida() + "\n"
+                        + "Imprevistos: $" + (long) res.getImprevistos() + "\n"
+                        + "Disponible por semana: $" + (long) res.getDisponibleSemanal() + "\n"
+                        + "Disponible por quincena: " + res.getDisponibleQuincena();
+            } catch (RuntimeException e) {
+                return e.getMessage();
+            }
         }
+
 
         return "No entendi el mensaje.\n"
                 + "Prueba con ejemplos como:\n"
