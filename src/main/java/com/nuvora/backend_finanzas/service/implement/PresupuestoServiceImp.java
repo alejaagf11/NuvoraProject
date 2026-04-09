@@ -120,7 +120,7 @@ public class PresupuestoServiceImp implements PresupuestoService {
         sesiones.put(userId, req);
 
         if (mensaje.matches(".*\\b(hola|buenas|hey|holi)\\b.*")) {
-            return "Hola soy nuvy👋, tu asistente financiero de confianza 💰.";
+            return "Hola soy nuvy👋, tu asistente financiera de confianza 💰.";
         }
 
         if (mensaje.startsWith("gano") || mensaje.startsWith("ingreso")) {
