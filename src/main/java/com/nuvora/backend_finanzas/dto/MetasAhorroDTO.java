@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @NoArgsConstructor
@@ -19,9 +20,12 @@ public class MetasAhorroDTO {
     private Double ahorroMensual;
     private LocalDate fechaLimite;
     private Double montoRestante;
+    private Long mesesRestantes;
 
     //  ENTITY → DTO
     public static MetasAhorroDTO fromEntity(MetasAhorro meta){
+        LocalDate hoy = LocalDate.now();
+        long mesesRestantes = calcularMesesRestantes(hoy, meta.getFechaLimite());
         return new MetasAhorroDTO(
                 meta.getMetaAhorroId(),
                 meta.getNombreMeta(),
@@ -29,7 +33,8 @@ public class MetasAhorroDTO {
                 meta.getMontoAhorrado(),
                 meta.getAhorroMensual(),
                 meta.getFechaLimite(),
-                meta.getMontoRestante()
+                meta.getMontoRestante(),
+                mesesRestantes
         );
     }
 
@@ -41,5 +46,18 @@ public class MetasAhorroDTO {
         meta.setMontoObjetivo(this.montoObjetivo);
         meta.setFechaLimite(this.fechaLimite);
         return meta;
+    }
+
+    private static long calcularMesesRestantes(LocalDate hoy, LocalDate fechaLimite) {
+        if (fechaLimite == null || !fechaLimite.isAfter(hoy)) {
+            return 0;
+        }
+
+        long meses = ChronoUnit.MONTHS.between(
+                hoy.withDayOfMonth(1),
+                fechaLimite.withDayOfMonth(1)
+        ) + 1;
+
+        return Math.max(meses, 0);
     }
 }

@@ -48,7 +48,7 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
         meta.setMontoAhorrado(0.0);
 
         MetasAhorro saved = metasAhorroRepository.save(meta);
-        return metasAhorroDTO.fromEntity(saved);
+        return MetasAhorroDTO.fromEntity(saved);
 
     }
 
@@ -88,9 +88,16 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
             throw new RuntimeException("Fecha inválida");
         }
 
+        double montoAhorrado = meta.getMontoAhorrado() != null ? meta.getMontoAhorrado() : 0.0;
+        double montoRestante = meta.getMontoObjetivo() - montoAhorrado;
+
         double ahorroMensual = Math.round(
                 (meta.getMontoObjetivo()/ meses) * 100.0
         ) / 100.0;
+
+        if (montoRestante <= 0) {
+            ahorroMensual = 0.0;
+        }
 
         meta.setAhorroMensual(ahorroMensual);
 
@@ -131,7 +138,7 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
         meta.setMontoAhorrado(newMonto);
 
         LocalDate hoy = LocalDate.now();
-        long mesesRest = ChronoUnit.MONTHS.between(hoy, meta.getFechaLimite());
+        long mesesRest = calcularMesesRestantes(hoy, meta.getFechaLimite());
 
         if (mesesRest <= 0){
             mesesRest = 1;
@@ -148,12 +155,25 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
         meta.setAhorroMensual(nuevoMensual);
 
         MetasAhorro saved = metasAhorroRepository.save(meta);
-        return MetasAhorroDTO.fromEntity(meta);
+        return MetasAhorroDTO.fromEntity(saved);
     }
 
     private MetasAhorro getMetaEntityById(Long id, Usuario usuario){
         return metasAhorroRepository
                 .findByMetaAhorroIdAndUsuario(id, usuario)
                 .orElseThrow(() -> new RuntimeException("Meta no encontrada"));
+    }
+
+    private long calcularMesesRestantes(LocalDate hoy, LocalDate fechaLimite) {
+        if (fechaLimite == null || !fechaLimite.isAfter(hoy)) {
+            return 0;
+        }
+
+        long meses = ChronoUnit.MONTHS.between(
+                hoy.withDayOfMonth(1),
+                fechaLimite.withDayOfMonth(1)
+        ) + 1;
+
+        return Math.max(meses, 0);
     }
 }
