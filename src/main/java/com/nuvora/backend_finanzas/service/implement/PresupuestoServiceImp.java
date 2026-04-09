@@ -120,14 +120,7 @@ public class PresupuestoServiceImp implements PresupuestoService {
         sesiones.put(userId, req);
 
         if (mensaje.matches(".*\\b(hola|buenas|hey|holi)\\b.*")) {
-            return "Hola 👋, soy tu asistente financiero 💰.\n"
-                    + "Puedes escribir cosas como:\n"
-                    + "- gano 2 millones 500 mil\n"
-                    + "- deuda 500000\n"
-                    + "- ahorro 300000\n"
-                    + "- estilo estricto\n"
-                    + "- tipo quincenal\n"
-                    + "- gasto arriendo 800000, servicios 150000, mercado 30000 ";
+            return "Hola soy nuvy👋, tu asistente financiero de confianza 💰.";
         }
 
         if (mensaje.startsWith("gano") || mensaje.startsWith("ingreso")) {
