@@ -1,123 +1,110 @@
 <div class="container-fluid main-vh-100 p-0">
   <div class="row h-100 m-0">
 
-    <div class="col-md-3 p-4 sidebar">
-      <h3 class="mb-4 fw-bold">Menu</h3>
+    <div class="col-md-3 p-4 sidebar d-flex flex-column">
+      <div>
+        <h3 class="mb-4 fw-bold">Menu</h3>
 
-      <ul class="list-unstyled menu-links">
-        <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
-        <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
-        <li class="mb-3" routerLink="/transacciones">Transacciones</li>
-        <li class="mb-3" routerLink="/categorias">Categorías</li>
-        <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
-      </ul>
+        <ul class="list-unstyled menu-links">
+          <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
+          <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
+          <li class="mb-3" routerLink="/transacciones">Transacciones</li>
+          <li class="mb-3" routerLink="/categorias">Categorías</li>
+          <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
+        </ul>
+      </div>
+
+      <div class="mt-auto pt-4">
+        <button class="btn btn-logout w-100" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </div>
     </div>
 
     <div class="col-md-9 p-5 main-content">
+      <div class="section-header mb-4">
+        <p class="eyebrow mb-2">Asistente financiero</p>
+        <h2 class="fw-bold mb-2">Presupuesto con chat</h2>
+        <p class="text-muted-custom mb-0">
+          Conversa con el asistente para calcular tu presupuesto mensual según tus ingresos, gastos, deudas y estilo de vida.
+        </p>
+      </div>
+
       <div class="row g-4">
-        <div class="col-lg-5">
-          <div class="card budget-card p-4">
-            <h3 class="fw-bold mb-3">Generar presupuesto</h3>
+        <div class="col-lg-8">
+          <div class="card budget-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h3 class="fw-bold mb-1">Aurix🪙</h3>
+                <p class="text-muted-custom small mb-0">
+                  Escribe de forma natural y el asistente te guiará paso a paso.
+                </p>
+              </div>
 
-            <div *ngIf="errorMensaje" class="alert alert-danger">
-              {{ errorMensaje }}
+              
+
+              <span class="pill-label"></span>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Ingreso mensual</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="presupuestoForm.ingreso"
-                name="ingreso"
-                placeholder="Ej: 2500000">
+            <div class="chat-box mb-3">
+              <div *ngFor="let mensaje of mensajes" class="mb-3">
+                <div [ngClass]="mensaje.rol === 'user' ? 'chat-user' : 'chat-bot'">
+                  {{ mensaje.texto }}
+                </div>
+              </div>
+
+              <div *ngIf="cargando" class="chat-bot">
+                Pensando respuesta...
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Gastos fijos</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="presupuestoForm.gastosFijos"
-                name="gastosFijos"
-                placeholder="Ej: 900000">
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Deudas</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="presupuestoForm.deudas"
-                name="deudas"
-                placeholder="Ej: 250000">
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Ahorro deseado</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="presupuestoForm.ahorroDeseado"
-                name="ahorroDeseado"
-                placeholder="Ej: 300000">
-            </div>
-
-            <div class="mb-4">
-              <label class="form-label">Estilo de vida</label>
+            <div class="d-flex gap-2">
               <input
                 type="text"
-                class="form-control"
-                [(ngModel)]="presupuestoForm.estiloVida"
-                name="estiloVida"
-                placeholder="Ej: Moderado">
-            </div>
+                class="form-control custom-input"
+                [(ngModel)]="mensajeChat"
+                (keyup.enter)="enviarMensaje()"
+                placeholder="Ej: gano 2 millones 500 mil">
 
-            <button class="btn btn-custom w-100" (click)="generarPresupuesto()">
-              Calcular presupuesto
-            </button>
+              <button class="btn btn-custom" (click)="enviarMensaje()" [disabled]="cargando">
+                Enviar
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="col-lg-7">
+        <div class="col-lg-4">
           <div class="card budget-card p-4 h-100">
-            <h3 class="fw-bold mb-4">Resultado</h3>
+            <h3 class="fw-bold mb-3">Ejemplos</h3>
+            <p class="text-muted-custom small mb-3">
+              Te dejamos algunos ejemplos base para que puedas probar en el asistente. Recuerda seguir el orden sugerido
+            </p>
 
-            <div *ngIf="!resultado" class="text-muted-custom">
-              Completa el formulario para ver tu distribución sugerida.
-            </div>
+            <div class="example-list d-grid gap-2">
+              <button class="btn btn-soft text-start" (click)="enviarEjemplo('gano 2 millones 500 mil')">
+                gano 2 millones 500 mil
+              </button>
 
-            <div *ngIf="resultado" class="result-grid">
-              <div class="result-item">
-                <span>Esenciales</span>
-                <strong>{{ resultado.esenciales | currency }}</strong>
-              </div>
+              <button class="btn btn-soft text-start" (click)="enviarEjemplo('deuda 300000')">
+                deuda 300000
+              </button>
 
-              <div class="result-item">
-                <span>Deudas</span>
-                <strong>{{ resultado.deudas | currency }}</strong>
-              </div>
+              <button class="btn btn-soft text-start" (click)="enviarEjemplo('ahorro 200000')">
+                ahorro 200000
+              </button>
 
-              <div class="result-item">
-                <span>Ahorro</span>
-                <strong>{{ resultado.ahorro | currency }}</strong>
-              </div>
+              <button class="btn btn-soft text-start" (click)="enviarEjemplo('estricto')">
+                estricto
+              </button>
 
-              <div class="result-item">
-                <span>Estilo de vida</span>
-                <strong>{{ resultado.estiloVida | currency }}</strong>
-              </div>
+              <button class="btn btn-soft text-start" (click)="enviarEjemplo('quincenal')">
+                quincenal
+              </button>
 
-              <div class="result-item">
-                <span>Imprevistos</span>
-                <strong>{{ resultado.imprevistos | currency }}</strong>
-              </div>
-
-              <div class="result-item highlight">
-                <span>Disponible semanal</span>
-                <strong>{{ resultado.disponibleSemanal | currency }}</strong>
-              </div>
-            </div>
+              <button class="btn btn-soft text-start" (click)="enviarEjemplo('gasto arriendo 800000, mercado 250000, transporte 120000')">
+                gasto arriendo 800000, mercado 250000, transporte 120000
+              </button>
+            
           </div>
         </div>
       </div>

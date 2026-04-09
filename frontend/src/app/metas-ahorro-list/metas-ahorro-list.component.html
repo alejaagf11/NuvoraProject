@@ -64,18 +64,23 @@
                 <p class="text-muted-custom small mb-0">
                   Fecha límite: {{ meta.fechaLimite }}
                 </p>
+                    
+
+              <p class="small mt-2 mb-0" style="color: #f7d3e1;">
+                Te quedan {{ meta.mesesRestantes }} {{ meta.mesesRestantes === 1 ? 'mes' : 'meses' }} hasta la fecha limite
+              
+              </p>
               </div>
 
+         
+
+
               <div class="d-flex gap-2 flex-wrap justify-content-end">
-                <button
-                  class="btn btn-sm btn-outline-light"
-                  [routerLink]="['/metas-ahorro-form', meta.metaAhorroId]">
+                <button class="btn btn-sm btn-outline-light" [routerLink]="['/metas-ahorro-form', meta.metaAhorroId]">
                   Editar
                 </button>
 
-                <button
-                  class="btn btn-sm btn-danger"
-                  (click)="deleteMeta(meta.metaAhorroId!)">
+                <button class="btn btn-sm btn-danger" (click)="deleteMeta(meta.metaAhorroId!)">
                   Eliminar
                 </button>
               </div>
@@ -97,7 +102,7 @@
               <div class="stat-box">
                 <span>Falta</span>
                 <strong class="danger-text">
-                  {{ (meta.montoObjetivo! - (meta.montoAhorrado || 0)) | currency }}
+                  {{ meta.montoRestante | currency }}
                 </strong>
               </div>
 
@@ -118,8 +123,7 @@
               </div>
 
               <div class="progress custom-progress">
-                <div
-                  class="progress-bar custom-progress-bar"
+                <div class="progress-bar custom-progress-bar"
                   [style.width.%]="((meta.montoAhorrado || 0) / meta.montoObjetivo!) * 100">
                 </div>
               </div>
@@ -129,15 +133,10 @@
               <label class="form-label small mb-2">Registrar abono</label>
 
               <div class="d-flex gap-2 flex-wrap">
-                <input
-                  type="number"
-                  class="form-control custom-input abono-input"
-                  placeholder="Monto a abonar"
+                <input type="number" class="form-control custom-input abono-input" placeholder="Monto a abonar"
                   [(ngModel)]="abonoInput[meta.metaAhorroId!]">
 
-                <button
-                  class="btn btn-custom"
-                  (click)="abonar(meta.metaAhorroId!, abonoInput[meta.metaAhorroId!])">
+                <button class="btn btn-custom" (click)="abonar(meta.metaAhorroId!, abonoInput[meta.metaAhorroId!])">
                   + Abonar
                 </button>
               </div>

@@ -6,4 +6,7 @@ export interface MetasAhorro{
     ahorroMensual?: number;
     montoAhorrado?: number;
     usuarioId?: number;
+    montoRestante?: number;
+    mesesRestantes?: number;
 }
+

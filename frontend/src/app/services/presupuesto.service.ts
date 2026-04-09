@@ -15,4 +15,12 @@ export class PresupuestoService {
   generar(data: PresupuestoRequest): Observable<PresupuestoResponse> {
     return this.http.post<PresupuestoResponse>(`${this.baseUrl}/generate`, data);
   }
+
+  chat(mensaje:string): Observable<string> {
+    return this.http.post(`${this.baseUrl}/chat`, mensaje,{
+      responseType: 'text'
+    } );
+  }
+
+  
 }
