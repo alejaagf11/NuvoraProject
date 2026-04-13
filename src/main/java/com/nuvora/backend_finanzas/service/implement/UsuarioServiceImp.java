@@ -118,4 +118,46 @@ public class UsuarioServiceImp implements UsuarioService {
         return usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
+
+    @Override
+    public UsuarioDTO updateUsuarioById(Long usuarioId, UsuarioDTO datosNuevos){
+
+        Usuario usuarioBD = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
+        if (datosNuevos.getNombreUsuario() != null && !datosNuevos.getNombreUsuario().isEmpty()) {
+            usuarioBD.setNombreUsuario(datosNuevos.getNombreUsuario());
+        }
+
+        if (datosNuevos.getCorreoUsuario() != null && !datosNuevos.getCorreoUsuario().isEmpty()) {
+            usuarioBD.setCorreoUsuario(datosNuevos.getCorreoUsuario());
+        }
+
+        if (datosNuevos.getMontoMensual() != null) {
+            usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
+        }
+
+        if (datosNuevos.getContrasenaUsuario() != null && !datosNuevos.getContrasenaUsuario().isEmpty()) {
+            usuarioBD.setContrasenaUsuario(passwordEncoder.encode(datosNuevos.getContrasenaUsuario()));
+        }
+
+        if ((datosNuevos.getRolUsuario() != null && !datosNuevos.getRolUsuario().isEmpty())){
+            usuarioBD.setRolUsuario(datosNuevos.getRolUsuario().toUpperCase());
+        }
+
+        Usuario update = usuarioRepository.save(usuarioBD);
+
+        return UsuarioDTO.fromEntity(update);
+    }
+
+    @Override
+    public void deleteUsuarioById(Long usuarioId){
+        Usuario usuario= usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuarioRepository.delete(usuario);
+
+    }
+
 }

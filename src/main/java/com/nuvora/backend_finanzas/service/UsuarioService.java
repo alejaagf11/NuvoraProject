@@ -26,4 +26,10 @@ public interface UsuarioService {
 
     Usuario getUsuarioEntityById(Long usuarioId);
 
+
+    // ADMIN
+
+    UsuarioDTO updateUsuarioById(Long usuarioId, UsuarioDTO datosNuevos);
+    void deleteUsuarioById(Long usuarioId) throws Exception;
+
 }

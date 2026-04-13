@@ -1,5 +1,7 @@
 package com.nuvora.backend_finanzas.config;
 
+import com.nuvora.backend_finanzas.entity.Usuario;
+import com.nuvora.backend_finanzas.repository.UsuarioRepository;
 import com.nuvora.backend_finanzas.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,6 +22,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -34,19 +40,22 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         try {
-            if (header != null && header.startsWith("Bearer ")) {
+
                 String token = header.substring(7); // quitar "Bearer "
                 Long userId = jwtService.validateTokenAndGetUserId(token);
 
-                request.setAttribute("userId", userId);
+            Usuario usuario = usuarioRepository.findById(userId)
+                    .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+
+            request.setAttribute("userId", userId);
+
+            String rol = usuario.getRolUsuario() != null ? usuario.getRolUsuario().toUpperCase() : "USER";
 
                 // Crear autenticación y colocar en SecurityContext
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(userId, null, List.of());
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(userId, null, List.of(new SimpleGrantedAuthority("ROLE_" + rol)));
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-                System.out.println("JwtFilter: Usuario autenticado con ID = " + userId);
-            }
         } catch (Exception e) {
             // Token inválido → 401
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

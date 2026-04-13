@@ -28,6 +28,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Endpoints públicos
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        .requestMatchers("/api/usuario/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/usuario/list").hasRole("ADMIN")
+
                         // Endpoints protegidos
                         .requestMatchers("/api/metasAhorro/**").authenticated()
                         // Cualquier otro requiere autenticación
