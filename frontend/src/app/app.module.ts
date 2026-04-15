@@ -14,6 +14,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
 import { PresupuestoComponent } from './presupuesto/presupuesto.component';
 import { TransaccionesComponent } from './transacciones/transacciones.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { CuentaComponent } from './cuenta/cuenta.component';
+
 
 
 
@@ -28,7 +30,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     UsuarioLoginComponent,
     PresupuestoComponent,
     TransaccionesComponent,
-    DashboardComponent
+    DashboardComponent,
+    CuentaComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,8 @@
 export interface Usuario {
-  usuarioId?: number;      
+  usuarioId?: number;
   rolUsuario?: string;
   nombreUsuario: string;
   correoUsuario: string;
-  contrasenaUsuario: string;
+  contrasenaUsuario?: string;
+  montoMensual?: number;
 }

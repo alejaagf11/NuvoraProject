@@ -9,6 +9,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { TransaccionesComponent } from './transacciones/transacciones.component';
 import { CategoriasComponent } from './categorias/categorias.component';
 import { PresupuestoComponent } from './presupuesto/presupuesto.component';
+import { CuentaComponent } from './cuenta/cuenta.component';
+
 
 const routes: Routes = [
   { path: 'usuario-login', component: UsuarioLoginComponent },
@@ -21,6 +23,7 @@ const routes: Routes = [
   { path: 'transacciones', component: TransaccionesComponent },
   { path: 'categorias', component: CategoriasComponent },
   { path: 'presupuesto', component: PresupuestoComponent },
+  { path: 'cuenta', component: CuentaComponent },
 
   { path: 'usuario-list', component: UsuariosListComponent },
 

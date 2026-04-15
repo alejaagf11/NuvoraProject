@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Usuario } from '../models/usuarios';
 
@@ -13,58 +13,46 @@ export class UsuarioService {
 
   constructor(private http: HttpClient) { }
 
-  // 🔐 Método para headers con token
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-  }
-
-  // 📄 LISTAR USUARIOS
+  // CRUD viejo
   getAll(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(`${this.baseUrl}`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get<Usuario[]>(`${this.baseUrl}/list`);
   }
 
-  // 🔍 OBTENER POR ID
   getById(id: number): Observable<Usuario> {
-    return this.http.get<Usuario>(`${this.baseUrl}/${id}`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get<Usuario>(`${this.baseUrl}/${id}`);
   }
 
-  // ✏️ ACTUALIZAR
   update(id: number, usuario: Usuario): Observable<Usuario> {
-    return this.http.put<Usuario>(`${this.baseUrl}/update/${id}`, usuario, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.put<Usuario>(`${this.baseUrl}/update/${id}`, usuario);
   }
 
-  // ❌ ELIMINAR
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
-  // 🆕 REGISTRO (NO lleva token)
-  create(usuario: Usuario) {
+  // Perfil actual
+  getMiUsuario(): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.baseUrl}/me`);
+  }
+
+  updateMiUsuario(usuario: Usuario): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.baseUrl}/update`, usuario);
+  }
+
+  deleteMiUsuario(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete`);
+  }
+
+  // Auth
+  create(usuario: Usuario): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.authUrl}/register`, usuario);
   }
 
-  // 🔑 LOGIN
-  login(usuario: { correoUsuario: string, contrasenaUsuario: string }): Observable<any> {
+  login(usuario: { correoUsuario: string; contrasenaUsuario: string }): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/login`, usuario).pipe(
       tap((response: any) => {
-        console.log('Respuesta login:', response);
-
         if (response.token) {
           localStorage.setItem('authToken', response.token);
-          console.log('Token guardado correctamente');
-        } else {
-          console.warn('No llegó token en la respuesta');
         }
       })
     );

@@ -14,7 +14,7 @@ export class PresupuestoComponent {
   mensajes: { rol: 'user' | 'bot'; texto: string }[] = [
     {
       rol: 'bot',
-      texto: 'Hola, soy tu asistente financiero Aurix😊'
+      texto: 'Hola soy tu Nuvy, tu asistente financiera de confianza 😊'
       }
   ];
 
