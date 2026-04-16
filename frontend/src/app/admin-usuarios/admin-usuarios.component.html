@@ -1,0 +1,148 @@
+<div class="admin-page">
+  <div class="admin-container">
+    <div class="admin-header">
+      <div>
+        <p class="eyebrow">Administracion</p>
+        <h2>Usuarios registrados</h2>
+        <p class="subtitle">
+          Visualiza las cuentas creadas, revisa roles y administra usuarios.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-soft-action" routerLink="/dashboard">Volver</button>
+        <button class="btn btn-soft-action" (click)="logout()">Cerrar sesion</button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMensaje" class="alert alert-danger custom-alert mb-4">
+      {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="mensajeExito" class="alert alert-success custom-alert mb-4">
+      {{ mensajeExito }}
+    </div>
+
+    <div class="stats-grid mb-4">
+      <div class="stat-card">
+        <span>Total usuarios</span>
+        <strong>{{ usuarios.length }}</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Administradores</span>
+        <strong>{{ contarAdmins() }}</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Usuarios</span>
+        <strong>{{ contarUsers() }}</strong>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <p *ngIf="cargando" class="empty-text">Cargando usuarios...</p>
+
+      <div *ngIf="!cargando && usuarios.length > 0" class="table-responsive">
+        <table class="table admin-table align-middle">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Monto mensual</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let usuario of usuarios">
+              <td>
+                <ng-container *ngIf="usuarioEditandoId !== usuario.usuarioId; else editarNombre">
+                  {{ usuario.nombreUsuario }}
+                </ng-container>
+                <ng-template #editarNombre>
+                  <input
+                    type="text"
+                    class="form-control custom-input"
+                    [(ngModel)]="usuario.nombreUsuario">
+                </ng-template>
+              </td>
+
+              <td>
+                <ng-container *ngIf="usuarioEditandoId !== usuario.usuarioId; else editarCorreo">
+                  {{ usuario.correoUsuario }}
+                </ng-container>
+                <ng-template #editarCorreo>
+                  <input
+                    type="email"
+                    class="form-control custom-input"
+                    [(ngModel)]="usuario.correoUsuario">
+                </ng-template>
+              </td>
+
+              <td>
+                <ng-container *ngIf="usuarioEditandoId !== usuario.usuarioId; else editarRol">
+                  <span class="badge-role" [class.admin]="usuario.rolUsuario === 'ADMIN'">
+                    {{ usuario.rolUsuario || 'USER' }}
+                  </span>
+                </ng-container>
+                <ng-template #editarRol>
+                  <select class="form-select custom-input" [(ngModel)]="rolEditando">
+                    <option value="USER">USER</option>
+                    <option value="ADMIN">ADMIN</option>
+                  </select>
+                </ng-template>
+              </td>
+
+              <td>
+                <ng-container *ngIf="usuarioEditandoId !== usuario.usuarioId; else editarMonto">
+                  {{ usuario.montoMensual || 0 | currency }}
+                </ng-container>
+                <ng-template #editarMonto>
+                  <input
+                    type="number"
+                    class="form-control custom-input"
+                    [(ngModel)]="montoMensualEditando">
+                </ng-template>
+              </td>
+
+              <td>
+                <div class="d-flex gap-2 flex-wrap">
+                  <button
+                    *ngIf="usuarioEditandoId !== usuario.usuarioId"
+                    class="btn btn-soft-action btn-sm"
+                    (click)="iniciarEdicion(usuario)">
+                    Editar
+                  </button>
+
+                  <button
+                    *ngIf="usuarioEditandoId === usuario.usuarioId"
+                    class="btn btn-save btn-sm"
+                    (click)="guardarEdicion(usuario)">
+                    Guardar
+                  </button>
+
+                  <button
+                    *ngIf="usuarioEditandoId === usuario.usuarioId"
+                    class="btn btn-soft-action btn-sm"
+                    (click)="cancelarEdicion()">
+                    Cancelar
+                  </button>
+
+                  <button class="btn btn-delete btn-sm" (click)="eliminarUsuario(usuario.usuarioId)">
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p *ngIf="!cargando && usuarios.length === 0" class="empty-text">
+        No hay usuarios registrados.
+      </p>
+    </div>
+  </div>
+</div>

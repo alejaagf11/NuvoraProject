@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import {
   HttpRequest,
   HttpHandler,
@@ -10,33 +11,34 @@ import { UsuarioService } from './usuario.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private usuarioService: UsuarioService) {}
+  constructor(
+    private usuarioService: UsuarioService,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-  const isAuthRequest =
-    request.url.includes('/api/auth/login') ||
-    request.url.includes('/api/auth/register');
+    const isAuthRequest =
+      request.url.includes('/api/auth/login') ||
+      request.url.includes('/api/auth/register');
 
-  console.log('Interceptando:', request.url);
+    if (isAuthRequest) {
+      return next.handle(request);
+    }
 
-  if (isAuthRequest) {
-    console.log('Ruta publica, sin token');
+    if (!isPlatformBrowser(this.platformId)) {
+      return next.handle(request);
+    }
+
+    const token = this.usuarioService.getToken();
+
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
     return next.handle(request);
   }
-
-  const token = this.usuarioService.getToken();
-  console.log('Token en interceptor:', token);
-
-  if (token) {
-    request = request.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    console.log('Authorization agregado');
-  }
-
-  return next.handle(request);
-}
-
 }

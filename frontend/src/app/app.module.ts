@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +15,7 @@ import { PresupuestoComponent } from './presupuesto/presupuesto.component';
 import { TransaccionesComponent } from './transacciones/transacciones.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CuentaComponent } from './cuenta/cuenta.component';
+import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
 
 
 
@@ -31,7 +32,8 @@ import { CuentaComponent } from './cuenta/cuenta.component';
     PresupuestoComponent,
     TransaccionesComponent,
     DashboardComponent,
-    CuentaComponent
+    CuentaComponent,
+    AdminUsuariosComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,6 @@ import { CuentaComponent } from './cuenta/cuenta.component';
     
   ],
   providers: [
-    provideClientHydration(withEventReplay()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

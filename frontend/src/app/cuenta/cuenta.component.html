@@ -15,22 +15,10 @@
         </ul>
       </div>
 
-      <div class="mt-auto pt-4">
-        <button class="btn btn-logout w-100" (click)="logout()">
-          Cerrar sesión
-        </button>
-      </div>
+      
     </div>
 
-    <div class="col-md-9 p-5 main-content">
-      <div class="section-header mb-4">
-        <p class="eyebrow mb-2">Tu perfil</p>
-        <h2 class="fw-bold mb-2">Mi cuenta</h2>
-        <p class="text-muted-custom mb-0">
-          Consulta y actualiza tu información personal y financiera.
-        </p>
-      </div>
-
+    <div class="col-md-9 main-content p-4 p-md-5">
       <div *ngIf="errorMensaje" class="alert alert-danger custom-alert mb-4">
         {{ errorMensaje }}
       </div>
@@ -39,41 +27,77 @@
         {{ mensajeExito }}
       </div>
 
-      <div class="row g-4">
-        <div class="col-lg-5">
-          <div class="card account-card p-4 text-center h-100">
-            <div class="profile-avatar mb-3">
-              {{ usuario.nombreUsuario?.charAt(0) || 'U' }}
-            </div>
+      <div class="account-wrapper mx-auto">
+        <div class="account-hero-card">
+          <div class="hero-glow"></div>
 
-            <h3 class="fw-bold mb-1">{{ usuario.nombreUsuario }}</h3>
-            <p class="text-muted-custom mb-2">{{ usuario.correoUsuario }}</p>
+          <div class="top-icons">
+            <button class="icon-action" routerLink="/dashboard" type="button" title="Volver">
+              ⌂
+            </button>
+            <button class="icon-action" type="button" title="Editar" (click)="isEditMode = !isEditMode">
+              ✎
+            </button>
+          </div>
 
-            <span class="pill-label mb-3">{{ usuario.rolUsuario || 'USUARIO' }}</span>
-
-            <div class="info-highlight mt-3">
-              <span>Monto mensual</span>
-              <strong>{{ usuario.montoMensual || 0 | currency }}</strong>
+          <div class="avatar-ring">
+            <div class="profile-avatar-large">
+              {{ usuario.nombreUsuario.charAt(0) || 'U' }}
             </div>
           </div>
-        </div>
 
-        <div class="col-lg-7">
-          <div class="card account-card p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h3 class="fw-bold mb-0">Información de la cuenta</h3>
-              <button class="btn btn-soft" (click)="isEditMode = !isEditMode">
-                {{ isEditMode ? 'Cancelar edición' : 'Editar perfil' }}
-              </button>
+          <p class="eyebrow mb-2">Perfil financiero</p>
+          <h2 class="profile-name">{{ usuario.nombreUsuario }}</h2>
+          <p class="profile-subtitle mb-1">{{ usuario.correoUsuario }}</p>
+          <span class="profile-badge">{{ usuario.rolUsuario || 'Cuenta activa' }}</span>
+
+          <div class="hero-balance-card mt-4">
+            <span class="balance-label">Saldo actual</span>
+            <strong class="balance-value">{{ saldoActual | currency }}</strong>
+            <small class="balance-note">Resumen general de tu cuenta</small>
+          </div>
+
+          <div class="metrics-grid mt-4">
+            <div class="metric-card">
+              <span>Ingreso base</span>
+              <strong>{{ usuario.montoMensual || 0 | currency }}</strong>
             </div>
 
+            <div class="metric-card">
+              <span>Metas activas</span>
+              <strong>{{ totalMetas }}</strong>
+            </div>
+
+            <div class="metric-card">
+              <span>Movimientos</span>
+              <strong>{{ totalTransacciones }}</strong>
+            </div>
+          </div>
+
+        
+        </div>
+
+        <div class="account-panel mt-4">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+              <h4 class="fw-bold mb-1">Información de la cuenta</h4>
+              <p class="text-muted-custom mb-0">
+                Administra tus datos personales y tu monto mensual.
+              </p>
+            </div>
+
+            <button class="btn btn-soft-action" type="button" (click)="isEditMode = !isEditMode">
+              {{ isEditMode ? 'Cancelar edición' : 'Editar perfil' }}
+            </button>
+          </div>
+
+          <div *ngIf="isEditMode; else modoVista">
             <div class="mb-3">
               <label class="form-label">Nombre</label>
               <input
                 type="text"
                 class="form-control custom-input"
-                [(ngModel)]="usuario.nombreUsuario"
-                [disabled]="!isEditMode">
+                [(ngModel)]="usuario.nombreUsuario">
             </div>
 
             <div class="mb-3">
@@ -81,8 +105,7 @@
               <input
                 type="email"
                 class="form-control custom-input"
-                [(ngModel)]="usuario.correoUsuario"
-                [disabled]="!isEditMode">
+                [(ngModel)]="usuario.correoUsuario">
             </div>
 
             <div class="mb-4">
@@ -90,23 +113,55 @@
               <input
                 type="number"
                 class="form-control custom-input"
-                [(ngModel)]="usuario.montoMensual"
-                [disabled]="!isEditMode">
+                [(ngModel)]="usuario.montoMensual">
             </div>
 
-            <div class="d-flex gap-2 flex-wrap">
-              <button class="btn btn-custom" *ngIf="isEditMode" (click)="guardarCambios()">
+            <div class="action-column">
+              <button class="btn btn-main-action w-100" (click)="guardarCambios()">
                 Guardar cambios
               </button>
-
-              <button class="btn btn-danger" (click)="eliminarCuenta()">
-                Eliminar cuenta
+              <button class="btn btn-soft-action w-100" (click)="isEditMode = false">
+                Cancelar
               </button>
             </div>
           </div>
+
+          <ng-template #modoVista>
+            <div class="info-list">
+              <div class="info-row">
+                <span>Nombre</span>
+                <strong>{{ usuario.nombreUsuario }}</strong>
+              </div>
+
+              <div class="info-row">
+                <span>Correo</span>
+                <strong>{{ usuario.correoUsuario }}</strong>
+              </div>
+
+              <div class="info-row">
+                <span>Monto mensual</span>
+                <strong>{{ usuario.montoMensual || 0 | currency }}</strong>
+              </div>
+            </div>
+
+            <div class="action-column mt-4">
+              <button class="btn btn-main-action w-100" routerLink="/metas-ahorro-list">
+                Ver mis metas
+              </button>
+              <button class="btn btn-soft-action w-100" routerLink="/transacciones">
+                Ver mis transacciones
+              </button>
+              <button class="btn btn-danger w-100" (click)="eliminarCuenta()">
+                Eliminar cuenta
+              </button>
+              <button class="btn btn-danger w-100" (click)="logout()">
+          Cerrar sesión
+        </button>
+            </div>
+          </ng-template>
         </div>
       </div>
-
     </div>
+
   </div>
 </div>

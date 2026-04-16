@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UsuarioService } from '../services/usuario.service';
 import { Router } from '@angular/router';
+import { UsuarioService } from '../services/usuario.service';
 
 @Component({
   selector: 'app-usuario-login',
@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./usuario-login.component.css']
 })
 export class UsuarioLoginComponent {
-
   loginForm: FormGroup;
   loginError: string | null = null;
 
@@ -31,24 +30,27 @@ export class UsuarioLoginComponent {
       return;
     }
 
-    console.log('Enviando login con:', this.loginForm.value);
-
     this.usuarioService.login(this.loginForm.value).subscribe({
-      next: (res) => {
-        console.log('Respuesta del login:', res);
-        console.log('Token guardado:', this.usuarioService.getToken());
+      next: () => {
         this.loginError = null;
-        
-        // Redirige después de login
-        setTimeout(() => {
-          this.router.navigate(['/dashboard']);
-        }, 500);
+
+        this.usuarioService.getMiUsuario().subscribe({
+          next: (usuario) => {
+            if (usuario.rolUsuario === 'ADMIN') {
+              this.router.navigate(['/admin/usuarios']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
+          },
+          error: (err) => {
+            console.error('Error al obtener usuario autenticado:', err);
+            this.loginError = 'No se pudo obtener la informacion del usuario';
+          }
+        });
       },
       error: (err) => {
         console.error('Error de login:', err);
-        console.error('Status:', err.status);
-        console.error('Mensaje:', err.error?.message || err.message);
-        this.loginError = 'Correo o contraseña incorrectos';
+        this.loginError = 'Correo o contrasena incorrectos';
       }
     });
   }

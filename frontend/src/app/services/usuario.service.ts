@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Usuario } from '../models/usuarios';
@@ -7,13 +8,18 @@ import { Usuario } from '../models/usuarios';
   providedIn: 'root'
 })
 export class UsuarioService {
-
   private baseUrl = 'http://localhost:8080/api/usuario';
   private authUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {}
 
-  // CRUD viejo
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
   getAll(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(`${this.baseUrl}/list`);
   }
@@ -30,9 +36,24 @@ export class UsuarioService {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
-  // Perfil actual
   getMiUsuario(): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.baseUrl}/me`);
+  }
+
+  getAdminUsuarios(): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(`${this.baseUrl}/admin/list`);
+  }
+
+  getUsuarioAdminById(id: number): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.baseUrl}/admin/${id}`);
+  }
+
+  updateUsuarioAdmin(id: number, usuario: Usuario): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.baseUrl}/admin/update/${id}`, usuario);
+  }
+
+  deleteUsuarioAdmin(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/delete/${id}`);
   }
 
   updateMiUsuario(usuario: Usuario): Observable<Usuario> {
@@ -43,7 +64,6 @@ export class UsuarioService {
     return this.http.delete<void>(`${this.baseUrl}/delete`);
   }
 
-  // Auth
   create(usuario: Usuario): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.authUrl}/register`, usuario);
   }
@@ -51,7 +71,7 @@ export class UsuarioService {
   login(usuario: { correoUsuario: string; contrasenaUsuario: string }): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/login`, usuario).pipe(
       tap((response: any) => {
-        if (response.token) {
+        if (response.token && this.isBrowser()) {
           localStorage.setItem('authToken', response.token);
         }
       })
@@ -59,10 +79,15 @@ export class UsuarioService {
   }
 
   getToken(): string | null {
+    if (!this.isBrowser()) {
+      return null;
+    }
     return localStorage.getItem('authToken');
   }
 
   logout(): void {
-    localStorage.removeItem('authToken');
+    if (this.isBrowser()) {
+      localStorage.removeItem('authToken');
+    }
   }
 }

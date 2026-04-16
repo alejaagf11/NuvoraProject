@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Usuario } from '../models/usuarios';
+import { MetasAhorroService } from '../services/metas-ahorro.service';
+import { TransaccionService } from '../services/transaccion.service';
 import { UsuarioService } from '../services/usuario.service';
 
 @Component({
@@ -21,13 +23,21 @@ export class CuentaComponent implements OnInit {
   mensajeExito: string | null = null;
   isEditMode = false;
 
+  saldoActual = 0;
+  totalMetas = 0;
+  totalTransacciones = 0;
+
   constructor(
     private usuarioService: UsuarioService,
+    private transaccionService: TransaccionService,
+    private metasAhorroService: MetasAhorroService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.cargarUsuario();
+    this.cargarSaldo();
+    this.cargarResumen();
   }
 
   cargarUsuario() {
@@ -39,6 +49,37 @@ export class CuentaComponent implements OnInit {
       error: (err) => {
         console.error('Error al cargar usuario', err);
         this.errorMensaje = 'No se pudo cargar la información de la cuenta';
+      }
+    });
+  }
+
+  cargarSaldo() {
+    this.transaccionService.getSaldo().subscribe({
+      next: (data) => {
+        this.saldoActual = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar saldo', err);
+      }
+    });
+  }
+
+  cargarResumen() {
+    this.transaccionService.getAll().subscribe({
+      next: (data) => {
+        this.totalTransacciones = data.length;
+      },
+      error: (err) => {
+        console.error('Error al cargar transacciones', err);
+      }
+    });
+
+    this.metasAhorroService.getAll().subscribe({
+      next: (data) => {
+        this.totalMetas = data.length;
+      },
+      error: (err) => {
+        console.error('Error al cargar metas', err);
       }
     });
   }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Transaccion } from '../models/transaccion';
+import { Usuario } from '../models/usuarios';
 import { TransaccionService } from '../services/transaccion.service';
 import { UsuarioService } from '../services/usuario.service';
 
@@ -16,6 +17,14 @@ export class DashboardComponent implements OnInit {
   saldoActual = 0;
   errorMensaje: string | null = null;
 
+  usuario: Usuario = {
+    nombreUsuario: '',
+    correoUsuario: '',
+    montoMensual: 0
+  };
+
+  nivelBotella = 8;
+
   constructor(
     private transaccionService: TransaccionService,
     private usuarioService: UsuarioService,
@@ -23,14 +32,28 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.cargarUsuario();
     this.cargarSaldo();
     this.cargarTransacciones();
+  }
+
+  cargarUsuario() {
+    this.usuarioService.getMiUsuario().subscribe({
+      next: (data) => {
+        this.usuario = data;
+        this.actualizarNivelBotella();
+      },
+      error: (err) => {
+        console.error('Error al cargar usuario', err);
+      }
+    });
   }
 
   cargarSaldo() {
     this.transaccionService.getSaldo().subscribe({
       next: (data) => {
         this.saldoActual = data;
+        this.actualizarNivelBotella();
       },
       error: (err) => {
         console.error('Error al cargar saldo', err);
@@ -50,6 +73,24 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
+ actualizarNivelBotella() {
+  const saldo = this.saldoActual || 0;
+  const montoMensual = this.usuario.montoMensual || 0;
+
+  if (saldo <= 0) {
+    this.nivelBotella = 8;
+    return;
+  }
+
+  const referencia = montoMensual > 0 ? montoMensual : 500000;
+  const porcentaje = (saldo / referencia) * 100;
+
+  this.nivelBotella = Math.max(8, Math.min(porcentaje, 100));
+}
+
+
+
 
   irATransacciones(tipo?: 'INGRESO' | 'GASTO') {
     if (tipo) {

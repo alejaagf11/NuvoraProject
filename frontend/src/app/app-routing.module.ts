@@ -10,6 +10,7 @@ import { TransaccionesComponent } from './transacciones/transacciones.component'
 import { CategoriasComponent } from './categorias/categorias.component';
 import { PresupuestoComponent } from './presupuesto/presupuesto.component';
 import { CuentaComponent } from './cuenta/cuenta.component';
+import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
 
 
 const routes: Routes = [
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'categorias', component: CategoriasComponent },
   { path: 'presupuesto', component: PresupuestoComponent },
   { path: 'cuenta', component: CuentaComponent },
+  { path: 'admin/usuarios', component: AdminUsuariosComponent },
 
   { path: 'usuario-list', component: UsuariosListComponent },
 

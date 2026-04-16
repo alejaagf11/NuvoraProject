@@ -212,3 +212,15 @@
   background: rgba(255,255,255,0.2);
   color: white;
 }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #1b0f18;
+}
+
+body {
+  overflow-x: hidden;
+}
