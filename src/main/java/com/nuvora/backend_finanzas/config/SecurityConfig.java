@@ -21,10 +21,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
-                .cors(cors -> {}) // habilitar CORS
-                .csrf(csrf -> csrf.disable()) // desactivar CSRF para APIs
+                .cors(cors -> {})
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir preflight OPTIONS
+
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Endpoints públicos
                         .requestMatchers("/api/auth/**").permitAll()
@@ -32,8 +32,25 @@ public class SecurityConfig {
                         .requestMatchers("/api/usuario/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/usuario/list").hasRole("ADMIN")
 
-                        // Endpoints protegidos
+                        .requestMatchers(HttpMethod.POST, "/api/modulos/register").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/modulos/update/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/modulos/delete/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/lecciones/register").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/lecciones/update/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/lecciones/delete/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/modulos/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/lecciones/**").authenticated()
+                        .requestMatchers("/api/progreso/**").authenticated()
+
                         .requestMatchers("/api/metasAhorro/**").authenticated()
+                        .requestMatchers("/api/transacciones/**").authenticated()
+                        .requestMatchers("/api/categorias/**").authenticated()
+                        .requestMatchers("/api/presupuesto/**").authenticated()
+                        .requestMatchers("/api/usuario/me").authenticated()
+                        .requestMatchers("/api/usuario/update").authenticated()
+                        .requestMatchers("/api/usuario/delete").authenticated()
                         // Cualquier otro requiere autenticación
                         .anyRequest().authenticated()
                 )
