@@ -94,7 +94,7 @@ public class ModuloAprendizajeServiceImp implements ModuloAprendizajeService {
         }
 
         if (moduloDTO.getOrdenModulo() != null){
-            modulo.setOrdenModulo(modulo.getOrdenModulo());
+            modulo.setOrdenModulo(moduloDTO.getOrdenModulo());
         }
 
         if (moduloDTO.getActivo() != null){

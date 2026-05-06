@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/modulos")
-public class ModuloAprencizajeController {
+public class ModuloAprendizajeController {
 
     @Autowired
     private ModuloAprendizajeService moduloAprendizajeService;
