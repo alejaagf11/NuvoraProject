@@ -47,7 +47,7 @@ public class ModuloAprendizajeServiceImp implements ModuloAprendizajeService {
         List<ModuloAprendizaje> modulos = moduloAprendizajeRepository.findByActivoTrueOrderByOrdenModuloAsc();
         List<ModuloProgresoResumDTO> resp = new ArrayList<>();
 
-        boolean desbloquedo = true;
+        boolean desbloqueado = true;
 
         for(ModuloAprendizaje modulo: modulos){
             int totalLecciones = leccionRepository.countByModuloAprendizajeAndActivoTrue(modulo);
@@ -65,11 +65,12 @@ public class ModuloAprendizajeServiceImp implements ModuloAprendizajeService {
             dto.setDescripcionModulo(modulo.getDescripcionModulo());
             dto.setOrdenModulo(modulo.getOrdenModulo());
             dto.setTotalLecciones(totalLecciones);
+            dto.setLeccionesCompletadas(leccionCompletadas);
             dto.setPorcentajeProgreso(Math.round(porcentaje * 100.0)/100.0);
-            dto.setDesbloqueado(desbloquedo);
+            dto.setDesbloqueado(desbloqueado);
 
             resp.add(dto);
-            desbloquedo = porcentaje >= 100.0;
+            desbloqueado = porcentaje >= 100.0;
         }
 
         return resp;
