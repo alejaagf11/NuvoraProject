@@ -1,0 +1,44 @@
+<div class="leccion-page">
+  <div class="leccion-container">
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">Leccion</p>
+        <h2>{{ leccion?.tituloLeccion || 'Leccion' }}</h2>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-soft-action" (click)="volverModulo()">Volver al modulo</button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMensaje" class="alert alert-danger custom-alert mb-4">
+      {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="mensajeExito" class="alert alert-success custom-alert mb-4">
+      {{ mensajeExito }}
+    </div>
+
+    <p *ngIf="cargando" class="empty-text">Cargando leccion...</p>
+
+    <div *ngIf="!cargando && leccion" class="leccion-card">
+      <div class="estado-row">
+        <span class="orden-chip">Leccion {{ leccion.ordenLeccion }}</span>
+        <span class="estado-chip" [class.completed]="completada">
+          {{ completada ? 'Completada' : 'Pendiente' }}
+        </span>
+      </div>
+
+      <div class="contenido-box">
+        {{ leccion.contenidoLeccion }}
+      </div>
+
+      <button
+        class="btn btn-main-action"
+        [disabled]="completada || guardando"
+        (click)="completarLeccion()">
+        {{ completada ? 'Leccion completada' : (guardando ? 'Guardando...' : 'Marcar como completada') }}
+      </button>
+    </div>
+  </div>
+</div>

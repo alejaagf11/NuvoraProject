@@ -1,0 +1,57 @@
+<div class="aprendizaje-page">
+  <div class="aprendizaje-container">
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">Aprendizaje</p>
+        <h2>Tu ruta financiera</h2>
+        <p class="subtitle">
+          Avanza por módulos, completa lecciones y sigue tu progreso.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-soft-action" routerLink="/dashboard">Volver</button>
+        <button class="btn btn-soft-action" (click)="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMensaje" class="alert alert-danger custom-alert mb-4">
+      {{ errorMensaje }}
+    </div>
+
+    <p *ngIf="cargando" class="empty-text">Cargando módulos...</p>
+
+    <div *ngIf="!cargando" class="modulos-grid">
+      <div class="modulo-card" *ngFor="let modulo of modulos">
+        <div class="modulo-top">
+          <span class="orden-chip">Módulo {{ modulo.ordenModulo }}</span>
+          <span class="estado-chip" [class.locked]="!modulo.desbloqueado">
+            {{ modulo.desbloqueado ? 'Disponible' : 'Bloqueado' }}
+          </span>
+        </div>
+
+        <h4>{{ modulo.tituloModulo }}</h4>
+        <p class="descripcion">{{ modulo.descripcionModulo }}</p>
+
+        <div class="meta-row">
+          <span>{{ modulo.totalLecciones }} lecciones</span>
+          <strong>{{ modulo.porcentajeProgreso }}%</strong>
+        </div>
+
+        <div class="progress custom-progress mb-3">
+          <div
+            class="progress-bar custom-progress-bar"
+            [style.width.%]="modulo.porcentajeProgreso">
+          </div>
+        </div>
+
+        <button
+          class="btn btn-main-action w-100"
+          [disabled]="!modulo.desbloqueado"
+          (click)="verModulo(modulo.moduloId, modulo.desbloqueado)">
+          Ver módulo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

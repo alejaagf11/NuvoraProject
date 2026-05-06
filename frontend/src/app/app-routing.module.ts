@@ -11,6 +11,9 @@ import { CategoriasComponent } from './categorias/categorias.component';
 import { PresupuestoComponent } from './presupuesto/presupuesto.component';
 import { CuentaComponent } from './cuenta/cuenta.component';
 import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
+import { AprendizajeComponent } from './aprendizaje/aprendizaje.component';
+import { ModuloDetalleComponent } from './modulo-detalle/modulo-detalle.component';
+import { LeccionComponent } from './leccion/leccion.component';
 
 
 const routes: Routes = [
@@ -26,6 +29,9 @@ const routes: Routes = [
   { path: 'presupuesto', component: PresupuestoComponent },
   { path: 'cuenta', component: CuentaComponent },
   { path: 'admin/usuarios', component: AdminUsuariosComponent },
+  { path: 'aprendizaje', component: AprendizajeComponent },
+  { path: 'aprendizaje/modulo/:moduloId', component: ModuloDetalleComponent },
+  { path: 'aprendizaje/leccion/:leccionId', component: LeccionComponent },
 
   { path: 'usuario-list', component: UsuariosListComponent },
 

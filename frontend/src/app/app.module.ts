@@ -16,6 +16,11 @@ import { TransaccionesComponent } from './transacciones/transacciones.component'
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CuentaComponent } from './cuenta/cuenta.component';
 import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
+import { AprendizajeComponent } from './aprendizaje/aprendizaje.component';
+import { ModuloDetalleComponent } from './modulo-detalle/modulo-detalle.component';
+import { LeccionComponent } from './leccion/leccion.component';
+import { AdminModulosComponent } from './admin-modulos/admin-modulos.component';
+import { AdminLeccionesComponent } from './admin-lecciones/admin-lecciones.component';
 
 
 
@@ -33,7 +38,12 @@ import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.componen
     TransaccionesComponent,
     DashboardComponent,
     CuentaComponent,
-    AdminUsuariosComponent
+    AdminUsuariosComponent,
+    AprendizajeComponent,
+    ModuloDetalleComponent,
+    LeccionComponent,
+    AdminModulosComponent,
+    AdminLeccionesComponent
   ],
   imports: [
     BrowserModule,

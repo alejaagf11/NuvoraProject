@@ -1,0 +1,43 @@
+<div class="detalle-page">
+  <div class="detalle-container">
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">Aprendizaje</p>
+        <h2>{{ modulo?.tituloModulo || 'Modulo' }}</h2>
+        <p class="subtitle">
+          {{ modulo?.descripcionModulo }}
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-soft-action" routerLink="/aprendizaje">Volver a modulos</button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMensaje" class="alert alert-danger custom-alert mb-4">
+      {{ errorMensaje }}
+    </div>
+
+    <p *ngIf="cargando" class="empty-text">Cargando lecciones...</p>
+
+    <div *ngIf="!cargando" class="lecciones-grid">
+      <div class="leccion-card" *ngFor="let leccion of lecciones">
+        <div class="leccion-top">
+          <span class="orden-chip">Leccion {{ leccion.ordenLeccion }}</span>
+          <span class="estado-chip" [class.completed]="estaCompletada(leccion.leccionId)">
+            {{ estaCompletada(leccion.leccionId) ? 'Completada' : 'Pendiente' }}
+          </span>
+        </div>
+
+        <h4>{{ leccion.tituloLeccion }}</h4>
+        <p class="descripcion">
+          {{ leccion.contenidoLeccion.length > 140 ? (leccion.contenidoLeccion | slice:0:140) + '...' : leccion.contenidoLeccion }}
+        </p>
+
+        <button class="btn btn-main-action w-100" (click)="abrirLeccion(leccion.leccionId)">
+          Abrir leccion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
