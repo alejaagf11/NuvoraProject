@@ -109,4 +109,8 @@ export class DashboardComponent implements OnInit {
   esGasto(tipo: string): boolean {
     return tipo === 'GASTO';
   }
+
+  esAdmin(): boolean {
+    return (this.usuario.rolUsuario || '').toUpperCase() === 'ADMIN';
+  }
 }

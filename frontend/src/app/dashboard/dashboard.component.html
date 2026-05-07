@@ -2,8 +2,8 @@
   <div class="main-content-full p-5">
     <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
       <div>
-        <h2 class="fw-bold mb-3">Hola, así va tu dinero</h2>
-        <p class="mb-4">Registra ingresos, gastos y controla tus metas de ahorro</p>
+        <h2 class="fw-bold mb-3">Hola, asi va tu dinero</h2>
+        <p class="mb-4">Registra ingresos, gastos, aprende por modulos y controla tus metas.</p>
 
         <div class="d-flex gap-3 flex-wrap">
           <button class="btn btn-custom" (click)="irATransacciones('INGRESO')">
@@ -15,15 +15,18 @@
           </button>
 
           <button class="btn btn-custom-outline" routerLink="/categorias">
-            + Nueva categoría
+            + Nueva categoria
+          </button>
+
+          <button class="btn btn-custom-outline" routerLink="/aprendizaje">
+            Ir a aprendizaje
           </button>
         </div>
       </div>
 
       <div class="d-flex align-items-center gap-2">
-
         <button class="profile-icon profile-button" routerLink="/cuenta" type="button" title="Ir a mi cuenta">
-          👤
+          Perfil
         </button>
       </div>
     </div>
@@ -35,32 +38,39 @@
     <div class="row g-4 mb-4">
       <div class="col-lg-8">
         <div class="card dashboard-card p-4 h-100">
-          <h5 class="fw-bold mb-3">Cómo empezar</h5>
+          <h5 class="fw-bold mb-3">Como empezar</h5>
           <p class="mb-3">
-            Primero crea una categoría para organizar tus movimientos. Luego registra ingresos o gastos y revisa cómo
-            cambian tus metas.
+            Primero crea una categoria para organizar tus movimientos. Luego registra ingresos o gastos,
+            revisa tus metas y avanza por el modulo de aprendizaje.
           </p>
 
           <div class="steps-grid">
             <div class="step-card">
               <span class="step-number">1</span>
-              <h6 class="fw-bold">Crea categorías</h6>
+              <h6 class="fw-bold">Crea categorias</h6>
               <p>Clasifica tus movimientos como salario, transporte, comida o arriendo.</p>
-              <button class="btn btn-sm btn-custom-outline" routerLink="/categorias">Ir a categorías</button>
+              <button class="btn btn-sm btn-custom-outline" routerLink="/categorias">Ir a categorias</button>
             </div>
 
             <div class="step-card">
               <span class="step-number">2</span>
               <h6 class="fw-bold">Registra movimientos</h6>
-              <p>Guarda ingresos y gastos usando la categoría que corresponda.</p>
+              <p>Guarda ingresos y gastos usando la categoria que corresponda.</p>
               <button class="btn btn-sm btn-custom-secondary" routerLink="/transacciones">Ir a transacciones</button>
             </div>
 
             <div class="step-card">
               <span class="step-number">3</span>
               <h6 class="fw-bold">Revisa tus metas</h6>
-              <p>Consulta cuánto llevas ahorrado y agrega nuevos abonos.</p>
+              <p>Consulta cuanto llevas ahorrado y agrega nuevos abonos.</p>
               <button class="btn btn-sm btn-custom" routerLink="/metas-ahorro-list">Ver metas</button>
+            </div>
+
+            <div class="step-card">
+              <span class="step-number">4</span>
+              <h6 class="fw-bold">Aprende por modulos</h6>
+              <p>Lee lecciones, marcalas como completadas y sigue tu progreso.</p>
+              <button class="btn btn-sm btn-custom-outline" routerLink="/aprendizaje">Ir a aprendizaje</button>
             </div>
           </div>
         </div>
@@ -70,9 +80,7 @@
         <div class="card dashboard-card p-4 h-100 text-center">
           <div class="jar-wrap mb-3">
             <div class="jar-body">
-              <div class="jar-liquid" [style.height.%]="nivelBotella">
-              </div>
-
+              <div class="jar-liquid" [style.height.%]="nivelBotella"></div>
             </div>
           </div>
 
@@ -82,6 +90,21 @@
           <button class="btn btn-custom mt-4" routerLink="/presupuesto">
             Ver presupuesto
           </button>
+
+          <div class="d-flex gap-2 flex-wrap justify-content-center mt-3">
+            <button class="btn btn-custom-outline" routerLink="/aprendizaje">
+              Ver modulos
+            </button>
+          </div>
+
+          <div *ngIf="esAdmin()" class="d-flex gap-2 flex-wrap justify-content-center mt-3">
+            <button class="btn btn-custom-secondary" routerLink="/admin/modulos">
+              Admin modulos
+            </button>
+            <button class="btn btn-custom-outline" routerLink="/admin/lecciones">
+              Admin lecciones
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -95,7 +118,7 @@
       </div>
 
       <div *ngIf="transacciones.length === 0" class="text-muted-custom">
-        No tienes transacciones registradas todavía.
+        No tienes transacciones registradas todavia.
       </div>
 
       <div *ngFor="let transaccion of transacciones" class="movement-row">

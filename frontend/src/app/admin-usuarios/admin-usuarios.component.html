@@ -10,7 +10,9 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn btn-soft-action" routerLink="/dashboard">Volver</button>
+        <button class="btn btn-soft-action" routerLink="/admin/modulos">Modulos</button>
+        <button class="btn btn-soft-action" routerLink="/admin/lecciones">Lecciones</button>
+  
         <button class="btn btn-soft-action" (click)="logout()">Cerrar sesion</button>
       </div>
     </div>
@@ -56,7 +58,7 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let usuario of usuarios">
+            <tr *ngFor="let usuario of usuarios; trackBy: trackByUsuarioId">
               <td>
                 <ng-container *ngIf="usuarioEditandoId !== usuario.usuarioId; else editarNombre">
                   {{ usuario.nombreUsuario }}
@@ -109,28 +111,37 @@
 
               <td>
                 <div class="d-flex gap-2 flex-wrap">
+                  <span
+                    *ngIf="esUsuarioActual(usuario)"
+                    class="badge-role">
+                    Tu cuenta
+                  </span>
+
                   <button
-                    *ngIf="usuarioEditandoId !== usuario.usuarioId"
+                    *ngIf="usuarioEditandoId !== usuario.usuarioId && !esUsuarioActual(usuario)"
                     class="btn btn-soft-action btn-sm"
                     (click)="iniciarEdicion(usuario)">
                     Editar
                   </button>
 
                   <button
-                    *ngIf="usuarioEditandoId === usuario.usuarioId"
+                    *ngIf="usuarioEditandoId === usuario.usuarioId && !esUsuarioActual(usuario)"
                     class="btn btn-save btn-sm"
                     (click)="guardarEdicion(usuario)">
                     Guardar
                   </button>
 
                   <button
-                    *ngIf="usuarioEditandoId === usuario.usuarioId"
+                    *ngIf="usuarioEditandoId === usuario.usuarioId && !esUsuarioActual(usuario)"
                     class="btn btn-soft-action btn-sm"
                     (click)="cancelarEdicion()">
                     Cancelar
                   </button>
 
-                  <button class="btn btn-delete btn-sm" (click)="eliminarUsuario(usuario.usuarioId)">
+                  <button
+                    *ngIf="!esUsuarioActual(usuario)"
+                    class="btn btn-delete btn-sm"
+                    (click)="eliminarUsuario(usuario.usuarioId)">
                     Eliminar
                   </button>
                 </div>

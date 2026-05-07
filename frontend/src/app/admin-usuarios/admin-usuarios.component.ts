@@ -10,11 +10,11 @@ import { UsuarioService } from '../services/usuario.service';
   styleUrls: ['./admin-usuarios.component.css']
 })
 export class AdminUsuariosComponent implements OnInit {
-
   usuarios: Usuario[] = [];
   cargando = true;
   errorMensaje: string | null = null;
   mensajeExito: string | null = null;
+  usuarioActualId: number | null = null;
 
   usuarioEditandoId: number | null = null;
   rolEditando = '';
@@ -26,7 +26,19 @@ export class AdminUsuariosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.cargarUsuarioActual();
     this.cargarUsuarios();
+  }
+
+  cargarUsuarioActual() {
+    this.usuarioService.getMiUsuario().subscribe({
+      next: (usuario) => {
+        this.usuarioActualId = usuario.usuarioId ?? null;
+      },
+      error: (err) => {
+        console.error('Error al cargar usuario actual', err);
+      }
+    });
   }
 
   cargarUsuarios() {
@@ -60,6 +72,11 @@ export class AdminUsuariosComponent implements OnInit {
   guardarEdicion(usuario: Usuario) {
     if (!usuario.usuarioId) return;
 
+    if (this.esUsuarioActual(usuario)) {
+      this.errorMensaje = 'Tu propia cuenta se gestiona desde Mi cuenta, no desde el panel admin.';
+      return;
+    }
+
     const payload: Usuario = {
       ...usuario,
       rolUsuario: this.rolEditando,
@@ -74,7 +91,7 @@ export class AdminUsuariosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al actualizar usuario', err);
-        this.errorMensaje = 'No se pudo actualizar el usuario';
+        this.errorMensaje = err?.error || 'No se pudo actualizar el usuario';
       }
     });
   }
@@ -82,18 +99,24 @@ export class AdminUsuariosComponent implements OnInit {
   eliminarUsuario(id?: number) {
     if (!id) return;
 
-    if (!confirm('¿Seguro que quieres eliminar este usuario?')) {
+    if (id === this.usuarioActualId) {
+      this.errorMensaje = 'No puedes eliminar la cuenta con la que tienes la sesion abierta.';
+      return;
+    }
+
+    if (!confirm('Seguro que quieres eliminar este usuario?')) {
       return;
     }
 
     this.usuarioService.deleteUsuarioAdmin(id).subscribe({
       next: () => {
         this.mensajeExito = 'Usuario eliminado correctamente';
-        this.cargarUsuarios();
+        this.usuarios = this.usuarios.filter(usuario => usuario.usuarioId !== id);
+        this.cancelarEdicion();
       },
       error: (err) => {
         console.error('Error al eliminar usuario', err);
-        this.errorMensaje = 'No se pudo eliminar el usuario';
+        this.errorMensaje = err?.error || 'No se pudo eliminar el usuario';
       }
     });
   }
@@ -104,6 +127,14 @@ export class AdminUsuariosComponent implements OnInit {
 
   contarUsers(): number {
     return this.usuarios.filter(u => (u.rolUsuario || 'USER') !== 'ADMIN').length;
+  }
+
+  esUsuarioActual(usuario: Usuario): boolean {
+    return (usuario.usuarioId ?? null) === this.usuarioActualId;
+  }
+
+  trackByUsuarioId(index: number, usuario: Usuario): number {
+    return usuario.usuarioId ?? index;
   }
 
   logout() {

@@ -1,1 +1,122 @@
-<p>admin-lecciones works!</p>
+<div class="admin-page">
+  <div class="admin-container">
+    <div class="admin-header">
+      <div>
+        <p class="eyebrow">Administracion</p>
+        <h2>Gestion de lecciones</h2>
+        <p class="subtitle">
+          Crea y organiza las lecciones dentro de cada modulo.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-soft-action" routerLink="/admin/modulos">Modulos</button>
+        <button class="btn btn-soft-action" routerLink="/admin/usuarios">Usuarios</button>
+        <button class="btn btn-soft-action" (click)="logout()">Cerrar sesion</button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMensaje" class="alert alert-danger custom-alert mb-4">
+      {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="mensajeExito" class="alert alert-success custom-alert mb-4">
+      {{ mensajeExito }}
+    </div>
+
+    <div class="form-card mb-4">
+      <h4 class="mb-3">{{ editandoId ? 'Editar leccion' : 'Nueva leccion' }}</h4>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Modulo</label>
+          <select
+            class="form-select custom-input"
+            [(ngModel)]="moduloSeleccionadoId"
+            (change)="onModuloChange()">
+            <option [ngValue]="null">Selecciona un modulo</option>
+            <option *ngFor="let modulo of modulos" [ngValue]="modulo.moduloId">
+              {{ modulo.tituloModulo }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Orden</label>
+          <input
+            type="number"
+            class="form-control custom-input"
+            [(ngModel)]="formulario.ordenLeccion">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Activo</label>
+          <select
+            class="form-select custom-input"
+            [(ngModel)]="formulario.activo">
+            <option [ngValue]="true">Si</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Titulo</label>
+          <input
+            type="text"
+            class="form-control custom-input"
+            [(ngModel)]="formulario.tituloLeccion">
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Contenido</label>
+          <textarea
+            rows="6"
+            class="form-control custom-input"
+            [(ngModel)]="formulario.contenidoLeccion"></textarea>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 flex-wrap mt-3">
+        <button class="btn btn-main-action" (click)="guardarLeccion()">
+          {{ editandoId ? 'Guardar cambios' : 'Crear leccion' }}
+        </button>
+        <button class="btn btn-soft-action" *ngIf="editandoId" (click)="resetFormulario(false)">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <div class="list-card">
+      <p *ngIf="cargando" class="empty-text">Cargando lecciones...</p>
+
+      <div *ngIf="!cargando && lecciones.length === 0" class="empty-text">
+        No hay lecciones registradas para este modulo.
+      </div>
+
+      <div *ngIf="!cargando && lecciones.length > 0" class="lecciones-grid">
+        <div class="leccion-card" *ngFor="let leccion of lecciones">
+          <div class="top-row">
+            <span class="orden-chip">Leccion {{ leccion.ordenLeccion }}</span>
+            <span class="estado-chip" [class.inactivo]="!leccion.activo">
+              {{ leccion.activo ? 'Activa' : 'Inactiva' }}
+            </span>
+          </div>
+
+          <h4>{{ leccion.tituloLeccion }}</h4>
+          <p>
+            {{ leccion.contenidoLeccion.length > 140 ? (leccion.contenidoLeccion | slice:0:140) + '...' : leccion.contenidoLeccion }}
+          </p>
+
+          <div class="d-flex gap-2 flex-wrap mt-3">
+            <button class="btn btn-soft-action btn-sm" (click)="editarLeccion(leccion)">
+              Editar
+            </button>
+            <button class="btn btn-delete btn-sm" (click)="eliminarLeccion(leccion.leccionId)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -18,4 +18,16 @@ export class LeccionService {
   getLeccionById(leccionId: number): Observable<Leccion> {
     return this.http.get<Leccion>(`${this.baseUrl}/${leccionId}`);
   }
+
+  createLeccion(leccion: Leccion): Observable<Leccion> {
+    return this.http.post<Leccion>(`${this.baseUrl}/register`, leccion);
+  }
+
+  updateLeccion(leccionId: number, leccion: Leccion): Observable<Leccion> {
+    return this.http.put<Leccion>(`${this.baseUrl}/update/${leccionId}`, leccion);
+  }
+
+  deleteLeccion(leccionId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete/${leccionId}`);
+  }
 }

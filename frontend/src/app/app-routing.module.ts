@@ -14,6 +14,8 @@ import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.componen
 import { AprendizajeComponent } from './aprendizaje/aprendizaje.component';
 import { ModuloDetalleComponent } from './modulo-detalle/modulo-detalle.component';
 import { LeccionComponent } from './leccion/leccion.component';
+import { AdminModulosComponent } from './admin-modulos/admin-modulos.component';
+import { AdminLeccionesComponent } from './admin-lecciones/admin-lecciones.component';
 
 
 const routes: Routes = [
@@ -32,8 +34,10 @@ const routes: Routes = [
   { path: 'aprendizaje', component: AprendizajeComponent },
   { path: 'aprendizaje/modulo/:moduloId', component: ModuloDetalleComponent },
   { path: 'aprendizaje/leccion/:leccionId', component: LeccionComponent },
-
+  { path: 'admin/modulos', component: AdminModulosComponent },
+  { path: 'admin/lecciones', component: AdminLeccionesComponent },
   { path: 'usuario-list', component: UsuariosListComponent },
+  
 
   { path: '', redirectTo: '/usuario-login', pathMatch: 'full' },
   { path: '**', redirectTo: '/usuario-login' }
