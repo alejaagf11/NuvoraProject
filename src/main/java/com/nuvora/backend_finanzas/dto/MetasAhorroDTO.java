@@ -53,11 +53,12 @@ public class MetasAhorroDTO {
             return 0;
         }
 
-        long meses = ChronoUnit.MONTHS.between(
-                hoy.withDayOfMonth(1),
-                fechaLimite.withDayOfMonth(1)
-        ) + 1;
+        long meses = ChronoUnit.MONTHS.between(hoy, fechaLimite);
 
-        return Math.max(meses, 0);
+        if (hoy.plusMonths(meses).isBefore(fechaLimite)){
+            meses++;
+        }
+
+        return meses;
     }
 }

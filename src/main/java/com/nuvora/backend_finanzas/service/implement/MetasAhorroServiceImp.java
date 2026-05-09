@@ -32,7 +32,7 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
 
         //creacion variables de tiempo
         LocalDate hoy = LocalDate.now();
-        long meses = ChronoUnit.MONTHS.between(hoy, meta.getFechaLimite());
+        long meses = calcularMesesRestantes(hoy, meta.getFechaLimite());
 
         if(meses <= 0){
             throw new RuntimeException("La fecha limite para la meta debe der mayor a hoy");
@@ -82,7 +82,7 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
             meta.setFechaLimite(metasAhorroDTO.getFechaLimite());
 
         LocalDate hoy = LocalDate.now();
-        long meses = ChronoUnit.MONTHS.between(hoy, meta.getFechaLimite());
+        long meses = calcularMesesRestantes(hoy, meta.getFechaLimite());
 
         if(meses <= 0){
             throw new RuntimeException("Fecha inválida");
@@ -92,7 +92,7 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
         double montoRestante = meta.getMontoObjetivo() - montoAhorrado;
 
         double ahorroMensual = Math.round(
-                (meta.getMontoObjetivo()/ meses) * 100.0
+                (montoRestante/ meses) * 100.0
         ) / 100.0;
 
         if (montoRestante <= 0) {
@@ -169,11 +169,12 @@ public class MetasAhorroServiceImp implements MetasAhorroService {
             return 0;
         }
 
-        long meses = ChronoUnit.MONTHS.between(
-                hoy.withDayOfMonth(1),
-                fechaLimite.withDayOfMonth(1)
-        ) + 1;
+       long meses = ChronoUnit.MONTHS.between(hoy, fechaLimite);
 
-        return Math.max(meses, 0);
+        if (hoy.plusMonths(meses).isBefore(fechaLimite)){
+            meses++;
+        }
+
+        return meses;
     }
 }
