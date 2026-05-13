@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MetasAhorroService } from '../services/metas-ahorro.service';
 import { MetasAhorro } from '../models/metas_ahorro';
 import { UsuarioService } from '../services/usuario.service';
+import id from '@angular/common/locales/extra/id';
 
 @Component({
   selector: 'app-metas-ahorro-form',
@@ -15,7 +16,11 @@ export class MetasAhorroFormComponent implements OnInit {
     nombreMeta: '',
     montoObjetivo: 0,
     fechaLimite: ''
+    
   };
+
+  mensajeExito: string | null = null;
+errorMensaje: string | null = null;
 
   isEditMode = false;
   metaId: number | null = null;
@@ -26,7 +31,7 @@ export class MetasAhorroFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private usuarioService: UsuarioService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -67,6 +72,8 @@ export class MetasAhorroFormComponent implements OnInit {
       return;
     }
 
+
+
     this.metasService.create(this.meta).subscribe({
       next: () => {
         console.log('Meta guardada');
@@ -78,6 +85,37 @@ export class MetasAhorroFormComponent implements OnInit {
     });
   }
 
+eliminarMeta(id: number) {
+
+  const confirmar = confirm(
+    '¿Deseas eliminar esta meta?'
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  this.metasService.delete(id).subscribe({
+
+    next: () => {
+
+      this.mensajeExito = 'Meta eliminada correctamente';
+      this.errorMensaje = null;
+
+      this.router.navigate(['/metas-ahorro-list']);
+    },
+
+    error: (err) => {
+
+      console.error('Error al eliminar meta', err);
+
+      this.errorMensaje =
+        err.error?.message ||
+        'No se pudo eliminar la meta';
+    }
+
+  });
+}
   logout() {
     this.usuarioService.logout();
     this.router.navigate(['/usuario-login']);

@@ -81,6 +81,24 @@ export class CategoriasComponent implements OnInit {
     });
   }
 
+  eliminarCategoria(id: number) {
+    if (!confirm('Seguro que quieres eliminar esta categoria?')) {
+      return;
+    }
+
+    this.categoriaService.delete(id).subscribe({
+      next: () => {
+        console.log('Categoría eliminada');
+        this.mensajeExito = 'Categoría eliminada correctamente';
+        this.cargarCategorias();
+      },
+      error: (err) => {
+        console.error('Error al eliminar categoría:', err);
+        this.errorMensaje = 'Error al eliminar: ' + (err.error?.message || err.message || err.status);
+      }
+    });
+  }
+
   editarCategoria(categoria: Categoria) {
     this.isEditMode = true;
     this.categoriaEditandoId = categoria.categoriaId || null;
@@ -96,21 +114,8 @@ export class CategoriasComponent implements OnInit {
     this.resetFormulario();
   }
 
-  eliminarCategoria(id: number) {
-    this.categoriaService.delete(id).subscribe({
-      next: () => {
-        this.mensajeExito = 'Categoría eliminada correctamente';
-        this.errorMensaje = null;
-        this.cargarCategorias();
-      },
-      error: (err) => {
-        console.error('Error al eliminar categoría', err);
-        this.errorMensaje =
-          err.error?.message ||
-          'No puedes eliminar esta categoría porque ya tiene transacciones asociadas';
-      }
-    });
-  }
+  
+  
 
   resetFormulario() {
     this.isEditMode = false;

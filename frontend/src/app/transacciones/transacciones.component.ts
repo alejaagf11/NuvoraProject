@@ -163,6 +163,10 @@ export class TransaccionesComponent implements OnInit {
   }
 
   eliminarTransaccion(id: number) {
+    if (!confirm('Seguro que quieres eliminar esta transaccion?')) {
+      return;
+    }
+
     this.transaccionService.delete(id).subscribe({
       next: () => {
         this.mensajeExito = 'Transacción eliminada correctamente';

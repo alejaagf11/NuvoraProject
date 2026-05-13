@@ -24,6 +24,7 @@ export class DashboardComponent implements OnInit {
   };
 
   nivelBotella = 8;
+nombreUsuario: any;
 
   constructor(
     private transaccionService: TransaccionService,

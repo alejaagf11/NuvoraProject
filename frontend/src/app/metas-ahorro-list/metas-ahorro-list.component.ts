@@ -42,6 +42,10 @@ export class MetasAhorroListComponent implements OnInit {
   }
 
   deleteMeta(id: number) {
+    if (!confirm('Seguro que quieres eliminar esta meta?')) {
+      return;
+    }
+
     this.metasService.delete(id).subscribe({
       next: () => {
         console.log('Meta eliminada');
