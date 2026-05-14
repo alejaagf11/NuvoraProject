@@ -324,6 +324,36 @@
 }
 
 @media (max-width: 768px) {
+  .sidebar {
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px 16px !important;
+  }
+
+  .menu-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .menu-links li {
+    margin-bottom: 0 !important;
+    border-bottom: none;
+    background: rgba(255, 255, 255, 0.06);
+    text-align: center;
+  }
+
+  .main-content {
+    min-height: auto;
+    padding: 20px 16px !important;
+  }
+
+  .account-hero-card,
+  .account-panel {
+    border-radius: 24px;
+  }
+
   .metrics-grid {
     grid-template-columns: 1fr;
   }
@@ -342,6 +372,23 @@
 
   .info-row strong {
     text-align: left;
+  }
+}
+
+@media (max-width: 576px) {
+  .menu-links {
+    grid-template-columns: 1fr;
+  }
+
+  .avatar-ring {
+    width: 108px;
+    height: 108px;
+  }
+
+  .profile-avatar-large {
+    width: 94px;
+    height: 94px;
+    font-size: 36px;
   }
 }
 

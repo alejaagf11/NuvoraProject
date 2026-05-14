@@ -1,0 +1,48 @@
+<div class="mobile-auth-shell">
+  <section class="auth-panel">
+    <div class="brand-row">
+      <div class="brand-mark">N</div>
+      <div>
+        <p class="eyebrow">Nuvora</p>
+        <h1>Has vuelto</h1>
+      </div>
+    </div>
+
+    <p class="auth-copy">
+      Revisa tus movimientos, tus metas y tu progreso financiero desde un solo lugar.
+    </p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <label>
+        <span>Correo</span>
+        <input type="email" formControlName="correoUsuario" placeholder="correo@ejemplo.com">
+      </label>
+      <small *ngIf="loginForm.get('correoUsuario')?.touched && loginForm.get('correoUsuario')?.invalid">
+        Ingresa un correo valido.
+      </small>
+
+      <label>
+        <span>Contrasena</span>
+        <input type="password" formControlName="contrasenaUsuario" placeholder="Tu contrasena">
+      </label>
+      <small *ngIf="loginForm.get('contrasenaUsuario')?.touched && loginForm.get('contrasenaUsuario')?.invalid">
+        Minimo 6 caracteres.
+      </small>
+
+      <div *ngIf="loginError" class="auth-error">
+        {{ loginError }}
+      </div>
+
+      <button type="submit" class="primary-action">
+        Iniciar sesion
+      </button>
+    </form>
+
+    
+
+    <p class="switch-copy">
+      Aun no tienes una cuenta?
+      <a routerLink="/mobile/usuario-form">Registrate</a>
+    </p>
+  </section>
+</div>

@@ -5,7 +5,10 @@ import { UsuariosFormComponent } from './usuarios-form/usuarios-form.component';
 import { MetasAhorroFormComponent } from './metas-ahorro-form/metas-ahorro-form.component';
 import { MetasAhorroListComponent } from './metas-ahorro-list/metas-ahorro-list.component';
 import { UsuarioLoginComponent } from './usuario-login/usuario-login.component';
+import { UsuarioLoginMobileComponent } from './usuario-login-mobile/usuario-login-mobile.component';
+import { UsuariosFormMobileComponent } from './usuarios-form-mobile/usuarios-form-mobile.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardMobileComponent } from './dashboard-mobile/dashboard-mobile.component';
 import { TransaccionesComponent } from './transacciones/transacciones.component';
 import { CategoriasComponent } from './categorias/categorias.component';
 import { PresupuestoComponent } from './presupuesto/presupuesto.component';
@@ -20,9 +23,12 @@ import { AdminLeccionesComponent } from './admin-lecciones/admin-lecciones.compo
 
 const routes: Routes = [
   { path: 'usuario-login', component: UsuarioLoginComponent },
+  { path: 'mobile/usuario-login', component: UsuarioLoginMobileComponent },
+  { path: 'mobile/usuario-form', component: UsuariosFormMobileComponent },
   { path: 'usuario-form', component: UsuariosFormComponent },
 
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'mobile/dashboard', component: DashboardMobileComponent },
   { path: 'metas-ahorro-list', component: MetasAhorroListComponent },
   { path: 'metas-ahorro-form', component: MetasAhorroFormComponent },
   { path: 'metas-ahorro-form/:id', component: MetasAhorroFormComponent },

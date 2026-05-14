@@ -1,0 +1,47 @@
+<div class="mobile-auth-shell">
+  <section class="auth-panel">
+    <div class="brand-mark">N</div>
+    <p class="eyebrow">Nuvora</p>
+    <h1>Crea tu cuenta</h1>
+    <p class="auth-copy">Empieza a organizar tu dinero, tus metas y tus aprendizajes desde el celular.</p>
+
+    <form [formGroup]="form" (ngSubmit)="saveUsuario()" class="auth-form">
+      <label>
+        <span>Nombre</span>
+        <input type="text" formControlName="nombreUsuario" placeholder="Tu nombre">
+      </label>
+      <small *ngIf="form.get('nombreUsuario')?.touched && form.get('nombreUsuario')?.invalid">
+        Minimo 3 caracteres.
+      </small>
+
+      <label>
+        <span>Correo</span>
+        <input type="email" formControlName="correoUsuario" placeholder="correo@ejemplo.com">
+      </label>
+      <small *ngIf="form.get('correoUsuario')?.touched && form.get('correoUsuario')?.invalid">
+        Ingresa un correo valido.
+      </small>
+
+      <label>
+        <span>Contrasena</span>
+        <input type="password" formControlName="contrasenaUsuario" placeholder="Minimo 6 caracteres">
+      </label>
+      <small *ngIf="form.get('contrasenaUsuario')?.touched && form.get('contrasenaUsuario')?.invalid">
+        Minimo 6 caracteres.
+      </small>
+
+      <div *ngIf="errorMensaje" class="auth-error">
+        {{ errorMensaje }}
+      </div>
+
+      <button type="submit" class="primary-action" [disabled]="cargando">
+        {{ cargando ? 'Creando cuenta...' : 'Crear cuenta' }}
+      </button>
+    </form>
+
+    <p class="switch-copy">
+      Ya tienes cuenta?
+      <a routerLink="/mobile/usuario-login">Inicia sesion</a>
+    </p>
+  </section>
+</div>

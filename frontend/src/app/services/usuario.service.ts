@@ -3,13 +3,14 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Usuario } from '../models/usuarios';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-  private baseUrl = 'http://localhost:8080/api/usuario';
-  private authUrl = 'http://localhost:8080/api/auth';
+  private baseUrl = `${API_BASE_URL}/api/usuario`;
+  private authUrl = `${API_BASE_URL}/api/auth`;
 
   constructor(
     private http: HttpClient,

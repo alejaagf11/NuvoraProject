@@ -14,6 +14,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
 import { PresupuestoComponent } from './presupuesto/presupuesto.component';
 import { TransaccionesComponent } from './transacciones/transacciones.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardMobileComponent } from './dashboard-mobile/dashboard-mobile.component';
 import { CuentaComponent } from './cuenta/cuenta.component';
 import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
 import { AprendizajeComponent } from './aprendizaje/aprendizaje.component';
@@ -21,6 +22,9 @@ import { ModuloDetalleComponent } from './modulo-detalle/modulo-detalle.componen
 import { LeccionComponent } from './leccion/leccion.component';
 import { AdminModulosComponent } from './admin-modulos/admin-modulos.component';
 import { AdminLeccionesComponent } from './admin-lecciones/admin-lecciones.component';
+import { IonicModule } from '@ionic/angular';
+import { UsuarioLoginMobileComponent } from './usuario-login-mobile/usuario-login-mobile.component';
+import { UsuariosFormMobileComponent } from './usuarios-form-mobile/usuarios-form-mobile.component';
 
 
 
@@ -37,20 +41,24 @@ import { AdminLeccionesComponent } from './admin-lecciones/admin-lecciones.compo
     PresupuestoComponent,
     TransaccionesComponent,
     DashboardComponent,
+    DashboardMobileComponent,
     CuentaComponent,
     AdminUsuariosComponent,
     AprendizajeComponent,
     ModuloDetalleComponent,
     LeccionComponent,
     AdminModulosComponent,
-    AdminLeccionesComponent
+    AdminLeccionesComponent,
+    UsuarioLoginMobileComponent,
+    UsuariosFormMobileComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule, 
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    IonicModule.forRoot({})
     
   ],
   providers: [

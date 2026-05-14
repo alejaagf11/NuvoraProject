@@ -1,0 +1,111 @@
+<main class="mobile-dashboard">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Nuvora</p>
+      <h1>Hola, {{ usuario.nombreUsuario || 'de nuevo' }}</h1>
+    </div>
+
+    <button class="avatar-button" routerLink="/cuenta" type="button" title="Mi cuenta">
+      {{ (usuario.nombreUsuario || 'N').charAt(0).toUpperCase() }}
+    </button>
+  </header>
+
+  <section class="balance-card">
+    <div>
+      <span>Saldo actual</span>
+      <strong>{{ saldoActual | currency }}</strong>
+      <small>Referencia mensual: {{ (usuario.montoMensual || 500000) | currency }}</small>
+    </div>
+
+    <div class="jar-mini" aria-hidden="true">
+      <div class="jar-fill" [style.height.%]="nivelBotella"></div>
+    </div>
+  </section>
+
+  <section class="quick-actions" aria-label="Acciones rapidas">
+    <button type="button" class="action action-income" (click)="irATransacciones('INGRESO')">
+      <span>+</span>
+      Ingreso
+    </button>
+
+    <button type="button" class="action action-expense" (click)="irATransacciones('GASTO')">
+      <span>-</span>
+      Gasto
+    </button>
+
+    <button type="button" class="action" routerLink="/categorias">
+      <span>#</span>
+      Categoria
+    </button>
+
+    <button type="button" class="action" routerLink="/metas-ahorro-list">
+      <span>$</span>
+      Metas
+    </button>
+  </section>
+
+  <section *ngIf="errorMensaje" class="message-card">
+    {{ errorMensaje }}
+  </section>
+
+  <section class="section-block">
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">Ruta sugerida</p>
+        <h2>Empieza aqui</h2>
+      </div>
+      <button type="button" routerLink="/aprendizaje">Aprender</button>
+    </div>
+
+    <div class="steps-strip">
+      <article class="step-card">
+        <span>1</span>
+        <h3>Categorias</h3>
+        <p>Ordena tus ingresos y gastos.</p>
+      </article>
+
+      <article class="step-card">
+        <span>2</span>
+        <h3>Movimientos</h3>
+        <p>Registra lo que entra y sale.</p>
+      </article>
+
+      <article class="step-card">
+        <span>3</span>
+        <h3>Metas</h3>
+        <p>Haz seguimiento a tu ahorro.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">Actividad</p>
+        <h2>Recientes</h2>
+      </div>
+      <button type="button" routerLink="/transacciones">Ver todo</button>
+    </div>
+
+    <div *ngIf="transacciones.length === 0" class="empty-state">
+      Todavia no tienes movimientos registrados.
+    </div>
+
+    <article *ngFor="let transaccion of transacciones" class="movement-card">
+      <div>
+        <h3>{{ transaccion.descTransaccion }}</h3>
+        <p>{{ transaccion.fechaTransaccion }} · {{ transaccion.tipo }}</p>
+      </div>
+      <strong [ngClass]="esGasto(transaccion.tipo) ? 'amount-expense' : 'amount-income'">
+        {{ esGasto(transaccion.tipo) ? '-' : '+' }}{{ transaccion.montoTransaccion | currency }}
+      </strong>
+    </article>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegacion movil">
+    <a routerLink="/mobile/dashboard" class="active">Inicio</a>
+    <a routerLink="/transacciones">Movs.</a>
+    <a routerLink="/presupuesto">Presup.</a>
+    <a routerLink="/cuenta">Cuenta</a>
+  </nav>
+</main>

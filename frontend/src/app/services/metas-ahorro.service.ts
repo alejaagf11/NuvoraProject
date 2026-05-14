@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MetasAhorro } from '../models/metas_ahorro';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MetasAhorroService {
 
-  private baseUrl = 'http://localhost:8080/api/metasAhorro';
+  private baseUrl = `${API_BASE_URL}/api/metasAhorro`;
 
   constructor(private http: HttpClient) { }
 

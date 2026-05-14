@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+html,
+body {
+  min-height: 100%;
+  height: auto !important;
+  overflow-x: hidden;
+  overflow-y: auto !important;
+}
+
+body {
+  position: static !important;
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
+}
+
+.vh-100,
+.main-vh-100,
+.main-content,
+.main-content-full,
+.sidebar {
+  min-height: 100vh !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+.main-vh-100,
+.main-content,
+.main-content-full {
+  overflow-y: visible !important;
+}
+
+.row.h-100,
+.row.min-vh-100 {
+  min-height: 100vh !important;
+  height: auto !important;
+}

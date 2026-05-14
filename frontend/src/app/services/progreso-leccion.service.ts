@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProgresoLeccionUsuario } from '../models/progreso-leccion';
 import { ModuloProgresoResumen } from '../models/progreso-resumen';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProgresoLeccionService {
-  private baseUrl = 'http://localhost:8080/api/progreso';
+  private baseUrl = `${API_BASE_URL}/api/progreso`;
 
   constructor(private http: HttpClient) {}
 

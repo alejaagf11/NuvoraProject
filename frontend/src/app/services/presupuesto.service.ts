@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/api.config';
 import { PresupuestoRequest, PresupuestoResponse } from '../models/presupuesto';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { PresupuestoRequest, PresupuestoResponse } from '../models/presupuesto';
 })
 export class PresupuestoService {
 
-  private baseUrl = 'http://localhost:8080/api/presupuesto';
+  private baseUrl = `${API_BASE_URL}/api/presupuesto`;
 
   constructor(private http: HttpClient) { }
 

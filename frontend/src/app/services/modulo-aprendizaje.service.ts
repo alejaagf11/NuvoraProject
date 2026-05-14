@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ModuloAprendizaje } from '../models/aprendizaje';
 import { ModuloProgresoResumen } from '../models/progreso-resumen';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ModuloAprendizajeService {
-  private baseUrl = 'http://localhost:8080/api/modulos';
+  private baseUrl = `${API_BASE_URL}/api/modulos`;
 
   constructor(private http: HttpClient) { }
 
