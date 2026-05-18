@@ -16,6 +16,7 @@ public class UsuarioDTO {
     private String correoUsuario;
     private String contrasenaUsuario; // solo usar en create/update
     private Double montoMensual;
+    private String fotoPerfil;
 
     // Convierte DTO a entidad
     public Usuario toEntity() {
@@ -28,6 +29,7 @@ public class UsuarioDTO {
             usuario.setContrasenaUsuario(this.contrasenaUsuario);
         }
         usuario.setMontoMensual(this.montoMensual != null ? this.montoMensual : 0);
+        usuario.setFotoPerfil(this.fotoPerfil);
         return usuario;
     }
 
@@ -40,6 +42,7 @@ public class UsuarioDTO {
         dto.setCorreoUsuario(usuario.getCorreoUsuario());
         // NO enviar contraseña al front
         dto.setMontoMensual(usuario.getMontoMensual());
+        dto.setFotoPerfil((usuario.getFotoPerfil()));
         return dto;
     }
 

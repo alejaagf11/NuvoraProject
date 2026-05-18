@@ -87,6 +87,11 @@ public class UsuarioServiceImp implements UsuarioService {
             usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
         }
 
+        if (datosNuevos.getFotoPerfil() != null && !datosNuevos.getFotoPerfil().isEmpty()) {
+            usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
+        }
+
+
         if (datosNuevos.getContrasenaUsuario() != null && !datosNuevos.getContrasenaUsuario().isEmpty()) {
             usuarioBD.setContrasenaUsuario(passwordEncoder.encode(datosNuevos.getContrasenaUsuario()));
         }
@@ -136,6 +141,10 @@ public class UsuarioServiceImp implements UsuarioService {
 
         if (datosNuevos.getMontoMensual() != null) {
             usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
+        }
+
+        if (datosNuevos.getFotoPerfil() != null && !datosNuevos.getFotoPerfil().isEmpty()) {
+            usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
         }
 
         if (datosNuevos.getContrasenaUsuario() != null && !datosNuevos.getContrasenaUsuario().isEmpty()) {

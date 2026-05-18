@@ -24,7 +24,7 @@ public class ModuloAprendizaje {
     @Column(name = "descripcion_modulo", nullable = false)
     private String descripcionModulo;
 
-    @Column(name = "orden_modulo", nullable = false)
+    @Column(name = "orden_modulo", nullable = false, unique = true)
     private Integer ordenModulo;
 
     @Column(name = "activo", nullable = false)

@@ -30,7 +30,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         .requestMatchers("/api/usuario/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/usuario/list").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/modulos/register").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/modulos/update/**").hasRole("ADMIN")

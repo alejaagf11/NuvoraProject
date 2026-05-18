@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ModuloAprendizajeRepository extends JpaRepository<ModuloAprendizaje, Long> {
     List<ModuloAprendizaje> findByActivoTrueOrderByOrdenModuloAsc();
+    boolean existsByOrdenModulo(Integer ordenModulo);
+    List<ModuloAprendizaje> findAllByOrderByOrdenModuloAsc();
 }

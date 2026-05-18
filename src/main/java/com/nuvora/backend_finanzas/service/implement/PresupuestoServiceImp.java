@@ -1,11 +1,15 @@
 package com.nuvora.backend_finanzas.service.implement;
 
-import com.nuvora.backend_finanzas.dto.BudgetDTO;
-import com.nuvora.backend_finanzas.dto.GastoFijoDTO;
+import com.nuvora.backend_finanzas.dto.*;
 import com.nuvora.backend_finanzas.entity.Usuario;
+import com.nuvora.backend_finanzas.service.FinancialSnapshotService;
+import com.nuvora.backend_finanzas.service.FirestoreChatMemoryService;
+import com.nuvora.backend_finanzas.service.GeminiBudgetService;
 import com.nuvora.backend_finanzas.service.PresupuestoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +19,15 @@ import java.util.Map;
 public class PresupuestoServiceImp implements PresupuestoService {
 
     private final Map<Long, BudgetDTO.Request> sesiones = new HashMap<>();
+
+    @Autowired
+    private GeminiBudgetService geminiBudgetService;
+
+    @Autowired
+    private FinancialSnapshotService financialSnapshotService;
+
+    @Autowired
+    private FirestoreChatMemoryService firestoreChatMemoryService;
 
     @Override
     public BudgetDTO.Response generarPresupuesto(BudgetDTO.Request request, Usuario usuario) {
@@ -26,13 +39,7 @@ public class PresupuestoServiceImp implements PresupuestoService {
             throw new RuntimeException("Ingreso invalido");
         }
 
-        if (request.getGastosFijos() == null) {
-            request.setGastosFijos(new ArrayList<>());
-        }
-
-        if (request.getGastosVariables() == null) {
-            request.setGastosVariables(new ArrayList<>());
-        }
+        inicializarListas(request);
 
         double ingreso = request.getIngreso();
         double deudas = request.getDeudas() != null ? request.getDeudas() : 0.0;
@@ -51,14 +58,14 @@ public class PresupuestoServiceImp implements PresupuestoService {
         double totalGastos = deudas + esenciales + variables;
         if (totalGastos > ingreso) {
             throw new RuntimeException(
-                    "Tus gastos y deudas superan tus ingresos. Debes reducir gastos antes de generar un presupuesto 😰."
+                    "Tus gastos y deudas superan tus ingresos. Debes reducir gastos antes de generar un presupuesto."
             );
         }
 
         double totalComprometido = totalGastos + ahorro + imprevistos;
         if (totalComprometido > ingreso) {
             throw new RuntimeException(
-                    "Con ahorro e imprevistos incluidos, el presupuesto supera tus ingresos. Ajusta los valores para continuar 😰."
+                    "Con ahorro e imprevistos incluidos, el presupuesto supera tus ingresos. Ajusta los valores para continuar."
             );
         }
 
@@ -68,7 +75,7 @@ public class PresupuestoServiceImp implements PresupuestoService {
 
             if (totalComprometido > ingreso) {
                 throw new RuntimeException(
-                        "Con estilo estricto, ahorro e imprevistos, el presupuesto supera tus ingresos 😰."
+                        "Con estilo estricto, ahorro e imprevistos, el presupuesto supera tus ingresos."
                 );
             }
         }
@@ -101,17 +108,113 @@ public class PresupuestoServiceImp implements PresupuestoService {
     }
 
 
+    @Override
+    public BudgetGenerateAiResponseDTO generarPresupuestoIA(BudgetDTO.Request request, Usuario usuario) {
+        BudgetDTO.Response presupuestoBase = generarPresupuesto(request, usuario);
+
+        try {
+            FinancialSnapshotDTO snapshot = financialSnapshotService.buildSnapshot(usuario);
+            BudgetProfileMemoryDTO profile = firestoreChatMemoryService.getProfile(usuario.getUsuarioId());
+            BudgetSummaryMemoryDTO summary = firestoreChatMemoryService.getSummary(usuario.getUsuarioId());
+
+            String prompt = "Genera una explicacion y recomendaciones para este presupuesto personal. "
+                    + "Esenciales: " + presupuestoBase.getEsenciales()
+                    + ", Variables: " + presupuestoBase.getVariables()
+                    + ", Deudas: " + presupuestoBase.getDeudas()
+                    + ", Ahorro: " + presupuestoBase.getAhorro()
+                    + ", Imprevistos: " + presupuestoBase.getImprevistos()
+                    + ", Estilo de vida: " + presupuestoBase.getEstiloVida()
+                    + ", Disponible semanal: " + presupuestoBase.getDisponibleSemanal()
+                    + ", Disponible por quincena: " + presupuestoBase.getDisponibleQuincena()
+                    + ". Contexto financiero del usuario: " + snapshot.getResumenGeneral()
+                    + ". Responde en espanol con un resumen claro, recomendaciones practicas y alertas si aplican.";
+
+            String respuesta = geminiBudgetService.generarRespuestaPresupuesto(prompt, snapshot, profile, summary);
+
+            BudgetGenerateAiResponseDTO dto = new BudgetGenerateAiResponseDTO();
+            dto.setBudget(presupuestoBase);
+            dto.setResumen(respuesta);
+            dto.setRecomendaciones(new ArrayList<>());
+            dto.setAlertas(new ArrayList<>());
+            dto.setSource("gemini");
+
+            return dto;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            BudgetGenerateAiResponseDTO dto = new BudgetGenerateAiResponseDTO();
+            dto.setBudget(presupuestoBase);
+            dto.setResumen("Presupuesto generado correctamente con la logica base del sistema.");
+            dto.setRecomendaciones(new ArrayList<>());
+            dto.setAlertas(new ArrayList<>());
+            dto.setSource("fallback");
+
+            return dto;
+        }
+    }
+
 
     @Override
-    public String chatIA(String msj, Usuario usuario) {
+    public BudgetChatResponseDTO chatIA(String msj, Usuario usuario) {
         if (usuario == null || usuario.getUsuarioId() == null) {
             throw new RuntimeException("Usuario no autenticado");
         }
 
         if (msj == null || msj.trim().isEmpty()) {
-            return "Escribe un mensaje valido. Ejemplo: gano 2 millones 500 mil";
+            return new BudgetChatResponseDTO(
+                    "Escribe una pregunta o solicitud relacionada con presupuesto o finanzas personales.",
+                    "fallback"
+            );
         }
 
+        try {
+            FinancialSnapshotDTO snapshot = financialSnapshotService.buildSnapshot(usuario);
+            BudgetProfileMemoryDTO profile = firestoreChatMemoryService.getProfile(usuario.getUsuarioId());
+            BudgetSummaryMemoryDTO summary = firestoreChatMemoryService.getSummary(usuario.getUsuarioId());
+
+            String sessionId = "presupuesto-main";
+
+            firestoreChatMemoryService.createSessionIfNotExists(
+                    usuario.getUsuarioId(),
+                    sessionId,
+                    "Sesion principal de presupuesto"
+            );
+
+            firestoreChatMemoryService.saveMessage(
+                    usuario.getUsuarioId(),
+                    sessionId,
+                    new ChatMessageMemoryDTO("user", msj, LocalDateTime.now().toString())
+            );
+
+            String respuesta = geminiBudgetService.generarRespuestaPresupuesto(msj, snapshot, profile, summary);
+
+            if (respuesta == null || respuesta.isBlank()) {
+                return new BudgetChatResponseDTO(chatIAReglas(msj, usuario), "fallback");
+            }
+
+            firestoreChatMemoryService.saveMessage(
+                    usuario.getUsuarioId(),
+                    sessionId,
+                    new ChatMessageMemoryDTO("model", respuesta, LocalDateTime.now().toString())
+            );
+
+            BudgetProfileMemoryDTO nuevoProfile = construirProfileDesdeUsuario(usuario, snapshot);
+            BudgetSummaryMemoryDTO nuevoSummary = construirSummaryDesdeRespuesta(respuesta);
+
+            firestoreChatMemoryService.saveProfile(usuario.getUsuarioId(), nuevoProfile);
+            firestoreChatMemoryService.saveSummary(usuario.getUsuarioId(), nuevoSummary);
+
+            return new BudgetChatResponseDTO(respuesta, "gemini");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BudgetChatResponseDTO(chatIAReglas(msj, usuario), "fallback");
+        }
+    }
+
+
+    private String chatIAReglas(String msj, Usuario usuario) {
         String mensaje = normalizarTexto(msj);
         Long userId = usuario.getUsuarioId();
 
@@ -120,7 +223,7 @@ public class PresupuestoServiceImp implements PresupuestoService {
         sesiones.put(userId, req);
 
         if (mensaje.matches(".*\\b(hola|buenas|hey|holi)\\b.*")) {
-            return "Hola soy nuvy👋, tu asistente financiera de confianza 💰.";
+            return "Hola, soy Nuvy, tu asistente financiera. Puedo ayudarte con presupuestos, ahorro y organización de gastos.";
         }
 
         if (mensaje.startsWith("gano") || mensaje.startsWith("ingreso")) {
@@ -128,8 +231,8 @@ public class PresupuestoServiceImp implements PresupuestoService {
             if (ingreso > 0) {
                 req.setIngreso(ingreso);
                 sesiones.put(userId, req);
-                return "Perfecto, guarde tu ingreso ✍️✍: $" + (long) ingreso
-                        + "\nAhora si tienes deudas ingresalas sino ingresa deuda 0 ❌.";
+                return "Perfecto, guardé tu ingreso: $" + (long) ingreso
+                        + "\nAhora, si tienes deudas, escríbelas. Si no, escribe deuda 0.";
             }
             return "No pude entender tu ingreso. Ejemplo: gano 2 millones 500 mil";
         }
@@ -148,50 +251,42 @@ public class PresupuestoServiceImp implements PresupuestoService {
             }
 
             return "Deudas guardadas: $" + (long) deudas
-                    + "\n 💸 Ahora dime cuanto dinero deseas ahorrar, o escribe ahorro 0.";
+                    + "\nAhora dime cuánto dinero deseas ahorrar, o escribe ahorro 0.";
         }
 
-            if (mensaje.startsWith("ahorro")) {
-                double ahorro = parseNumero(mensaje);
-                if (ahorro < 0) {
-                    return "No pude entender el ahorro. Ejemplo: ahorro 300000";
-                }
-                req.setAhorroDeseado(ahorro);
-                sesiones.put(userId, req);
-                return "Ahorro deseado guardado: $" + (long) ahorro
-                        + "\n ahora escoje el estilo de vida que mas te identifique (estricto o flexible) 🫠";
-
-
+        if (mensaje.startsWith("ahorro")) {
+            double ahorro = parseNumero(mensaje);
+            if (ahorro < 0) {
+                return "No pude entender el ahorro. Ejemplo: ahorro 300000";
             }
-
+            req.setAhorroDeseado(ahorro);
+            sesiones.put(userId, req);
+            return "Ahorro deseado guardado: $" + (long) ahorro
+                    + "\nAhora escoge el estilo de vida que más te identifique: estricto o flexible.";
+        }
 
         if (mensaje.contains("estricto")) {
             req.setEstiloVida("estricto");
             sesiones.put(userId, req);
-            return "Listo, usare un estilo de vida estricto ✔️."
-            +"\n ¿el tipo de ingreso es semanal o quincenal? 🤔";
+            return "Listo, usaré un estilo de vida estricto.\n¿Tu tipo de ingreso es semanal o quincenal?";
         }
 
         if (mensaje.contains("flexible")) {
             req.setEstiloVida("flexible");
             sesiones.put(userId, req);
-            return "Listo, usare un estilo de vida flexible ✔️."
-                    +"\n ¿el tipo de ingreso es semanal o quincenal? 🤔";
+            return "Listo, usaré un estilo de vida flexible.\n¿Tu tipo de ingreso es semanal o quincenal?";
         }
 
         if (mensaje.contains("quincenal")) {
             req.setTipoIngreso("quincenal");
             sesiones.put(userId, req);
-            return "Perfecto, registrare tu ingreso como quincenal 🤐."+
-                    "\n ahora puedes ingresar tus gastos 😥";
-
+            return "Perfecto, registré tu ingreso como quincenal.\nAhora puedes ingresar tus gastos.";
         }
 
         if (mensaje.contains("semanal")) {
             req.setTipoIngreso("semanal");
             sesiones.put(userId, req);
-            return "Perfecto, registrare tu ingreso como semanal 🤐."+
-                    "\n ahora puedes ingresar tus gastos 😥";
+            return "Perfecto, registré tu ingreso como semanal.\nAhora puedes ingresar tus gastos.";
         }
 
         if (mensaje.startsWith("gasto")) {
@@ -201,12 +296,12 @@ public class PresupuestoServiceImp implements PresupuestoService {
             if (req.getIngreso() != null && req.getIngreso() > 0) {
                 try {
                     BudgetDTO.Response res = generarPresupuesto(req, usuario);
-                    return "Tu presupuesto esta listo:\n\n"
+                    return "Tu presupuesto está listo:\n\n"
                             + "Esenciales: $" + (long) res.getEsenciales() + "\n"
                             + "Variables: $" + (long) res.getVariables() + "\n"
                             + "Deudas: $" + (long) res.getDeudas() + "\n"
                             + "Ahorro: $" + (long) res.getAhorro() + "\n"
-                            + "Dinero para Ocio: $" + (long) res.getEstiloVida() + "\n"
+                            + "Dinero para ocio: $" + (long) res.getEstiloVida() + "\n"
                             + "Imprevistos: $" + (long) res.getImprevistos() + "\n"
                             + "Disponible por semana: $" + (long) res.getDisponibleSemanal() + "\n"
                             + "Disponible por quincena: " + res.getDisponibleQuincena();
@@ -215,12 +310,12 @@ public class PresupuestoServiceImp implements PresupuestoService {
                 }
             }
 
-            return "Gastos guardados. Ahora dime tu ingreso para calcular el presupuesto. ✉️";
+            return "Gastos guardados. Ahora dime tu ingreso para calcular el presupuesto.";
         }
 
         if (mensaje.contains("presupuesto") || mensaje.contains("calcular")) {
             if (req.getIngreso() == null || req.getIngreso() <= 0) {
-                return "Aun no tengo tu ingreso. Ejemplo: gano 2 millones 500 mil";
+                return "Aún no tengo tu ingreso. Ejemplo: gano 2 millones 500 mil";
             }
 
             try {
@@ -230,7 +325,7 @@ public class PresupuestoServiceImp implements PresupuestoService {
                         + "Variables: $" + (long) res.getVariables() + "\n"
                         + "Deudas: $" + (long) res.getDeudas() + "\n"
                         + "Ahorro: $" + (long) res.getAhorro() + "\n"
-                        + "Dinero para Ocio: $" + (long) res.getEstiloVida() + "\n"
+                        + "Dinero para ocio: $" + (long) res.getEstiloVida() + "\n"
                         + "Imprevistos: $" + (long) res.getImprevistos() + "\n"
                         + "Disponible por semana: $" + (long) res.getDisponibleSemanal() + "\n"
                         + "Disponible por quincena: " + res.getDisponibleQuincena();
@@ -239,15 +334,14 @@ public class PresupuestoServiceImp implements PresupuestoService {
             }
         }
 
-
-        return "No entendi el mensaje.\n"
+        return "Puedo ayudarte con presupuesto, ahorro, gastos e ingresos.\n"
                 + "Prueba con ejemplos como:\n"
                 + "- gano 2 millones 500 mil\n"
                 + "- deuda 400000\n"
                 + "- ahorro 300000\n"
                 + "- estilo estricto\n"
                 + "- tipo quincenal\n"
-                + "- gasto arriendo 800000 dia 5 mercado 250000 dia 15 transporte 120000 dia 20";
+                + "- gasto arriendo 800000 dia 5, mercado 250000 dia 15, transporte 120000 dia 20";
     }
 
     private void registrarGastosDesdeTexto(String mensaje, BudgetDTO.Request req) {
@@ -306,50 +400,6 @@ public class PresupuestoServiceImp implements PresupuestoService {
         }
     }
 
-
-    private boolean esInicioDeNuevoGasto(String[] palabras, int index) {
-        if ("dia".equals(palabras[index])) {
-            return true;
-        }
-
-        if (index + 1 >= palabras.length) {
-            return false;
-        }
-
-        return esNombreDeGasto(palabras[index]) && contieneNumero(palabras[index + 1]);
-    }
-
-    private boolean esNombreDeGasto(String palabra) {
-        return palabra.matches("[a-zA-Záéíóúñ]+");
-    }
-
-    private boolean contieneNumero(String texto) {
-        return texto.matches(".*\\d.*")
-                || texto.equals("mil")
-                || texto.equals("millon")
-                || texto.equals("millones")
-                || texto.equals("uno")
-                || texto.equals("dos")
-                || texto.equals("tres")
-                || texto.equals("cuatro")
-                || texto.equals("cinco")
-                || texto.equals("seis")
-                || texto.equals("siete")
-                || texto.equals("ocho")
-                || texto.equals("nueve")
-                || texto.equals("diez")
-                || texto.equals("cien")
-                || texto.equals("ciento")
-                || texto.equals("doscientos")
-                || texto.equals("trescientos")
-                || texto.equals("cuatrocientos")
-                || texto.equals("quinientos")
-                || texto.equals("seiscientos")
-                || texto.equals("setecientos")
-                || texto.equals("ochocientos")
-                || texto.equals("novecientos");
-    }
-
     private boolean esGastoFijo(String nombre) {
         String gasto = nombre.toLowerCase();
         return gasto.equals("arriendo")
@@ -397,8 +447,8 @@ public class PresupuestoServiceImp implements PresupuestoService {
         gastosQ2 += (deudas / 2.0) + (ahorro / 2.0) + (imprevistos / 2.0);
 
         Map<String, Double> quincenas = new HashMap<>();
-        quincenas.put("Quincena 1 ", redondear(Math.max(quincena1 - gastosQ1, 0)));
-        quincenas.put("Quincena 2 ", redondear(Math.max(quincena2 - gastosQ2, 0)));
+        quincenas.put("Quincena 1", redondear(Math.max(quincena1 - gastosQ1, 0)));
+        quincenas.put("Quincena 2", redondear(Math.max(quincena2 - gastosQ2, 0)));
         return quincenas;
     }
 
@@ -507,4 +557,25 @@ public class PresupuestoServiceImp implements PresupuestoService {
     private double redondear(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }
+
+    private BudgetProfileMemoryDTO construirProfileDesdeUsuario(Usuario usuario, FinancialSnapshotDTO snapshot) {
+        BudgetProfileMemoryDTO profile = new BudgetProfileMemoryDTO();
+        profile.setPreferredStyle("no definido");
+        profile.setIncomeType("no definido");
+        profile.setSavingPriority(snapshot.getTotalAhorradoMetas() > 0 ? "media" : "baja");
+        profile.setDebtLevel(snapshot.getSaldoEstimado() < 0 ? "alta" : "media");
+        profile.setMainExpenseCategories(new ArrayList<>(snapshot.getGastosPorCategoria().keySet()));
+        profile.setLastUpdated(LocalDateTime.now().toString());
+        return profile;
+    }
+
+    private BudgetSummaryMemoryDTO construirSummaryDesdeRespuesta(String respuesta) {
+        BudgetSummaryMemoryDTO summary = new BudgetSummaryMemoryDTO();
+        summary.setSummary(respuesta);
+        summary.setLastBudgetRecommendation(respuesta);
+        summary.setUpdatedAt(LocalDateTime.now().toString());
+        return summary;
+    }
+
+
 }

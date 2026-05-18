@@ -78,6 +78,20 @@
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
        </dependency>
+		<!-- Dependencia de Firebase  -->
+		<dependency>
+			<groupId>com.google.firebase</groupId>
+			<artifactId>firebase-admin</artifactId>
+			<version>9.3.0</version>
+		</dependency>
+
+		<!-- Dependecia de Gemini-->
+		<dependency>
+			<groupId>com.google.genai</groupId>
+			<artifactId>google-genai</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

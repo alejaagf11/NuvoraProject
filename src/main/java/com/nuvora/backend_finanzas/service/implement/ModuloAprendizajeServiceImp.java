@@ -30,6 +30,19 @@ public class ModuloAprendizajeServiceImp implements ModuloAprendizajeService {
     public ModuloAprendizajeDTO createModulo(ModuloAprendizajeDTO moduloDTO){
 
         ModuloAprendizaje modulo = moduloDTO.toEntity();
+
+        if (modulo.getOrdenModulo() == null || modulo.getOrdenModulo() < 1){
+            int ultimoOrden = moduloAprendizajeRepository.findAllByOrderByOrdenModuloAsc()
+                    .stream()
+                    .map(ModuloAprendizaje::getOrdenModulo)
+                    .max(Integer::compareTo)
+                    .orElse(0);
+            modulo.setOrdenModulo(ultimoOrden + 1);
+
+        } else if (moduloAprendizajeRepository.existsByOrdenModulo(modulo.getOrdenModulo())) {
+           throw new RuntimeException("Ya existe un modulo con ese orden");
+        }
+
         ModuloAprendizaje saved = moduloAprendizajeRepository.save(modulo);
         return ModuloAprendizajeDTO.fromEntity(saved);
     }
@@ -94,8 +107,25 @@ public class ModuloAprendizajeServiceImp implements ModuloAprendizajeService {
             modulo.setDescripcionModulo(moduloDTO.getDescripcionModulo());
         }
 
+
         if (moduloDTO.getOrdenModulo() != null){
-            modulo.setOrdenModulo(moduloDTO.getOrdenModulo());
+            Integer nuevoOrden = moduloDTO.getOrdenModulo();
+
+            if (nuevoOrden < 1){
+                throw new RuntimeException("El orden del modulo debe ser mayor que que 0");
+            }
+
+            boolean ordenOcupado = moduloAprendizajeRepository.findByActivoTrueOrderByOrdenModuloAsc()
+                    .stream()
+                    .anyMatch(m -> !m.getModuloId().equals(modulo.getModuloId())
+                    && m.getOrdenModulo().equals(nuevoOrden)
+                    );
+            if (ordenOcupado){
+                throw new RuntimeException("Ya existe otro modulo con ese orden");
+            }
+
+            modulo.setOrdenModulo(nuevoOrden);
+
         }
 
         if (moduloDTO.getActivo() != null){

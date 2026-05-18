@@ -1,9 +1,12 @@
 package com.nuvora.backend_finanzas.controller;
 
+import com.nuvora.backend_finanzas.dto.BudgetChatRequestDTO;
 import com.nuvora.backend_finanzas.dto.BudgetDTO;
+import com.nuvora.backend_finanzas.dto.BudgetGenerateAiResponseDTO;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.PresupuestoService;
 import com.nuvora.backend_finanzas.service.UsuarioService;
+import com.nuvora.backend_finanzas.dto.BudgetChatResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,10 +38,17 @@ public class PresupuestoController {
         return presupuestoService.generarPresupuesto(request, usuario);
     }
 
-    @PostMapping("/chat")
-    public String chat(@RequestBody String msj, HttpServletRequest req){
+    @PostMapping("/generate-ai")
+    public BudgetGenerateAiResponseDTO generateAiResponseDTO(@RequestBody BudgetDTO.Request request, HttpServletRequest req){
         Usuario usuario = getUsuarioAutenticado(req);
-        return presupuestoService.chatIA(msj, usuario);
+
+        return presupuestoService.generarPresupuestoIA(request, usuario);
+    }
+
+    @PostMapping("/chat")
+    public BudgetChatResponseDTO chat(@RequestBody BudgetChatRequestDTO request, HttpServletRequest req){
+        Usuario usuario = getUsuarioAutenticado(req);
+        return presupuestoService.chatIA(request.getMessage(), usuario);
     }
 
 }

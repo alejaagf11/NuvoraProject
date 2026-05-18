@@ -1,10 +1,8 @@
 package com.nuvora.backend_finanzas.repository;
 
 import com.nuvora.backend_finanzas.entity.Leccion;
-import com.nuvora.backend_finanzas.entity.ModuloAprendizaje;
 import com.nuvora.backend_finanzas.entity.ProgresoLeccionUsuario;
 import com.nuvora.backend_finanzas.entity.Usuario;
-import org.apache.catalina.LifecycleState;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

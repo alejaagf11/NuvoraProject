@@ -1,6 +1,5 @@
 package com.nuvora.backend_finanzas.controller;
 
-import aj.org.objectweb.asm.commons.TryCatchBlockSorter;
 import com.nuvora.backend_finanzas.dto.UsuarioDTO;
 import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.UsuarioService;
@@ -93,7 +92,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/admin/delete/{usuarioId}")
-    public ResponseEntity<Void> deleteUsuarioById(Long usuarioId) {
+    public ResponseEntity<Void> deleteUsuarioById(@PathVariable Long usuarioId) {
         try{
             usuarioService.deleteUsuarioById(usuarioId);
             return ResponseEntity.noContent().build();
