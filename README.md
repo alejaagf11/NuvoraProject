@@ -54,14 +54,14 @@ Antes de ejecutar el proyecto es necesario instalar las siguientes herramientas:
 - Maven
 - MySQL Server
 
-Clonar el proyecto:
+### Clonar el proyecto:
 Al realizar la instalacion de intellij es necesario darle click al boton de "Clone Repository" para pasar el proyecto de manera correcta
 <img width="1179" height="144" alt="Captura de pantalla 2026-05-19 192624" src="https://github.com/user-attachments/assets/556bb37a-2f7e-4071-9eaa-e422d1b2f25e" />
 
 Seguido a esto se ingresa la url de git hub
 <img width="1187" height="262" alt="Captura de pantalla 2026-05-19 192706" src="https://github.com/user-attachments/assets/ce5b0466-0bb5-408d-b8ae-3db753bcc27a" />
 
-Configurar el archivo:
+### Configurar el archivo:
 
 src/main/resources/application.properties
 
@@ -73,15 +73,15 @@ spring.datasource.username=root
 spring.datasource.password=1234
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-Instalar dependencias:
+### Instalar dependencias:
 
 mvn clean install
 
-Ejecutar el backend:
+### Ejecutar el backend:
 Para ejecutar el backend, basta con presionar el botón de reproducción (triángulo verde) ubicado junto al nombre "backendFinanzasApplication”
 <img width="314" height="31" alt="Captura de pantalla 2026-05-19 193057" src="https://github.com/user-attachments/assets/f7ba1c06-d392-4112-92aa-df112af22ffc" />
 
-Servidor backend:
+### Servidor backend:
 
 http://localhost:8080
 
@@ -95,7 +95,7 @@ http://localhost:8080
 ## Instalación de Angular CLI:
 npm install -g @angular/cli
 
-Verificación:
+### Verificación:
 Para corroborar la instalacion es necesario colocar los siguientes comandos en la terminal de visual studio code
 node -v
 npm -v
@@ -103,20 +103,20 @@ ng version
 
 <img width="1463" height="907" alt="Captura de pantalla 2026-05-19 204624" src="https://github.com/user-attachments/assets/8a73fa2c-ecec-4269-b16c-1d73ad7bb8ef" />
 
-Clonar el Proyecto
+### Clonar el Proyecto
 git clone https://github.com/alejaagf11/NuvoraProject.git
 
 Ingresar a la carpeta del proyecto para visualizarlo:
 cd frontend
 <img width="1920" height="1008" alt="Captura de pantalla 2026-05-19 164051" src="https://github.com/user-attachments/assets/f4506c5c-73bb-4207-acb1-b35142886060" />
 
-Ejecutar Frontend:
+### Ejecutar Frontend:
 Luego de ingresar a la carpeta, corres el Frontend con el siguiente comando
 ng serve
 <img width="1477" height="477" alt="image" src="https://github.com/user-attachments/assets/b4d6ec84-49c8-418a-84e0-4432a370ccb8" />
 
 
-Configuración de la Base de Datos
+### Configuración de la Base de Datos
 Abrir MySQL Workbench.
 Crear la base de datos:
 CREATE DATABASE nuvora;
@@ -133,7 +133,7 @@ Importar el script SQL correspondiente.
 - Ionic CLI
 - Android Studio
 
-Comandos principales:
+### Comandos principales:
 npm install -g @ionic/cli
 
 Luego, dentro del frontend Angular:
@@ -153,7 +153,7 @@ app id: ingresas "com.nuvora.app"
 Después agregas Android:
 npx cap add android
 
-## Cada vez que quieras probar en Android
+### Cada vez que quieras probar en Android
 Primero construyes Angular:
 ng build
 
