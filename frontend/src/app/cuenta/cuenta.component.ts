@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Usuario } from '../models/usuarios';
 import { MetasAhorroService } from '../services/metas-ahorro.service';
+import { ProfilePhotoService } from '../services/profile-photo.service';
 import { TransaccionService } from '../services/transaccion.service';
 import { UsuarioService } from '../services/usuario.service';
 
@@ -22,6 +23,7 @@ export class CuentaComponent implements OnInit {
   errorMensaje: string | null = null;
   mensajeExito: string | null = null;
   isEditMode = false;
+  fotoPerfil: string | null = null;
 
   saldoActual = 0;
   totalMetas = 0;
@@ -31,10 +33,12 @@ export class CuentaComponent implements OnInit {
     private usuarioService: UsuarioService,
     private transaccionService: TransaccionService,
     private metasAhorroService: MetasAhorroService,
+    private profilePhotoService: ProfilePhotoService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.fotoPerfil = this.profilePhotoService.getPhoto();
     this.cargarUsuario();
     this.cargarSaldo();
     this.cargarResumen();
@@ -97,6 +101,41 @@ export class CuentaComponent implements OnInit {
         this.errorMensaje = err.error?.message || 'No se pudo actualizar la cuenta';
       }
     });
+  }
+
+  seleccionarFoto(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+
+    if (!archivo) {
+      return;
+    }
+
+    if (!archivo.type.startsWith('image/')) {
+      this.errorMensaje = 'Selecciona una imagen valida';
+      return;
+    }
+
+    if (archivo.size > 1_500_000) {
+      this.errorMensaje = 'La imagen debe pesar menos de 1.5 MB';
+      return;
+    }
+
+    const lector = new FileReader();
+    lector.onload = () => {
+      this.fotoPerfil = lector.result as string;
+      this.profilePhotoService.savePhoto(this.fotoPerfil);
+      this.mensajeExito = 'Foto de perfil actualizada';
+      this.errorMensaje = null;
+    };
+    lector.readAsDataURL(archivo);
+  }
+
+  quitarFoto() {
+    this.fotoPerfil = null;
+    this.profilePhotoService.removePhoto();
+    this.mensajeExito = 'Foto de perfil eliminada';
+    this.errorMensaje = null;
   }
 
   eliminarCuenta() {

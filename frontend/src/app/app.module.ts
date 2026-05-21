@@ -25,7 +25,7 @@ import { AdminLeccionesComponent } from './admin-lecciones/admin-lecciones.compo
 import { IonicModule } from '@ionic/angular';
 import { UsuarioLoginMobileComponent } from './usuario-login-mobile/usuario-login-mobile.component';
 import { UsuariosFormMobileComponent } from './usuarios-form-mobile/usuarios-form-mobile.component';
-
+import { ProfileIconComponent } from './shared/profile-icon/profile-icon.component';
 
 
 
@@ -50,7 +50,8 @@ import { UsuariosFormMobileComponent } from './usuarios-form-mobile/usuarios-for
     AdminModulosComponent,
     AdminLeccionesComponent,
     UsuarioLoginMobileComponent,
-    UsuariosFormMobileComponent
+    UsuariosFormMobileComponent,
+    ProfileIconComponent
   ],
   imports: [
     BrowserModule,

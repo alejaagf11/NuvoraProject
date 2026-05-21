@@ -5,10 +5,12 @@ body {
   height: auto !important;
   overflow-x: hidden;
   overflow-y: auto !important;
+  scroll-behavior: smooth;
 }
 
 body {
   position: static !important;
+  overscroll-behavior-y: auto;
 }
 
 app-root {
@@ -30,6 +32,14 @@ app-root {
 .main-content,
 .main-content-full {
   overflow-y: visible !important;
+}
+
+.container-fluid,
+.row,
+.col-md-9,
+.col-lg-8,
+.col-lg-4 {
+  max-height: none !important;
 }
 
 .row.h-100,

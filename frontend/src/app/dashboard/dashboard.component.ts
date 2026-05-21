@@ -4,6 +4,7 @@ import { Transaccion } from '../models/transaccion';
 import { Usuario } from '../models/usuarios';
 import { TransaccionService } from '../services/transaccion.service';
 import { UsuarioService } from '../services/usuario.service';
+import { ProfilePhotoService } from '../services/profile-photo.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ export class DashboardComponent implements OnInit {
   transacciones: Transaccion[] = [];
   saldoActual = 0;
   errorMensaje: string | null = null;
+  fotoPerfil: string | null = null;
 
   usuario: Usuario = {
     nombreUsuario: '',
@@ -29,10 +31,12 @@ nombreUsuario: any;
   constructor(
     private transaccionService: TransaccionService,
     private usuarioService: UsuarioService,
+    private profilePhotoService: ProfilePhotoService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.fotoPerfil = this.profilePhotoService.getPhoto();
     this.cargarUsuario();
     this.cargarSaldo();
     this.cargarTransacciones();

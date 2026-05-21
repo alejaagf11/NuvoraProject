@@ -94,24 +94,7 @@
   padding: 12px 18px;
 }
 
-.btn-soft:hover {
-  background: rgba(255,255,255,0.2);
-  color: white;
-}
 
-.btn-logout {
-  background: rgba(255,255,255,0.12);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 14px;
-  font-weight: 700;
-  padding: 12px 18px;
-}
-
-.btn-logout:hover {
-  background: rgba(255,255,255,0.2);
-  color: white;
-}
 
 .chat-box {
   background: rgba(255,255,255,0.08);
@@ -156,8 +139,43 @@
   letter-spacing: 0.08em;
 }
 
-.example-list .btn {
-  white-space: normal;
+
+.chat-message-row {
+  display: flex;
+}
+
+.chat-message-user {
+  justify-content: flex-end;
+}
+
+.chat-message-bot {
+  justify-content: flex-start;
+}
+
+.chat-input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.chat-input-row .btn-custom {
+  min-width: 120px;
+}
+
+.examples-card {
+  position: sticky;
+  top: 24px;
+}
+
+@media (max-width: 992px) {
+  .chat-input-row {
+    grid-template-columns: 1fr;
+  }
+
+  .examples-card {
+    position: static;
+  }
 }
 
 html,

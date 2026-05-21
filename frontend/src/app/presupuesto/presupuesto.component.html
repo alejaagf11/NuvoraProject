@@ -4,7 +4,6 @@
     <div class="col-md-3 p-4 sidebar d-flex flex-column">
       <div>
         <h3 class="mb-4 fw-bold">Menu</h3>
-
         <ul class="list-unstyled menu-links">
           <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
           <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
@@ -12,24 +11,24 @@
           <li class="mb-3" routerLink="/categorias">Categorías</li>
           <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
           <li class="mb-3" routerLink="/aprendizaje">Aprendizaje</li>
-           <li class="mb-3" routerLink="/cuenta">Mi cuenta</li>
         </ul>
       </div>
 
-      <div class="mt-auto pt-4">
-        <button class="btn btn-logout w-100" (click)="logout()">
-          Cerrar sesión
-        </button>
-      </div>
+     
     </div>
 
     <div class="col-md-9 p-5 main-content">
-      <div class="section-header mb-4">
-        <p class="eyebrow mb-2">Asistente financiero</p>
-        <h2 class="fw-bold mb-2">Presupuesto con chat</h2>
-        <p class="text-muted-custom mb-0">
-          Conversa con el asistente para calcular tu presupuesto mensual según tus ingresos, gastos, deudas y estilo de vida.
-        </p>
+      <div class="d-flex justify-content-between align-items-start mb-4 gap-3">
+        <div class="section-header">
+          <p class="eyebrow mb-2">Asistente financiero</p>
+          <h2 class="fw-bold mb-2">Presupuesto con chat</h2>
+          <p class="text-muted-custom mb-0">
+            Conversa con el asistente para calcular tu presupuesto mensual según tus ingresos, gastos, deudas y estilo de
+            vida.
+          </p>
+        </div>
+
+        <app-profile-icon></app-profile-icon>
       </div>
 
       <div class="row g-4">
@@ -43,70 +42,69 @@
                 </p>
               </div>
 
-              
+
 
               <span class="pill-label"></span>
             </div>
 
-            <div class="chat-box mb-3">
-              <div *ngFor="let mensaje of mensajes" class="mb-3">
+            <div class="chat-box mb-3" #chatBox>
+              <div *ngFor="let mensaje of mensajes" class="mb-3 chat-message-row"
+                [ngClass]="mensaje.rol === 'user' ? 'chat-message-user' : 'chat-message-bot'">
+
                 <div [ngClass]="mensaje.rol === 'user' ? 'chat-user' : 'chat-bot'">
                   {{ mensaje.texto }}
                 </div>
               </div>
-
-              <div *ngIf="cargando" class="chat-bot">
-                Pensando respuesta...
-              </div>
             </div>
 
+            <div *ngIf="cargando" class="chat-bot">
+              Pensando respuesta...
+            </div>
             <div class="d-flex gap-2">
-              <input
-                type="text"
-                class="form-control custom-input"
-                [(ngModel)]="mensajeChat"
-                (keyup.enter)="enviarMensaje()"
-                placeholder="Ej: gano 2 millones 500 mil">
+            <input type="text" class="form-control custom-input" [(ngModel)]="mensajeChat"
+              (keyup.enter)="enviarMensaje()" placeholder="Ej: gano 2 millones 500 mil">
 
-              <button class="btn btn-custom" (click)="enviarMensaje()" [disabled]="cargando">
-                Enviar
-              </button>
-            </div>
+            <button class="btn btn-custom" (click)="enviarMensaje()" [disabled]="cargando">
+              Enviar
+            </button>
           </div>
         </div>
+      </div>
+          
 
-        <div class="col-lg-4">
-          <div class="card budget-card p-4 h-100">
-            <h3 class="fw-bold mb-3">Ejemplos</h3>
-            <p class="text-muted-custom small mb-3">
-              Te dejamos algunos ejemplos base para que puedas probar en el asistente. Recuerda seguir el orden sugerido
-            </p>
+      <div class="col-lg-4">
+        <div class="card budget-card p-4 h-100">
+          <h3 class="fw-bold mb-3">Ejemplos</h3>
+          <p class="text-muted-custom small mb-3">
+            Te dejamos algunos ejemplos base para que puedas probar en el asistente. Recuerda seguir el orden sugerido
+          </p>
 
-            <div class="example-list d-grid gap-2">
-              <button class="btn btn-soft text-start" (click)="enviarEjemplo('gano 2 millones 500 mil')">
-                gano 2 millones 500 mil
-              </button>
+          <div class="example-list d-grid gap-2">
+            <button class="btn btn-soft text-start" (click)="enviarEjemplo('gano 2 millones 500 mil')">
+              gano 2 millones 500 mil
+            </button>
 
-              <button class="btn btn-soft text-start" (click)="enviarEjemplo('deuda 300000')">
-                deuda 300000
-              </button>
+            <button class="btn btn-soft text-start" (click)="enviarEjemplo('deuda 300000')">
+              deuda 300000
+            </button>
 
-              <button class="btn btn-soft text-start" (click)="enviarEjemplo('ahorro 200000')">
-                ahorro 200000
-              </button>
+            <button class="btn btn-soft text-start" (click)="enviarEjemplo('ahorro 200000')">
+              ahorro 200000
+            </button>
 
-              <button class="btn btn-soft text-start" (click)="enviarEjemplo('estricto')">
-                estricto
-              </button>
+            <button class="btn btn-soft text-start" (click)="enviarEjemplo('estricto')">
+              estricto
+            </button>
 
-              <button class="btn btn-soft text-start" (click)="enviarEjemplo('quincenal')">
-                quincenal
-              </button>
+            <button class="btn btn-soft text-start" (click)="enviarEjemplo('quincenal')">
+              quincenal
+            </button>
 
-              <button class="btn btn-soft text-start" (click)="enviarEjemplo('gasto arriendo 800000, mercado 250000, transporte 120000')">
-                gasto arriendo 800000, mercado 250000, transporte 120000
-              </button>
-            
+            <button class="btn btn-soft text-start"
+              (click)="enviarEjemplo('gasto arriendo 800000, mercado 250000, transporte 120000')">
+              gasto arriendo 800000, mercado 250000, transporte 120000
+            </button>
+
           </div>
         </div>
       </div>

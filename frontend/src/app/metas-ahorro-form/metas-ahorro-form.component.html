@@ -11,15 +11,11 @@
           <li class="mb-3" routerLink="/categorias">Categorías</li>
           <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
           <li class="mb-3" routerLink="/aprendizaje">Aprendizaje</li>
-          <li class="mb-3" routerLink="/cuenta">Mi cuenta</li>
+   
         </ul>
       </div>
 
-      <div class="mt-auto pt-4">
-        <button class="btn btn-logout w-100" (click)="logout()">
-          Cerrar sesión
-        </button>
-      </div>
+
     </div>
 
     <div class="col-md-9 p-5 main-content d-flex flex-column">
@@ -35,8 +31,7 @@
               empieza a construir tu ahorro paso a paso.' }}
             </p>
           </div>
-
-
+          <app-profile-icon class="flex-shrink-0"></app-profile-icon>
 
           <div class="row w-100 justify-content-center">
             <div class="col-lg-7 col-xl-6">
@@ -84,17 +79,14 @@
                     Volver
                   </a>
                 </div>
-                   <button
-  *ngIf="isEditMode"
-  type="button"
-  class="btn btn-danger"
-  (click)="$event.preventDefault(); eliminarMeta(metaId!)">
+                <button *ngIf="isEditMode" type="button" class="btn btn-danger"
+                  (click)="$event.preventDefault(); eliminarMeta(metaId!)">
 
-  Eliminar
-</button>
+                  Eliminar
+                </button>
               </form>
-              
-               
+
+
             </div>
           </div>
 

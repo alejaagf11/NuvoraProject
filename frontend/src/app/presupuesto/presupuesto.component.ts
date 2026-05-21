@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PresupuestoService } from '../services/presupuesto.service';
 import { UsuarioService } from '../services/usuario.service';
@@ -15,7 +15,7 @@ export class PresupuestoComponent {
     {
       rol: 'bot',
       texto: 'Hola soy tu Nuvy, tu asistente financiera de confianza 😊'
-      }
+    }
   ];
 
   mensajeChat = '';
@@ -25,19 +25,31 @@ export class PresupuestoComponent {
     private presupuestoService: PresupuestoService,
     private usuarioService: UsuarioService,
     private router: Router
-  ) {}
+  ) { }
+
+  @ViewChild('chatBox') chatBox!: ElementRef<HTMLDivElement>;
+
+  private bajarChat(): void {
+    setTimeout(() => {
+      if (this.chatBox) {
+        this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight;
+      }
+    }, 50);
+  }
 
   enviarMensaje() {
     if (!this.mensajeChat.trim() || this.cargando) return;
 
     const texto = this.mensajeChat.trim();
     this.mensajes.push({ rol: 'user', texto });
+    this.bajarChat();
     this.mensajeChat = '';
     this.cargando = true;
 
     this.presupuestoService.chat(texto).subscribe({
       next: (respuesta) => {
         this.mensajes.push({ rol: 'bot', texto: respuesta });
+        this.bajarChat();
         this.cargando = false;
       },
       error: (err) => {
@@ -47,6 +59,7 @@ export class PresupuestoComponent {
           texto: 'No pude procesar tu mensaje en este momento. Intenta de nuevo.'
         });
         this.cargando = false;
+         this.bajarChat();
       }
     });
   }

@@ -24,3 +24,11 @@ export interface PresupuestoResponse {
   disponibleSemanal: number;
   disponibleQuincena: { [key: string]: number };
 }
+
+export interface PresupuestoAiResponse {
+  budget: PresupuestoResponse;
+  resumen: string;
+  recomendaciones: string[];
+  alertas: string[];
+  source: string;
+}

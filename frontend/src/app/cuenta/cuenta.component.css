@@ -105,6 +105,44 @@
   justify-content: center;
   font-size: 46px;
   font-weight: 700;
+  overflow: hidden;
+}
+
+.profile-avatar-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-upload {
+  cursor: pointer;
+  margin: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.avatar-upload:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 0 5px rgba(244, 223, 189, 0.22);
+}
+
+.avatar-upload input,
+.hero-photo-actions input {
+  display: none;
+}
+
+.hero-photo-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: -4px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-photo {
+  padding: 8px 14px;
+  font-size: 13px;
 }
 
 .eyebrow {
@@ -307,6 +345,16 @@
 .btn-logout:hover {
   background: rgba(255, 255, 255, 0.2);
   color: white;
+}
+
+.photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.photo-actions input {
+  display: none;
 }
 
 .btn-logout {

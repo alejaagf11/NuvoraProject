@@ -11,24 +11,24 @@
           <li class="mb-3" routerLink="/categorias">Categorías</li>
           <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
           <li class="mb-3" routerLink="/aprendizaje">Aprendizaje</li>
-           <li class="mb-3" routerLink="/cuenta">Mi cuenta</li>
-        </ul>
-      </div>
 
-      <div class="mt-auto pt-4">
-        <button class="btn btn-logout w-100" (click)="logout()">
-          Cerrar sesión
-        </button>
+        </ul>
       </div>
     </div>
 
     <div class="col-md-9 p-5 main-content">
-      <div class="section-header mb-4">
-        <p class="eyebrow mb-2">Organiza tus movimientos</p>
-        <h2 class="fw-bold mb-2">Transacciones</h2>
-        <p class="text-muted-custom mb-0">
-          Registra ingresos y gastos con una categoría para mantener tu historial claro y ordenado.
-        </p>
+
+      <div class="d-flex justify-content-between align-items-start mb-4 gap-3">
+        <div class="section-header">
+          <p class="eyebrow mb-2">Organiza tus movimientos</p>
+
+          <h2 class="fw-bold mb-2">Transacciones</h2>
+          <p class="text-muted-custom mb-0">
+            Registra ingresos y gastos con una categoría para mantener tu historial claro y ordenado.
+          </p>
+        </div>
+
+        <app-profile-icon class="flex-shrink-0"></app-profile-icon>
       </div>
 
       <div class="row g-4">
@@ -56,7 +56,8 @@
 
             <div class="form-block mb-3">
               <label class="form-label">Tipo</label>
-              <select class="form-select custom-input" [(ngModel)]="nuevaTransaccion.tipo" (change)="onTipoChange()" name="tipo">
+              <select class="form-select custom-input" [(ngModel)]="nuevaTransaccion.tipo" (change)="onTipoChange()"
+                name="tipo">
                 <option value="INGRESO">Ingreso</option>
                 <option value="GASTO">Gasto</option>
               </select>
@@ -96,7 +97,8 @@
             </div>
 
             <div class="d-flex gap-2 mt-3">
-              <button class="btn btn-custom flex-fill" (click)="guardarTransaccion()" [disabled]="categoriasFiltradas.length === 0">
+              <button class="btn btn-custom flex-fill" (click)="guardarTransaccion()"
+                [disabled]="categoriasFiltradas.length === 0">
                 {{ isEditMode ? 'Actualizar transacción' : 'Guardar transacción' }}
               </button>
 
@@ -115,7 +117,8 @@
                 <p class="text-muted-custom small mb-0">Consulta, edita o elimina tus registros recientes.</p>
               </div>
 
-              <select class="form-select filter-select custom-input" [(ngModel)]="filtroTipo" (change)="onTipoChange()" name="filtroTipo">
+              <select class="form-select filter-select custom-input" [(ngModel)]="filtroTipo" (change)="onTipoChange()"
+                name="filtroTipo">
                 <option value="">Todos</option>
                 <option value="INGRESO">Ingresos</option>
                 <option value="GASTO">Gastos</option>
@@ -137,8 +140,7 @@
               </div>
 
               <div class="movement-side">
-                <div class="fw-bold"
-                  [ngClass]="esGasto(transaccion.tipo) ? 'amount-expense' : 'amount-income'">
+                <div class="fw-bold" [ngClass]="esGasto(transaccion.tipo) ? 'amount-expense' : 'amount-income'">
                   {{ esGasto(transaccion.tipo) ? '-' : '+' }}{{ transaccion.montoTransaccion | currency }}
                 </div>
 

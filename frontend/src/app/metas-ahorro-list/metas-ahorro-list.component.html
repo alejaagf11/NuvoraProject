@@ -12,14 +12,8 @@
           <li class="mb-3" routerLink="/categorias">Categorías</li>
           <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
           <li class="mb-3" routerLink="/aprendizaje">Aprendizaje</li>
-           <li class="mb-3" routerLink="/cuenta">Mi cuenta</li>
-        </ul>
-      </div>
 
-      <div class="mt-auto pt-4">
-        <button class="btn btn-logout w-100" (click)="logout()">
-          Cerrar sesión
-        </button>
+        </ul>
       </div>
     </div>
 
@@ -33,10 +27,11 @@
               Crea metas, registra abonos y revisa cuánto te falta para alcanzarlas.
             </p>
           </div>
-
+          
           <button class="btn btn-custom" routerLink="/metas-ahorro-form">
             + Nueva meta
           </button>
+            <app-profile-icon class="flex-shrink-0"></app-profile-icon>
         </div>
       </div>
 
@@ -66,15 +61,16 @@
                 <p class="text-muted-custom small mb-0">
                   Fecha límite: {{ meta.fechaLimite }}
                 </p>
-                    
 
-              <p class="small mt-2 mb-0" style="color: #f7d3e1;">
-                Te quedan {{ meta.mesesRestantes }} {{ meta.mesesRestantes === 1 ? 'mes' : 'meses' }} hasta la fecha limite
-              
-              </p>
+
+                <p class="small mt-2 mb-0" style="color: #f7d3e1;">
+                  Te quedan {{ meta.mesesRestantes }} {{ meta.mesesRestantes === 1 ? 'mes' : 'meses' }} hasta la fecha
+                  limite
+
+                </p>
               </div>
 
-         
+
 
 
               <div class="d-flex gap-2 flex-wrap justify-content-end">

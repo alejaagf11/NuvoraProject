@@ -13,21 +13,20 @@
           <li class="mb-3" routerLink="/aprendizaje">Aprendizaje</li>
         </ul>
       </div>
-
-      <div class="mt-auto pt-4">
-        <button class="btn btn-logout w-100" (click)="logout()">
-          Cerrar sesión
-        </button>
-      </div>
     </div>
 
     <div class="col-md-9 p-5 main-content">
-      <div class="section-header mb-4">
-        <p class="eyebrow mb-2">Clasifica tus movimientos</p>
-        <h2 class="fw-bold mb-2">Categorías</h2>
-        <p class="text-muted-custom mb-0">
-          Crea categorías para entender mejor tus ingresos y gastos y mantener tu historial organizado.
-        </p>
+      <div class="d-flex justify-content-between align-items-start mb-4 gap-3">
+        <div class="section-header">
+          <p class="eyebrow mb-2">Clasifica tus movimientos</p>
+
+          <h2 class="fw-bold mb-2">Categorías</h2>
+          <p class="text-muted-custom mb-0">
+            Crea categorías para entender mejor tus ingresos y gastos y mantener tu historial organizado.
+          </p>
+        </div>
+
+        <app-profile-icon class="flex-shrink-0"></app-profile-icon>
       </div>
 
       <div class="row g-4">

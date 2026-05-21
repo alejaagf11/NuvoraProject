@@ -26,7 +26,8 @@
 
       <div class="d-flex align-items-center gap-2">
         <button class="profile-icon profile-button" routerLink="/cuenta" type="button" title="Ir a mi cuenta">
-          👤
+          <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Foto de perfil">
+          <span *ngIf="!fotoPerfil">{{ usuario.nombreUsuario.charAt(0) || 'U' }}</span>
         </button>
       </div>
     </div>

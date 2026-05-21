@@ -147,3 +147,29 @@
     grid-template-columns: 1fr;
   }
 }
+
+.custom-input,
+.custom-input option {
+  background-color: #8a5572;
+  color: white;
+}
+
+.custom-input:focus {
+  background-color: #8a5572;
+  color: white;
+}
+
+select.custom-input {
+  color: white;
+}
+
+select.custom-input option {
+  background: #5d304d;
+  color: white;
+}
+
+select.custom-input option:hover,
+select.custom-input option:checked {
+  background: #f2bdd3;
+  color: #3a1b31;
+}

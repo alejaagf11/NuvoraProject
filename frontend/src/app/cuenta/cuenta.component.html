@@ -13,7 +13,7 @@
           <li class="mb-3" routerLink="/categorias">Categorías</li>
           <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
           <li class="mb-3" routerLink="/aprendizaje">Aprendizaje</li>
-          <li class="mb-3" routerLink="/cuenta">Mi cuenta</li>
+
         </ul>
       </div>
 
@@ -43,9 +43,21 @@
           </div>
 
           <div class="avatar-ring">
-            <div class="profile-avatar-large">
-              {{ usuario.nombreUsuario.charAt(0) || 'U' }}
-            </div>
+            <label class="profile-avatar-large avatar-upload" title="Cambiar foto">
+              <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Foto de perfil">
+              <span *ngIf="!fotoPerfil">{{ usuario.nombreUsuario.charAt(0) || 'U' }}</span>
+              <input type="file" accept="image/*" (change)="seleccionarFoto($event)">
+            </label>
+          </div>
+
+          <div class="hero-photo-actions">
+            <label class="btn btn-soft-action btn-photo" type="button">
+              {{ fotoPerfil ? 'Cambiar foto' : 'Seleccionar foto' }}
+              <input type="file" accept="image/*" (change)="seleccionarFoto($event)">
+            </label>
+            <button *ngIf="fotoPerfil" class="btn btn-soft-action btn-photo" type="button" (click)="quitarFoto()">
+              Quitar foto
+            </button>
           </div>
 
           <p class="eyebrow mb-2">Perfil financiero</p>

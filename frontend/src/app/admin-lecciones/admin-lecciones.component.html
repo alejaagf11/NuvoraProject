@@ -30,10 +30,7 @@
       <div class="row g-3">
         <div class="col-md-6">
           <label class="form-label">Modulo</label>
-          <select
-            class="form-select custom-input"
-            [(ngModel)]="moduloSeleccionadoId"
-            (change)="onModuloChange()">
+          <select class="form-select custom-input" [(ngModel)]="moduloSeleccionadoId" (change)="onModuloChange()">
             <option [ngValue]="null">Selecciona un modulo</option>
             <option *ngFor="let modulo of modulos" [ngValue]="modulo.moduloId">
               {{ modulo.tituloModulo }}
@@ -43,17 +40,12 @@
 
         <div class="col-md-3">
           <label class="form-label">Orden</label>
-          <input
-            type="number"
-            class="form-control custom-input"
-            [(ngModel)]="formulario.ordenLeccion">
+          <input type="number" class="form-control custom-input" [(ngModel)]="formulario.ordenLeccion">
         </div>
 
         <div class="col-md-3">
           <label class="form-label">Activo</label>
-          <select
-            class="form-select custom-input"
-            [(ngModel)]="formulario.activo">
+          <select class="form-select custom-input" [(ngModel)]="formulario.activo">
             <option [ngValue]="true">Si</option>
             <option [ngValue]="false">No</option>
           </select>
@@ -61,18 +53,18 @@
 
         <div class="col-12">
           <label class="form-label">Titulo</label>
-          <input
-            type="text"
-            class="form-control custom-input"
-            [(ngModel)]="formulario.tituloLeccion">
+          <input type="text" class="form-control custom-input" [(ngModel)]="formulario.tituloLeccion">
         </div>
 
         <div class="col-12">
           <label class="form-label">Contenido</label>
-          <textarea
-            rows="6"
-            class="form-control custom-input"
-            [(ngModel)]="formulario.contenidoLeccion"></textarea>
+          <textarea rows="6" class="form-control custom-input" [(ngModel)]="formulario.contenidoLeccion"></textarea>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Link de video</label>
+          <input type="text" class="form-control custom-input" [(ngModel)]="videoUrl"
+            placeholder="https://www.youtube.com/watch?v=...">
         </div>
       </div>
 
@@ -104,7 +96,8 @@
 
           <h4>{{ leccion.tituloLeccion }}</h4>
           <p>
-            {{ leccion.contenidoLeccion.length > 140 ? (leccion.contenidoLeccion | slice:0:140) + '...' : leccion.contenidoLeccion }}
+            {{ leccion.contenidoLeccion.length > 140 ? (leccion.contenidoLeccion | slice:0:140) + '...' :
+            leccion.contenidoLeccion }}
           </p>
 
           <div class="d-flex gap-2 flex-wrap mt-3">
@@ -114,6 +107,8 @@
             <button class="btn btn-delete btn-sm" (click)="eliminarLeccion(leccion.leccionId)">
               Eliminar
             </button>
+
+
           </div>
         </div>
       </div>
