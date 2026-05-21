@@ -4,6 +4,7 @@ import { Leccion } from '../models/leccion';
 import { ProgresoLeccionUsuario } from '../models/progreso-leccion';
 import { LeccionService } from '../services/leccion.service';
 import { ProgresoLeccionService } from '../services/progreso-leccion.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-leccion',
@@ -24,9 +25,10 @@ export class LeccionComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private sanitizer: DomSanitizer,
     private leccionService: LeccionService,
     private progresoLeccionService: ProgresoLeccionService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.leccionId = Number(this.route.snapshot.paramMap.get('leccionId'));
@@ -98,4 +100,24 @@ export class LeccionComponent implements OnInit {
 
     this.router.navigate(['/aprendizaje/modulo', this.leccion.moduloId]);
   }
+
+  obtenerVideoUrl(contenido: string): string {
+
+    const partes = contenido.split('\nVIDEO:');
+
+    return partes[1]?.trim() || '';
+  }
+
+ obtenerYoutubeEmbedUrl(url: string): SafeResourceUrl {
+
+  const match = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/
+  );
+
+  const videoId = match?.[1];
+
+  return this.sanitizer.bypassSecurityTrustResourceUrl(
+    `https://www.youtube.com/embed/${videoId}`
+  );
+}
 }

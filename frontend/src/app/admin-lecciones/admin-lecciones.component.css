@@ -173,3 +173,15 @@ select.custom-input option:checked {
   background: #f2bdd3;
   color: #3a1b31;
 }
+
+.video-thumbnail {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 14px;
+  transition: 0.3s ease;
+}
+
+.video-thumbnail:hover {
+  transform: scale(1.02);
+}

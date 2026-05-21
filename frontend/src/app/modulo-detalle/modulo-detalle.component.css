@@ -122,3 +122,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.video-thumbnail {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-top: 10px;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.video-thumbnail:hover {
+  transform: scale(1.02);
+}

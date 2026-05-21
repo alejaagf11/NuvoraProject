@@ -154,10 +154,6 @@ export class AdminLeccionesComponent implements OnInit {
         : this.formulario.contenidoLeccion.trim()
     };
 
-    // =========================
-    // EDITAR LECCION
-    // =========================
-
     if (this.editandoId) {
 
       const leccionesAMover = this.obtenerLeccionesParaEditar(
@@ -318,6 +314,25 @@ export class AdminLeccionesComponent implements OnInit {
       ? Math.floor(ordenNumerico)
       : 1;
   }
+  obtenerVideoUrl(contenido: string): string {
+
+  const partes = contenido.split('\nVIDEO:');
+
+  return partes[1]?.trim() || '';
+}
+
+obtenerThumbnailYoutube(url: string): string {
+
+  const match = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/ 
+  );
+
+  const videoId = match?.[1];
+
+  return videoId
+    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+    : '';
+}
 
   // =========================
   // CREAR

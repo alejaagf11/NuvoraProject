@@ -30,9 +30,37 @@
         </div>
 
         <h4>{{ leccion.tituloLeccion }}</h4>
+
         <p class="descripcion">
-          {{ leccion.contenidoLeccion.length > 140 ? (leccion.contenidoLeccion | slice:0:140) + '...' : leccion.contenidoLeccion }}
+
+          {{
+          leccion.contenidoLeccion
+          .split('\nVIDEO:')[0]
+          .length > 140
+
+          ? (
+          leccion.contenidoLeccion
+          .split('\nVIDEO:')[0]
+          | slice:0:140
+          ) + '...'
+
+          : leccion.contenidoLeccion
+          .split('\nVIDEO:')[0]
+          }}
+
         </p>
+
+        <div *ngIf="obtenerVideoUrl(leccion.contenidoLeccion)" class="video-preview mt-3">
+
+          <a [href]="obtenerVideoUrl(leccion.contenidoLeccion)" target="_blank">
+
+            <img [src]="obtenerThumbnailYoutube(
+        obtenerVideoUrl(leccion.contenidoLeccion)
+      )" class="img-fluid rounded video-thumbnail" alt="Miniatura del video">
+
+          </a>
+
+        </div>
 
         <button class="btn btn-main-action w-100" (click)="abrirLeccion(leccion.leccionId)">
           Abrir leccion

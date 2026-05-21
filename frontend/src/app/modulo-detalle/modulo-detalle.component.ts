@@ -97,4 +97,24 @@ export class ModuloDetalleComponent implements OnInit {
 
     this.router.navigate(['/aprendizaje/leccion', leccionId]);
   }
+
+  obtenerVideoUrl(contenido: string): string {
+
+  const partes = contenido.split('\nVIDEO:');
+
+  return partes[1]?.trim() || '';
+}
+
+obtenerThumbnailYoutube(url: string): string {
+
+  const match = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/
+  );
+
+  const videoId = match?.[1];
+
+  return videoId
+    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+    : '';
+}
 }

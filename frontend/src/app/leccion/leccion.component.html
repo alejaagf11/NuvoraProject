@@ -30,8 +30,30 @@
       </div>
 
       <div class="contenido-box">
-        {{ leccion.contenidoLeccion }}
-      </div>
+
+  <p class="contenido-texto">
+    {{ leccion.contenidoLeccion.split('\nVIDEO:')[0] }}
+  </p>
+
+  <div
+    *ngIf="obtenerVideoUrl(leccion.contenidoLeccion)"
+    class="video-container mt-4"
+  >
+
+    <iframe
+      width="100%"
+      height="450"
+      [src]="obtenerYoutubeEmbedUrl(
+        obtenerVideoUrl(leccion.contenidoLeccion)
+      )"
+      title="Video de la leccion"
+      frameborder="0"
+      allowfullscreen>
+    </iframe>
+
+  </div>
+
+</div>
 
       <button
         class="btn btn-main-action"

@@ -113,3 +113,13 @@
   border-radius: 14px;
   border: none;
 }
+
+.video-container iframe {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.contenido-texto {
+  white-space: pre-line;
+  line-height: 1.8;
+}
