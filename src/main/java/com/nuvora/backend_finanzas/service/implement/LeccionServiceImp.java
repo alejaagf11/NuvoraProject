@@ -24,6 +24,18 @@ public class LeccionServiceImp implements LeccionService {
     public LeccionDTO createLeccion(LeccionDTO leccionDTO){
         ModuloAprendizaje modulo = moduloAprendizajeService.getModuloEntityById(leccionDTO.getModuloId());
         Leccion leccion = leccionDTO.toEntity(modulo);
+
+        if (leccion.getOrdenLeccion() == null || leccion.getOrdenLeccion() <1){
+            int ultimoOrden = leccionRepository.findByModuloAprendizajeOrderByOrdenLeccionAsc(modulo)
+                    .stream()
+                    .map(Leccion::getOrdenLeccion)
+                    .max(Integer::compareTo)
+                    .orElse(0);
+            leccion.setOrdenLeccion(ultimoOrden + 1);
+        } else if (leccionRepository.existsByModuloAprendizajeAndOrdenLeccion(modulo, leccion.getOrdenLeccion())) {
+            throw new RuntimeException("Ya existe una leccion con este modulo");
+        }
+
         Leccion saved = leccionRepository.save(leccion);
         return LeccionDTO.fromEntity(saved);
     }
@@ -63,10 +75,30 @@ public class LeccionServiceImp implements LeccionService {
             leccion.setActivo(leccionDTO.getActivo());
         }
 
-        if (leccionDTO.getModuloId() != null) {
-            ModuloAprendizaje modulo = moduloAprendizajeService.getModuloEntityById(leccionDTO.getModuloId());
-            leccion.setModuloAprendizaje(modulo);
+        ModuloAprendizaje moduloDestino = leccion.getModuloAprendizaje();
+        if (leccionDTO.getModuloId() != null){
+            moduloDestino = moduloAprendizajeService.getModuloEntityById(leccionDTO.getModuloId());
         }
+
+        Integer nuevoOrden = leccionDTO.getOrdenLeccion() != null
+                ? leccionDTO.getOrdenLeccion()
+                : leccion.getOrdenLeccion();
+
+        if(nuevoOrden == null || nuevoOrden < 1){
+            throw new RuntimeException("El orden de la leccion debe ser mayor que 0");
+        }
+
+        boolean ordenOcupado = leccionRepository.findByModuloAprendizajeOrderByOrdenLeccionAsc(moduloDestino)
+                .stream()
+                .anyMatch(l -> !l.getLeccionId().equals(leccion.getLeccionId())
+                && l.getOrdenLeccion().equals(nuevoOrden));
+
+        if (ordenOcupado){
+            throw new RuntimeException("Ya existe otra leccion con ese orden en este modulo");
+        }
+
+        leccion.setModuloAprendizaje(moduloDestino);
+        leccion.setOrdenLeccion(nuevoOrden);
 
         Leccion updated = leccionRepository.save(leccion);
         return LeccionDTO.fromEntity(updated);

@@ -10,4 +10,8 @@ public interface LeccionRepository extends JpaRepository<Leccion, Long> {
     List<Leccion> findByModuloAprendizajeAndActivoTrueOrderByOrdenLeccionAsc(ModuloAprendizaje moduloAprendizaje);
 
     Integer countByModuloAprendizajeAndActivoTrue(ModuloAprendizaje moduloAprendizaje);
+
+    boolean existsByModuloAprendizajeAndOrdenLeccion(ModuloAprendizaje moduloAprendizaje, Integer ordenLeccion);
+
+    List<Leccion> findByModuloAprendizajeOrderByOrdenLeccionAsc(ModuloAprendizaje moduloAprendizaje);
 }

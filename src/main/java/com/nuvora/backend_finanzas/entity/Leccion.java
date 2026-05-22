@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"modulo_id", "orden_leccion"})
+        }
+)
+
 @Entity
 @Data
 @AllArgsConstructor
