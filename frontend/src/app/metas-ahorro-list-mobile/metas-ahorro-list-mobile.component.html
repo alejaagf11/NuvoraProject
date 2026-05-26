@@ -1,0 +1,98 @@
+<main class="mobile-page">
+  <header class="topbar">
+    <button type="button" class="icon-button" routerLink="/mobile/dashboard">‹</button>
+    <div>
+      <p class="eyebrow">Ahorro</p>
+      <h1>Metas</h1>
+    </div>
+    <button type="button" class="avatar-button" routerLink="/mobile/cuenta">N</button>
+  </header>
+
+  <section class="summary-card">
+    <div>
+      <span>Objetivos activos</span>
+      <strong>{{ metas.length }}</strong>
+      <small>Registra abonos y revisa tu progreso.</small>
+    </div>
+    <button type="button" routerLink="/mobile/metas-ahorro-form">Nueva</button>
+  </section>
+
+  <section *ngIf="errorMensaje" class="alert error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="alert success">{{ mensajeExito }}</section>
+
+  <section class="list-section">
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">Seguimiento</p>
+        <h2>Tus metas</h2>
+      </div>
+      <button type="button" routerLink="/mobile/metas-ahorro-form">Crear</button>
+    </div>
+
+    <div *ngIf="cargando" class="empty-state">Cargando metas...</div>
+
+    <div *ngIf="!cargando && metas.length === 0" class="empty-state">
+      Todavia no tienes metas de ahorro.
+    </div>
+
+    <article *ngFor="let meta of metas" class="goal-card">
+      <div class="goal-header">
+        <div>
+          <h3>{{ meta.nombreMeta }}</h3>
+          <p>Fecha limite: {{ meta.fechaLimite || 'Sin fecha' }}</p>
+        </div>
+        <strong>{{ progreso(meta) | number:'1.0-0' }}%</strong>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progreso(meta)"></div>
+      </div>
+
+      <div class="stats-grid">
+        <div>
+          <span>Meta</span>
+          <strong>{{ meta.montoObjetivo | currency }}</strong>
+        </div>
+        <div>
+          <span>Ahorrado</span>
+          <strong>{{ meta.montoAhorrado || 0 | currency }}</strong>
+        </div>
+        <div>
+          <span>Falta</span>
+          <strong>{{ meta.montoRestante || 0 | currency }}</strong>
+        </div>
+        <div>
+          <span>Mensual</span>
+          <strong>{{ meta.ahorroMensual || 0 | currency }}</strong>
+        </div>
+      </div>
+
+      <p class="months" *ngIf="meta.mesesRestantes !== undefined">
+        Te quedan {{ meta.mesesRestantes }} {{ meta.mesesRestantes === 1 ? 'mes' : 'meses' }}.
+      </p>
+
+      <div class="abono-box">
+        <input
+          type="number"
+          placeholder="Monto a abonar"
+          [(ngModel)]="abonoInput[meta.metaAhorroId!]"
+        >
+        <button type="button" (click)="abonar(meta.metaAhorroId!, abonoInput[meta.metaAhorroId!])">
+          Abonar
+        </button>
+      </div>
+
+      <div class="card-actions">
+        <button type="button" [routerLink]="['/mobile/metas-ahorro-form', meta.metaAhorroId]">Editar</button>
+        <button type="button" (click)="deleteMeta(meta.metaAhorroId!)">Eliminar</button>
+      </div>
+    </article>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegacion movil">
+    <a routerLink="/mobile/dashboard">Inicio</a>
+    <a routerLink="/mobile/transacciones">Movs.</a>
+    <a routerLink="/mobile/presupuesto">Presup.</a>
+    <a routerLink="/mobile/cuenta">Cuenta</a>
+  </nav>
+</main>

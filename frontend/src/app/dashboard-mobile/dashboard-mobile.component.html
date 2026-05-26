@@ -5,7 +5,7 @@
       <h1>Hola, {{ usuario.nombreUsuario || 'de nuevo' }}</h1>
     </div>
 
-    <button class="avatar-button" routerLink="/cuenta" type="button" title="Mi cuenta">
+    <button class="avatar-button" routerLink="/mobile/cuenta" type="button" title="Mi cuenta">
       {{ (usuario.nombreUsuario || 'N').charAt(0).toUpperCase() }}
     </button>
   </header>
@@ -33,12 +33,12 @@
       Gasto
     </button>
 
-    <button type="button" class="action" routerLink="/categorias">
+    <button type="button" class="action" routerLink="/mobile/categorias">
       <span>#</span>
       Categoria
     </button>
 
-    <button type="button" class="action" routerLink="/metas-ahorro-list">
+    <button type="button" class="action" routerLink="/mobile/metas-ahorro-list">
       <span>$</span>
       Metas
     </button>
@@ -54,7 +54,7 @@
         <p class="eyebrow">Ruta sugerida</p>
         <h2>Empieza aqui</h2>
       </div>
-      <button type="button" routerLink="/aprendizaje">Aprender</button>
+      <button type="button" routerLink="/mobile/aprendizaje">Aprender</button>
     </div>
 
     <div class="steps-strip">
@@ -84,7 +84,7 @@
         <p class="eyebrow">Actividad</p>
         <h2>Recientes</h2>
       </div>
-      <button type="button" routerLink="/transacciones">Ver todo</button>
+      <button type="button" routerLink="/mobile/transacciones">Ver todo</button>
     </div>
 
     <div *ngIf="transacciones.length === 0" class="empty-state">
@@ -104,8 +104,8 @@
 
   <nav class="bottom-nav" aria-label="Navegacion movil">
     <a routerLink="/mobile/dashboard" class="active">Inicio</a>
-    <a routerLink="/transacciones">Movs.</a>
-    <a routerLink="/presupuesto">Presup.</a>
-    <a routerLink="/cuenta">Cuenta</a>
+    <a routerLink="/mobile/transacciones">Movs.</a>
+    <a routerLink="/mobile/presupuesto">Presup.</a>
+    <a routerLink="/mobile/cuenta">Cuenta</a>
   </nav>
 </main>

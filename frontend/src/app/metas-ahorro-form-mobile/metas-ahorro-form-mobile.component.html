@@ -1,0 +1,72 @@
+<main class="mobile-page">
+  <header class="topbar">
+    <button type="button" class="icon-button" routerLink="/mobile/metas-ahorro-list">‹</button>
+    <div>
+      <p class="eyebrow">{{ isEditMode ? 'Editar objetivo' : 'Nuevo objetivo' }}</p>
+      <h1>{{ isEditMode ? 'Editar meta' : 'Crear meta' }}</h1>
+    </div>
+    <button type="button" class="avatar-button" routerLink="/mobile/cuenta">N</button>
+  </header>
+
+  <section *ngIf="errorMensaje" class="alert error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="alert success">{{ mensajeExito }}</section>
+
+  <form class="form-card" (ngSubmit)="saveMeta()">
+    <h2>Datos de la meta</h2>
+    <p>Define un nombre, un monto objetivo y la fecha limite.</p>
+
+    <label>Nombre</label>
+    <input
+      type="text"
+      name="nombreMeta"
+      [(ngModel)]="meta.nombreMeta"
+      required
+      placeholder="Ej: Viaje"
+    >
+
+    <label>Monto objetivo</label>
+    <input
+      type="number"
+      name="montoObjetivo"
+      [(ngModel)]="meta.montoObjetivo"
+      required
+      placeholder="Ej: 1000000"
+    >
+
+    <label>Fecha limite</label>
+    <input
+      type="date"
+      name="fechaLimite"
+      [(ngModel)]="meta.fechaLimite"
+      required
+    >
+
+    <div class="tip-box">
+      Elige una fecha realista para calcular mejor tu ahorro mensual recomendado.
+    </div>
+
+    <button type="submit" class="primary-button" [disabled]="guardando">
+      {{ guardando ? 'Guardando...' : (isEditMode ? 'Guardar cambios' : 'Crear meta') }}
+    </button>
+
+    <button type="button" class="soft-button" routerLink="/mobile/metas-ahorro-list">
+      Volver
+    </button>
+
+    <button
+      *ngIf="isEditMode"
+      type="button"
+      class="danger-button"
+      (click)="eliminarMeta(metaId!)"
+    >
+      Eliminar meta
+    </button>
+  </form>
+
+  <nav class="bottom-nav" aria-label="Navegacion movil">
+    <a routerLink="/mobile/dashboard">Inicio</a>
+    <a routerLink="/mobile/transacciones">Movs.</a>
+    <a routerLink="/mobile/presupuesto">Presup.</a>
+    <a routerLink="/mobile/cuenta">Cuenta</a>
+  </nav>
+</main>

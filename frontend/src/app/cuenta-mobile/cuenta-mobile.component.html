@@ -1,0 +1,74 @@
+<main class="mobile-page">
+  <header class="topbar">
+    <button type="button" class="icon-button" routerLink="/mobile/dashboard">‹</button>
+    <div>
+      <p class="eyebrow">Perfil</p>
+      <h1>Mi cuenta</h1>
+    </div>
+    <button type="button" class="icon-button logout" (click)="logout()">Salir</button>
+  </header>
+
+  <section class="profile-card">
+    <div class="avatar-wrap">
+      <img *ngIf="fotoPerfil; else inicial" [src]="fotoPerfil" alt="Foto de perfil">
+      <ng-template #inicial>
+        <div class="avatar-letter">{{ (usuario.nombreUsuario || 'N').charAt(0).toUpperCase() }}</div>
+      </ng-template>
+    </div>
+
+    <div class="photo-actions">
+      <label class="soft-button">
+        {{ fotoPerfil ? 'Cambiar foto' : 'Seleccionar foto' }}
+        <input type="file" accept="image/*" (change)="seleccionarFoto($event)">
+      </label>
+      <button *ngIf="fotoPerfil" type="button" class="soft-button danger" (click)="quitarFoto()">Quitar foto</button>
+    </div>
+
+    <h2>{{ usuario.nombreUsuario || 'Usuario' }}</h2>
+    <p>{{ usuario.correoUsuario }}</p>
+  </section>
+
+  <section class="stats-grid">
+    <article>
+      <span>Saldo</span>
+      <strong>{{ saldoActual | currency }}</strong>
+    </article>
+    <article>
+      <span>Metas</span>
+      <strong>{{ totalMetas }}</strong>
+    </article>
+    <article>
+      <span>Movs.</span>
+      <strong>{{ totalTransacciones }}</strong>
+    </article>
+  </section>
+
+  <section *ngIf="errorMensaje" class="alert error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="alert success">{{ mensajeExito }}</section>
+
+  <section class="form-card">
+    <div class="card-title">
+      <h2>Datos personales</h2>
+      <button type="button" (click)="isEditMode = !isEditMode">{{ isEditMode ? 'Cancelar' : 'Editar' }}</button>
+    </div>
+
+    <label>Nombre</label>
+    <input type="text" [(ngModel)]="usuario.nombreUsuario" [disabled]="!isEditMode">
+
+    <label>Correo</label>
+    <input type="email" [(ngModel)]="usuario.correoUsuario" [disabled]="!isEditMode">
+
+    <label>Monto mensual</label>
+    <input type="number" [(ngModel)]="usuario.montoMensual" [disabled]="!isEditMode">
+
+    <button *ngIf="isEditMode" type="button" class="primary-button" (click)="guardarCambios()">Guardar cambios</button>
+    <button type="button" class="delete-button" (click)="eliminarCuenta()">Eliminar cuenta</button>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegacion movil">
+    <a routerLink="/mobile/dashboard">Inicio</a>
+    <a routerLink="/mobile/transacciones">Movs.</a>
+    <a routerLink="/mobile/presupuesto">Presup.</a>
+    <a routerLink="/mobile/cuenta" class="active">Cuenta</a>
+  </nav>
+</main>

@@ -1,0 +1,100 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MetasAhorro } from '../models/metas_ahorro';
+import { MetasAhorroService } from '../services/metas-ahorro.service';
+import { UsuarioService } from '../services/usuario.service';
+
+@Component({
+  selector: 'app-metas-ahorro-list-mobile',
+  standalone: false,
+  templateUrl: './metas-ahorro-list-mobile.component.html',
+  styleUrls: ['./metas-ahorro-list-mobile.component.css'],
+})
+export class MetasAhorroListMobileComponent implements OnInit {
+  metas: MetasAhorro[] = [];
+  abonoInput: { [key: number]: number } = {};
+  errorMensaje: string | null = null;
+  mensajeExito: string | null = null;
+  cargando = false;
+
+  constructor(
+    private metasService: MetasAhorroService,
+    private usuarioService: UsuarioService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadMetas();
+  }
+
+  loadMetas(): void {
+    this.cargando = true;
+
+    this.metasService.getAll().subscribe({
+      next: (data) => {
+        this.metas = data;
+        this.errorMensaje = null;
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar metas:', err);
+        this.errorMensaje = 'Error al cargar metas: ' + (err.error?.message || err.message || err.status);
+        this.cargando = false;
+      }
+    });
+  }
+
+  deleteMeta(id: number): void {
+    if (!confirm('Seguro que quieres eliminar esta meta?')) {
+      return;
+    }
+
+    this.metasService.delete(id).subscribe({
+      next: () => {
+        this.mensajeExito = 'Meta eliminada correctamente';
+        this.errorMensaje = null;
+        this.loadMetas();
+      },
+      error: (err) => {
+        console.error('Error al eliminar meta:', err);
+        this.errorMensaje = 'Error al eliminar: ' + (err.error?.message || err.message || err.status);
+      }
+    });
+  }
+
+  abonar(id: number, monto: number): void {
+    if (!monto || monto <= 0) {
+      this.errorMensaje = 'Ingresa un monto valido';
+      this.mensajeExito = null;
+      return;
+    }
+
+    this.metasService.abonar(id, monto).subscribe({
+      next: () => {
+        this.abonoInput[id] = 0;
+        this.mensajeExito = 'Abono realizado exitosamente';
+        this.errorMensaje = null;
+        this.loadMetas();
+      },
+      error: (err) => {
+        console.error('Error al abonar:', err);
+        this.errorMensaje = 'Error al abonar: ' + (err.error?.message || err.message || err.status);
+        this.mensajeExito = null;
+      }
+    });
+  }
+
+  progreso(meta: MetasAhorro): number {
+    if (!meta.montoObjetivo) {
+      return 0;
+    }
+
+    return Math.min(((meta.montoAhorrado || 0) / meta.montoObjetivo) * 100, 100);
+  }
+
+  logout(): void {
+    this.usuarioService.logout();
+    this.router.navigate(['/mobile/usuario-login']);
+  }
+
+}

@@ -1,0 +1,66 @@
+<main class="mobile-page">
+  <header class="mobile-header">
+    <button type="button" class="ghost-button" routerLink="/mobile/dashboard">Volver</button>
+    <div>
+      <p class="eyebrow">Organizacion</p>
+      <h1>Categorias</h1>
+    </div>
+  </header>
+
+  <section *ngIf="errorMensaje" class="message-card error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="message-card success">{{ mensajeExito }}</section>
+
+  <section class="panel-card">
+    <h2>{{ isEditMode ? 'Editar categoria' : 'Nueva categoria' }}</h2>
+
+    <label>
+      <span>Nombre</span>
+      <input type="text" [(ngModel)]="nuevaCategoria.nombreCategoria" placeholder="Ej: Transporte">
+    </label>
+
+    <label>
+      <span>Tipo</span>
+      <select [(ngModel)]="nuevaCategoria.tipoCategoria">
+        <option value="GASTO">Gasto</option>
+        <option value="INGRESO">Ingreso</option>
+      </select>
+    </label>
+
+    <div class="action-row">
+      <button type="button" class="primary-action" (click)="guardarCategoria()">
+        {{ isEditMode ? 'Guardar' : 'Crear' }}
+      </button>
+      <button *ngIf="isEditMode" type="button" class="soft-action" (click)="resetFormulario()">
+        Cancelar
+      </button>
+    </div>
+  </section>
+
+  <section class="list-section">
+    <div class="section-title">
+      <h2>Tus categorias</h2>
+      <span>{{ categorias.length }}</span>
+    </div>
+
+    <article *ngFor="let categoria of categorias" class="item-card">
+      <div>
+        <h3>{{ categoria.nombreCategoria }}</h3>
+        <p [class.income]="esIngreso(categoria.tipoCategoria)">
+          {{ categoria.tipoCategoria }}
+        </p>
+      </div>
+
+      <div class="card-actions">
+        <button type="button" (click)="editarCategoria(categoria)">Editar</button>
+        <button type="button" class="danger" (click)="eliminarCategoria(categoria.categoriaId)">Eliminar</button>
+      </div>
+    </article>
+  </section>
+
+  <nav class="bottom-nav">
+    <a routerLink="/mobile/dashboard">Inicio</a>
+    <a routerLink="/mobile/transacciones">Movs.</a>
+    <a routerLink="/mobile/presupuesto">Presup.</a>
+    <a routerLink="/mobile/cuenta">Cuenta</a>
+  </nav>
+</main>

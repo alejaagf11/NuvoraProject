@@ -91,11 +91,11 @@ export class DashboardMobileComponent implements OnInit {
 
   irATransacciones(tipo?: 'INGRESO' | 'GASTO') {
     if (tipo) {
-      this.router.navigate(['/transacciones'], { queryParams: { tipo } });
+      this.router.navigate(['/mobile/transacciones'], { queryParams: { tipo } });
       return;
     }
 
-    this.router.navigate(['/transacciones']);
+    this.router.navigate(['/mobile/transacciones']);
   }
 
   logout() {

@@ -26,6 +26,15 @@ import { IonicModule } from '@ionic/angular';
 import { UsuarioLoginMobileComponent } from './usuario-login-mobile/usuario-login-mobile.component';
 import { UsuariosFormMobileComponent } from './usuarios-form-mobile/usuarios-form-mobile.component';
 import { ProfileIconComponent } from './shared/profile-icon/profile-icon.component';
+import { CuentaMobileComponent } from './cuenta-mobile/cuenta-mobile.component';
+import { PresupuestoMobileComponent } from './presupuesto-mobile/presupuesto-mobile.component';
+import { CategoriasMobileComponent } from './categorias-mobile/categorias-mobile.component';
+import { AprendizajeMobileComponent } from './aprendizaje-mobile/aprendizaje-mobile.component';
+import { LeccionMobileComponent } from './leccion-mobile/leccion-mobile.component';
+import { TransaccionesMobileComponent } from './transacciones-mobile/transacciones-mobile.component';
+import { ModuloDetalleMobileComponent } from './modulo-detalle-mobile/modulo-detalle-mobile.component';
+import { MetasAhorroListMobileComponent } from './metas-ahorro-list-mobile/metas-ahorro-list-mobile.component';
+import { MetasAhorroFormMobileComponent } from './metas-ahorro-form-mobile/metas-ahorro-form-mobile.component';
 
 
 
@@ -51,7 +60,16 @@ import { ProfileIconComponent } from './shared/profile-icon/profile-icon.compone
     AdminLeccionesComponent,
     UsuarioLoginMobileComponent,
     UsuariosFormMobileComponent,
-    ProfileIconComponent
+    ProfileIconComponent,
+    CuentaMobileComponent,
+    PresupuestoMobileComponent,
+    CategoriasMobileComponent,
+    AprendizajeMobileComponent,
+    LeccionMobileComponent,
+    TransaccionesMobileComponent,
+    ModuloDetalleMobileComponent,
+    MetasAhorroListMobileComponent,
+    MetasAhorroFormMobileComponent
   ],
   imports: [
     BrowserModule,
@@ -60,7 +78,6 @@ import { ProfileIconComponent } from './shared/profile-icon/profile-icon.compone
     HttpClientModule,
     ReactiveFormsModule,
     IonicModule.forRoot({})
-    
   ],
   providers: [
     {

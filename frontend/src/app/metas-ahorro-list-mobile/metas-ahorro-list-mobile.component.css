@@ -1,0 +1,267 @@
+.mobile-page {
+  min-height: 100vh;
+  padding: 22px 18px 92px;
+  background: #170b18;
+  color: #fff;
+}
+
+.topbar,
+.summary-card,
+.section-title,
+.goal-header,
+.abono-box,
+.card-actions,
+.bottom-nav {
+  display: flex;
+  align-items: center;
+}
+
+.topbar {
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #e6cfe0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+h3 {
+  margin-bottom: 4px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.icon-button,
+.avatar-button {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: #6f255f;
+  color: #fff;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.avatar-button {
+  font-size: 16px;
+}
+
+.summary-card,
+.goal-card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  background: #7f4c6a;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.summary-card {
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 18px;
+}
+
+.summary-card span,
+.stats-grid span {
+  display: block;
+  color: #ead7e3;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.summary-card small,
+.goal-card p,
+.months {
+  color: #ead7e3;
+}
+
+.summary-card button,
+.section-title button,
+.abono-box button,
+.card-actions button {
+  border: 0;
+  border-radius: 16px;
+  background: #5c1458;
+  color: #fff;
+  font-weight: 800;
+}
+
+.summary-card button,
+.section-title button {
+  padding: 11px 14px;
+}
+
+.alert,
+.empty-state {
+  margin-bottom: 14px;
+  padding: 13px 14px;
+  border-radius: 18px;
+  font-weight: 700;
+}
+
+.alert.error {
+  background: rgba(219, 65, 87, 0.25);
+}
+
+.alert.success {
+  background: rgba(89, 177, 128, 0.25);
+}
+
+.empty-state {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ead7e3;
+}
+
+.section-title {
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0 12px;
+}
+
+.goal-card {
+  margin-bottom: 14px;
+  padding: 16px;
+}
+
+.goal-header {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.goal-header strong {
+  flex: 0 0 auto;
+  color: #fff0b8;
+  font-size: 20px;
+}
+
+.progress-track {
+  height: 10px;
+  margin: 14px 0;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #fff0b8;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stats-grid div {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.stats-grid strong {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.months {
+  margin: 12px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.abono-box {
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.abono-box input {
+  min-width: 0;
+  flex: 1;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.11);
+  color: #fff;
+  outline: none;
+}
+
+.abono-box input::placeholder {
+  color: #e7d4df;
+}
+
+.abono-box button {
+  height: 44px;
+  padding: 0 13px;
+}
+
+.card-actions {
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.card-actions button {
+  flex: 1;
+  min-height: 40px;
+}
+
+.card-actions button:last-child {
+  background: #8d2442;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  justify-content: space-around;
+  padding: 12px;
+  border-radius: 22px;
+  background: #241125;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.bottom-nav a {
+  color: #cbb2c5;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}

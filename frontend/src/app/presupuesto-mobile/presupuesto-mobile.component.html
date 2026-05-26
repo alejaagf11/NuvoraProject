@@ -1,0 +1,53 @@
+<main class="mobile-page">
+  <header class="topbar">
+    <button type="button" class="icon-button" routerLink="/mobile/dashboard">‹</button>
+    <div>
+      <p class="eyebrow">Asistente financiero</p>
+      <h1>Presupuesto</h1>
+    </div>
+    <button type="button" class="avatar-button" routerLink="/mobile/cuenta">N</button>
+  </header>
+
+  <section class="chat-card">
+    <div class="chat-box" #chatBox>
+      <div
+        *ngFor="let mensaje of mensajes"
+        class="message-row"
+        [ngClass]="mensaje.rol === 'user' ? 'message-user' : 'message-bot'"
+      >
+        <div class="bubble">{{ mensaje.texto }}</div>
+      </div>
+
+      <div *ngIf="cargando" class="message-row message-bot">
+        <div class="bubble">Pensando respuesta...</div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <input
+        type="text"
+        [(ngModel)]="mensajeChat"
+        (keyup.enter)="enviarMensaje()"
+        placeholder="Ej: gano 2 millones"
+      >
+      <button type="button" (click)="enviarMensaje()" [disabled]="cargando">Enviar</button>
+    </div>
+  </section>
+
+  <section class="examples">
+    <p class="eyebrow">Ejemplos</p>
+    <div class="chips">
+      <button type="button" (click)="enviarEjemplo('gano 2 millones 500 mil')">Ingreso</button>
+      <button type="button" (click)="enviarEjemplo('deuda 300000')">Deuda</button>
+      <button type="button" (click)="enviarEjemplo('ahorro 200000')">Ahorro</button>
+      <button type="button" (click)="enviarEjemplo('gasto arriendo 800000, mercado 250000')">Gastos</button>
+    </div>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegacion movil">
+    <a routerLink="/mobile/dashboard">Inicio</a>
+    <a routerLink="/mobile/transacciones">Movs.</a>
+    <a routerLink="/mobile/presupuesto" class="active">Presup.</a>
+    <a routerLink="/mobile/cuenta">Cuenta</a>
+  </nav>
+</main>

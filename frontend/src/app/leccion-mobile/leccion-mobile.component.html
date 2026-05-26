@@ -1,0 +1,43 @@
+<main class="mobile-page">
+  <header class="topbar">
+    <button type="button" class="icon-button" (click)="volverModulo()">‹</button>
+    <div>
+      <p class="eyebrow">Leccion</p>
+      <h1>{{ leccion?.tituloLeccion || 'Cargando' }}</h1>
+    </div>
+  </header>
+
+  <section *ngIf="cargando" class="state-card">Cargando leccion...</section>
+  <section *ngIf="errorMensaje" class="state-card error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="state-card success">{{ mensajeExito }}</section>
+
+  <article *ngIf="leccion" class="lesson-card">
+    <span class="pill">Leccion {{ leccion.ordenLeccion }}</span>
+
+    <div *ngIf="obtenerVideoUrl(leccion.contenidoLeccion)" class="video-box">
+      <iframe
+        [src]="obtenerYoutubeEmbedUrl(obtenerVideoUrl(leccion.contenidoLeccion))"
+        title="Video de la leccion"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <p class="content">{{ obtenerTextoLeccion(leccion.contenidoLeccion) }}</p>
+
+    <button
+      type="button"
+      class="primary-button"
+      [disabled]="completada || guardando"
+      (click)="completarLeccion()"
+    >
+      {{ completada ? 'Completada' : (guardando ? 'Guardando...' : 'Marcar como completada') }}
+    </button>
+  </article>
+
+  <nav class="bottom-nav" aria-label="Navegacion movil">
+    <a routerLink="/mobile/dashboard">Inicio</a>
+    <a routerLink="/mobile/aprendizaje">Aprender</a>
+    <a routerLink="/mobile/presupuesto">Presup.</a>
+    <a routerLink="/mobile/cuenta">Cuenta</a>
+  </nav>
+</main>

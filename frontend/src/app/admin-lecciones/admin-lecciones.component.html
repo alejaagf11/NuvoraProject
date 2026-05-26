@@ -86,9 +86,9 @@
       </div>
 
       <div *ngIf="!cargando && lecciones.length > 0" class="lecciones-grid">
-        <div class="leccion-card" *ngFor="let leccion of lecciones">
+        <div class="leccion-card" *ngFor="let leccion of lecciones; let i = index">
           <div class="top-row">
-            <span class="orden-chip">Leccion {{ leccion.ordenLeccion }}</span>
+            <span class="orden-chip">Leccion {{ i + 1 }}</span>
             <span class="estado-chip" [class.inactivo]="!leccion.activo">
               {{ leccion.activo ? 'Activa' : 'Inactiva' }}
             </span>
@@ -113,7 +113,7 @@
           </div>
 
           <div class="d-flex gap-2 flex-wrap mt-3">
-            <button class="btn btn-soft-action btn-sm" (click)="editarLeccion(leccion)">
+            <button class="btn btn-soft-action btn-sm" (click)="editarLeccion(leccion, i + 1)">
               Editar
             </button>
             <button class="btn btn-delete btn-sm" (click)="eliminarLeccion(leccion.leccionId)">

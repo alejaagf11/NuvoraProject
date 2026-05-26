@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { concatMap, switchMap, toArray } from 'rxjs/operators';
 import { ModuloAprendizaje } from '../models/aprendizaje';
 import { Leccion } from '../models/leccion';
 import { LeccionService } from '../services/leccion.service';
@@ -156,23 +156,19 @@ export class AdminLeccionesComponent implements OnInit {
 
     if (this.editandoId) {
 
-      const leccionesAMover = this.obtenerLeccionesParaEditar(
+      const leccionesFinales = this.obtenerLeccionesParaEditar(
         this.editandoId,
-        leccionParaGuardar.ordenLeccion
+        leccionParaGuardar.ordenLeccion,
+        leccionParaGuardar
       );
 
-      this.actualizarOrdenes(leccionesAMover).pipe(
+      const leccionesTemporales = this.lecciones.filter(
+        leccion => !!leccion.leccionId
+      );
 
-        switchMap(() => {
+      this.moverOrdenesTemporalmente(leccionesTemporales).pipe(
 
-          leccionParaGuardar.ordenLeccion =
-            this.formulario.ordenLeccion;
-
-          return this.leccionService.updateLeccion(
-            this.editandoId!,
-            leccionParaGuardar
-          );
-        })
+        switchMap(() => this.actualizarOrdenesFinales(leccionesFinales))
 
       ).subscribe({
 
@@ -191,7 +187,7 @@ export class AdminLeccionesComponent implements OnInit {
         error: (err) => {
           console.error('Error al actualizar leccion', err);
           this.errorMensaje =
-            'No se pudo actualizar la leccion';
+            this.obtenerMensajeError(err, 'No se pudo actualizar la leccion');
         }
 
       });
@@ -203,15 +199,22 @@ export class AdminLeccionesComponent implements OnInit {
     // CREAR LECCION
     // =========================
 
-    const leccionesAMover = this.obtenerLeccionesParaCrear(
-      leccionParaGuardar.ordenLeccion
+    const planCreacion = this.obtenerPlanParaCrear(
+      leccionParaGuardar.ordenLeccion,
+      leccionParaGuardar
     );
 
-    this.actualizarOrdenes(leccionesAMover).pipe(
+    const leccionesTemporales = this.lecciones.filter(
+      leccion => !!leccion.leccionId
+    );
+
+    this.moverOrdenesTemporalmente(leccionesTemporales).pipe(
 
       switchMap(() =>
-        this.leccionService.createLeccion(leccionParaGuardar)
-      )
+        this.leccionService.createLeccion(planCreacion.nuevaLeccion)
+      ),
+
+      switchMap(() => this.actualizarOrdenesFinales(planCreacion.leccionesExistentes))
 
     ).subscribe({
 
@@ -230,13 +233,13 @@ export class AdminLeccionesComponent implements OnInit {
       error: (err) => {
         console.error('Error al crear leccion', err);
         this.errorMensaje =
-          'No se pudo crear la leccion';
+          this.obtenerMensajeError(err, 'No se pudo crear la leccion');
       }
 
     });
   }
 
-  editarLeccion(leccion: Leccion) {
+  editarLeccion(leccion: Leccion, ordenVisual?: number) {
 
     this.editandoId = leccion.leccionId || null;
 
@@ -244,7 +247,8 @@ export class AdminLeccionesComponent implements OnInit {
 
     this.formulario = {
       ...leccion,
-      contenidoLeccion: partes[0].trim()
+      contenidoLeccion: partes[0].trim(),
+      ordenLeccion: ordenVisual || leccion.ordenLeccion
     };
 
     this.videoUrl = partes[1]?.trim() || '';
@@ -338,22 +342,44 @@ obtenerThumbnailYoutube(url: string): string {
   // CREAR
   // =========================
 
-  private obtenerLeccionesParaCrear(
-    nuevoOrden: number
-  ): Leccion[] {
+  private obtenerPlanParaCrear(
+    nuevoOrden: number,
+    nuevaLeccion: Leccion
+  ): { nuevaLeccion: Leccion; leccionesExistentes: Leccion[] } {
 
-    return this.lecciones
+    const marcadorNuevaLeccion: Leccion = {
+      ...nuevaLeccion,
+      leccionId: undefined
+    };
 
-      .filter(leccion =>
-        !!leccion.leccionId &&
-        leccion.moduloId === this.formulario.moduloId &&
-        leccion.ordenLeccion >= nuevoOrden
-      )
+    const leccionesOrdenadas = this.obtenerLeccionesOrdenadasDelModulo();
+    const posicion = Math.max(
+      0,
+      Math.min(nuevoOrden - 1, leccionesOrdenadas.length)
+    );
 
-      .map(leccion => ({
+    leccionesOrdenadas.splice(posicion, 0, marcadorNuevaLeccion);
+
+    const leccionesFinales = this.asignarOrdenesPersistentes(leccionesOrdenadas);
+    const nuevaLeccionFinal = leccionesFinales.find(leccion => !leccion.leccionId) || nuevaLeccion;
+
+    return {
+      nuevaLeccion: nuevaLeccionFinal,
+      leccionesExistentes: leccionesFinales.filter(leccion => !!leccion.leccionId)
+    };
+  }
+
+  private asignarOrdenesPersistentes(lecciones: Leccion[]): Leccion[] {
+    const baseOrden = this.obtenerBaseOrdenPersistente(200000);
+
+    return lecciones.map((leccion, index) => ({
         ...leccion,
-        ordenLeccion: leccion.ordenLeccion + 1
+        ordenLeccion: baseOrden + index
       }));
+  }
+
+  private obtenerBaseOrdenPersistente(offset: number): number {
+    return Math.floor(Date.now() / 1000) + offset;
   }
 
   // =========================
@@ -362,18 +388,11 @@ obtenerThumbnailYoutube(url: string): string {
 
   private obtenerLeccionesParaEditar(
     leccionId: number,
-    nuevoOrden: number
+    nuevoOrden: number,
+    leccionEditada: Leccion
   ): Leccion[] {
 
-    const leccionesModulo = [...this.lecciones]
-
-      .filter(
-        l => l.moduloId === this.formulario.moduloId
-      )
-
-      .sort(
-        (a, b) => a.ordenLeccion - b.ordenLeccion
-      );
+    const leccionesModulo = this.obtenerLeccionesOrdenadasDelModulo();
 
     const leccionEditando = leccionesModulo.find(
       l => l.leccionId === leccionId
@@ -392,24 +411,21 @@ obtenerThumbnailYoutube(url: string): string {
       Math.min(nuevoOrden - 1, restantes.length)
     );
 
-    restantes.splice(posicion, 0, {
-      ...leccionEditando,
-      ordenLeccion: nuevoOrden
-    });
+    restantes.splice(posicion, 0, leccionEditada);
 
-    return restantes
-
-      .map((leccion, index) => ({
-        ...leccion,
-        ordenLeccion: index + 1
-      }))
-
-      .filter(
-        l => l.leccionId !== leccionId
-      );
+    return this.asignarOrdenesPersistentes(restantes);
   }
 
-  private actualizarOrdenes(
+  private obtenerLeccionesOrdenadasDelModulo(): Leccion[] {
+    return [...this.lecciones]
+      .filter(leccion =>
+        !!leccion.leccionId &&
+        leccion.moduloId === this.formulario.moduloId
+      )
+      .sort((a, b) => a.ordenLeccion - b.ordenLeccion);
+  }
+
+  private moverOrdenesTemporalmente(
     lecciones: Leccion[]
   ): Observable<Leccion[]> {
 
@@ -417,18 +433,47 @@ obtenerThumbnailYoutube(url: string): string {
       return of([]);
     }
 
-    return forkJoin(
+    const ordenTemporalBase = this.obtenerBaseOrdenPersistente(100000);
 
-      lecciones.map(leccion =>
+    return from(lecciones).pipe(
+      concatMap((leccion, index) =>
+        this.leccionService.updateLeccion(
+          leccion.leccionId!,
+          {
+            ...leccion,
+            ordenLeccion: ordenTemporalBase + index
+          }
+        )
+      ),
+      toArray()
+    );
+  }
 
+  private actualizarOrdenesFinales(
+    lecciones: Leccion[]
+  ): Observable<Leccion[]> {
+
+    if (lecciones.length === 0) {
+      return of([]);
+    }
+
+    return from(lecciones).pipe(
+      concatMap(leccion =>
         this.leccionService.updateLeccion(
           leccion.leccionId!,
           leccion
         )
-
-      )
-
+      ),
+      toArray()
     );
+  }
+
+  private obtenerMensajeError(err: any, mensajePorDefecto: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    return mensajePorDefecto;
   }
 
   logout() {

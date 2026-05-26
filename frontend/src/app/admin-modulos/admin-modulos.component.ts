@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { from, Observable, of } from 'rxjs';
+import { concatMap, switchMap, toArray } from 'rxjs/operators';
 import { ModuloAprendizaje } from '../models/aprendizaje';
 import { ModuloAprendizajeService } from '../services/modulo-aprendizaje.service';
 import { UsuarioService } from '../services/usuario.service';
@@ -52,13 +54,23 @@ export class AdminModulosComponent implements OnInit {
   }
 
   guardarModulo() {
+    this.formulario.ordenModulo = this.normalizarOrden(this.formulario.ordenModulo);
+
     if (!this.formulario.tituloModulo.trim() || !this.formulario.descripcionModulo.trim()) {
       this.errorMensaje = 'Completa el titulo y la descripcion del modulo';
       return;
     }
 
     if (this.editandoId) {
-      this.moduloService.updateModulo(this.editandoId, this.formulario).subscribe({
+      const modulosAMover = this.obtenerModulosParaEditar(
+        this.editandoId,
+        this.formulario.ordenModulo
+      );
+
+      this.moverOrdenesTemporalmente(modulosAMover).pipe(
+        switchMap(() => this.moduloService.updateModulo(this.editandoId!, this.formulario)),
+        switchMap(() => this.actualizarOrdenesFinales(modulosAMover))
+      ).subscribe({
         next: () => {
           this.mensajeExito = 'Modulo actualizado correctamente';
           this.resetFormulario();
@@ -66,13 +78,18 @@ export class AdminModulosComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error al actualizar modulo', err);
-          this.errorMensaje = 'No se pudo actualizar el modulo';
+          this.errorMensaje = this.obtenerMensajeError(err, 'No se pudo actualizar el modulo');
         }
       });
       return;
     }
 
-    this.moduloService.createModulo(this.formulario).subscribe({
+    const modulosAMover = this.obtenerModulosParaCrear(this.formulario.ordenModulo);
+
+    this.moverOrdenesTemporalmente(modulosAMover).pipe(
+      switchMap(() => this.moduloService.createModulo(this.formulario)),
+      switchMap(() => this.actualizarOrdenesFinales(modulosAMover))
+    ).subscribe({
       next: () => {
         this.mensajeExito = 'Modulo creado correctamente';
         this.resetFormulario();
@@ -80,7 +97,7 @@ export class AdminModulosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al crear modulo', err);
-        this.errorMensaje = 'No se pudo crear el modulo';
+        this.errorMensaje = this.obtenerMensajeError(err, 'No se pudo crear el modulo');
       }
     });
   }
@@ -130,6 +147,111 @@ export class AdminModulosComponent implements OnInit {
   irALecciones(moduloId?: number) {
     if (!moduloId) return;
     this.router.navigate(['/admin/lecciones'], { queryParams: { moduloId } });
+  }
+
+  private normalizarOrden(orden: number): number {
+    const ordenNumerico = Number(orden);
+
+    return Number.isFinite(ordenNumerico) && ordenNumerico > 0
+      ? Math.floor(ordenNumerico)
+      : 1;
+  }
+
+  private obtenerModulosParaCrear(nuevoOrden: number): ModuloAprendizaje[] {
+    return this.modulos
+      .filter(modulo =>
+        !!modulo.moduloId &&
+        modulo.ordenModulo >= nuevoOrden
+      )
+      .map(modulo => ({
+        ...modulo,
+        ordenModulo: modulo.ordenModulo + 1
+      }));
+  }
+
+  private obtenerModulosParaEditar(moduloId: number, nuevoOrden: number): ModuloAprendizaje[] {
+    const modulosOrdenados = [...this.modulos].sort(
+      (a, b) => a.ordenModulo - b.ordenModulo
+    );
+
+    const moduloEditando = modulosOrdenados.find(
+      modulo => modulo.moduloId === moduloId
+    );
+
+    if (!moduloEditando) {
+      return [];
+    }
+
+    const restantes = modulosOrdenados.filter(
+      modulo => modulo.moduloId !== moduloId
+    );
+
+    const posicion = Math.max(
+      0,
+      Math.min(nuevoOrden - 1, restantes.length)
+    );
+
+    restantes.splice(posicion, 0, {
+      ...moduloEditando,
+      ordenModulo: nuevoOrden
+    });
+
+    return restantes
+      .map((modulo, index) => ({
+        ...modulo,
+        ordenModulo: index + 1
+      }))
+      .filter(modulo => modulo.moduloId !== moduloId);
+  }
+
+  private moverOrdenesTemporalmente(modulos: ModuloAprendizaje[]): Observable<ModuloAprendizaje[]> {
+    if (modulos.length === 0) {
+      return of([]);
+    }
+
+    const ordenTemporalBase =
+      Math.max(
+        ...this.modulos.map(modulo => modulo.ordenModulo),
+        ...modulos.map(modulo => modulo.ordenModulo),
+        0
+      ) + 1000;
+
+    return from(modulos).pipe(
+      concatMap((modulo, index) =>
+        this.moduloService.updateModulo(
+          modulo.moduloId!,
+          {
+            ...modulo,
+            ordenModulo: ordenTemporalBase + index
+          }
+        )
+      ),
+      toArray()
+    );
+  }
+
+  private actualizarOrdenesFinales(modulos: ModuloAprendizaje[]): Observable<ModuloAprendizaje[]> {
+    if (modulos.length === 0) {
+      return of([]);
+    }
+
+    return from(modulos).pipe(
+      concatMap(modulo =>
+        this.moduloService.updateModulo(
+          modulo.moduloId!,
+          modulo
+        )
+      ),
+      toArray()
+    );
+  }
+
+  private obtenerMensajeError(err: any, mensajePorDefecto: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    return mensajePorDefecto;
   }
 
   logout() {

@@ -1,0 +1,74 @@
+<main class="mobile-page">
+  <header class="topbar">
+    <button type="button" class="icon-button" routerLink="/mobile/dashboard">‹</button>
+    <div>
+      <p class="eyebrow">Movimientos</p>
+      <h1>Transacciones</h1>
+    </div>
+    <button type="button" class="avatar-button" routerLink="/mobile/cuenta">N</button>
+  </header>
+
+  <section *ngIf="errorMensaje" class="alert error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="alert success">{{ mensajeExito }}</section>
+
+  <section class="form-card">
+    <h2>{{ isEditMode ? 'Editar movimiento' : 'Nuevo movimiento' }}</h2>
+
+    <div class="type-switch">
+      <button type="button" [class.active]="nuevaTransaccion.tipo === 'INGRESO'" (click)="nuevaTransaccion.tipo = 'INGRESO'; onTipoChange()">Ingreso</button>
+      <button type="button" [class.active]="nuevaTransaccion.tipo === 'GASTO'" (click)="nuevaTransaccion.tipo = 'GASTO'; onTipoChange()">Gasto</button>
+    </div>
+
+    <label>Monto</label>
+    <input type="number" [(ngModel)]="nuevaTransaccion.montoTransaccion" placeholder="Ej: 50000">
+
+    <label>Descripcion</label>
+    <input type="text" [(ngModel)]="nuevaTransaccion.descTransaccion" placeholder="Ej: mercado">
+
+    <label>Fecha</label>
+    <input type="date" [(ngModel)]="nuevaTransaccion.fechaTransaccion">
+
+    <label>Categoria</label>
+    <select [(ngModel)]="nuevaTransaccion.categoriaId">
+      <option [ngValue]="0">Selecciona una categoria</option>
+      <option *ngFor="let categoria of categoriasFiltradas" [ngValue]="categoria.categoriaId">
+        {{ categoria.nombreCategoria }}
+      </option>
+    </select>
+
+    <button type="button" class="primary-button" (click)="guardarTransaccion()">
+      {{ isEditMode ? 'Guardar cambios' : 'Registrar' }}
+    </button>
+    <button *ngIf="isEditMode" type="button" class="soft-button" (click)="cancelarEdicion()">Cancelar</button>
+  </section>
+
+  <section class="list-section">
+    <div class="section-title">
+      <h2>Historial</h2>
+      <button type="button" routerLink="/mobile/categorias">Categorias</button>
+    </div>
+
+    <div *ngIf="transacciones.length === 0" class="empty-state">Todavia no tienes transacciones.</div>
+
+    <article *ngFor="let transaccion of transacciones" class="movement-card">
+      <div>
+        <h3>{{ transaccion.descTransaccion }}</h3>
+        <p>{{ transaccion.fechaTransaccion || 'Sin fecha' }} · {{ transaccion.tipo }}</p>
+      </div>
+      <strong [class.expense]="esGasto(transaccion.tipo)">
+        {{ esGasto(transaccion.tipo) ? '-' : '+' }}{{ transaccion.montoTransaccion | currency }}
+      </strong>
+      <div class="card-actions">
+        <button type="button" (click)="editarTransaccion(transaccion)">Editar</button>
+        <button type="button" (click)="eliminarTransaccion(transaccion.transaccionId)">Eliminar</button>
+      </div>
+    </article>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegacion movil">
+    <a routerLink="/mobile/dashboard">Inicio</a>
+    <a routerLink="/mobile/transacciones" class="active">Movs.</a>
+    <a routerLink="/mobile/presupuesto">Presup.</a>
+    <a routerLink="/mobile/cuenta">Cuenta</a>
+  </nav>
+</main>
