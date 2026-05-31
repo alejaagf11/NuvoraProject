@@ -87,7 +87,7 @@ public class UsuarioServiceImp implements UsuarioService {
             usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
         }
 
-        if (datosNuevos.getFotoPerfil() != null && !datosNuevos.getFotoPerfil().isEmpty()) {
+        if (datosNuevos.getFotoPerfil() != null) {
             usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
         }
 
@@ -143,7 +143,7 @@ public class UsuarioServiceImp implements UsuarioService {
             usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
         }
 
-        if (datosNuevos.getFotoPerfil() != null && !datosNuevos.getFotoPerfil().isEmpty()) {
+        if (datosNuevos.getFotoPerfil() != null) {
             usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
         }
 

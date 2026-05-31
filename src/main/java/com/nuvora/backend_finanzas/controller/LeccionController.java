@@ -1,7 +1,10 @@
 package com.nuvora.backend_finanzas.controller;
 
 import com.nuvora.backend_finanzas.dto.LeccionDTO;
+import com.nuvora.backend_finanzas.entity.Usuario;
 import com.nuvora.backend_finanzas.service.LeccionService;
+import com.nuvora.backend_finanzas.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +20,9 @@ public class LeccionController {
     @Autowired
     private LeccionService leccionService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @PostMapping("/register")
     public ResponseEntity<LeccionDTO> createLeccion(@RequestBody LeccionDTO leccionDTO){
         return ResponseEntity.ok(leccionService.createLeccion(leccionDTO));
@@ -29,8 +35,15 @@ public class LeccionController {
     }
 
     @GetMapping("/{leccionId}")
-    public ResponseEntity<LeccionDTO> getLeccionById(@PathVariable Long leccionId){
-        return ResponseEntity.ok(leccionService.getLeccionById(leccionId));
+    public ResponseEntity<LeccionDTO> getLeccionById(@PathVariable Long leccionId, HttpServletRequest request){
+
+        try{
+            Usuario usuario = getUsuarioAutenticado(request);
+            return ResponseEntity.ok(leccionService.getLeccionByIdParaUsuario(leccionId,usuario));
+        } catch (Exception e) {
+           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+
     }
 
     @PutMapping("/update/{leccionId}")
@@ -50,5 +63,15 @@ public class LeccionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    private Usuario getUsuarioAutenticado(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+
+        if (userId == null) {
+            throw new RuntimeException("Usuario no autenticado");
+        }
+
+        return usuarioService.getUsuarioEntityById(userId);
     }
 }

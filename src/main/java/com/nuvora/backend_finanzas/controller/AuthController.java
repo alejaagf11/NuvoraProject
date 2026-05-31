@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -31,31 +32,44 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO){
+    public ResponseEntity<?> loginUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO, HttpServletRequest request) {
         UsuarioDTO usuarioLogin = usuarioService.loginUsuario(
                 usuarioDTO.getCorreoUsuario(),
                 usuarioDTO.getContrasenaUsuario()
         );
 
-        if(usuarioLogin != null){
-            String token = jwtService.createToken(usuarioLogin.getUsuarioId());
-            return ResponseEntity.ok(new LoginResponse(token));
+        Long usuarioActualId = (Long) request.getAttribute("userId");
+
+        if (usuarioActualId != null) {
+            Usuario usuarioActual = usuarioService.getUsuarioEntityById(usuarioActualId);
+
+            boolean actualEsAdmin = "ADMIN".equalsIgnoreCase(usuarioActual.getRolUsuario());
+            boolean nuevoEsAdmin = "ADMIN".equalsIgnoreCase(usuarioLogin.getRolUsuario());
+            boolean esOtroUsuario = !usuarioActual.getUsuarioId().equals(usuarioLogin.getUsuarioId());
+
+            if (actualEsAdmin && nuevoEsAdmin && esOtroUsuario) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Ya hay una cuenta de administrador abierta en este navegador");
+            }
         }
 
-        return ResponseEntity.status(401).body("Credenciales Incorrectas");
+        String token = jwtService.createToken(usuarioLogin.getUsuarioId());
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 
     public static class LoginResponse{
         private String token;
+
         public LoginResponse(String token){
             this.token = token;
         }
+
         public String getToken() {
             return token;
         }
+
         public void setToken(String token){
             this.token = token;
         }
-
     }
 }

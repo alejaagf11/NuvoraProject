@@ -29,6 +29,8 @@ public class ProgresoLeccionUsuarioServiceImp implements ProgresoLeccionUsuarioS
 
     @Override
     public ProgresoLeccionUsuarioDTO completarLeccion(Long leccionId, Usuario usuario){
+        leccionService.validarLeccionDesbloqueada(leccionId, usuario);
+
         Leccion leccion = leccionService.getLeccionEntityById(leccionId);
 
         ProgresoLeccionUsuario progreso = progresoLeccionUsuarioRepository

@@ -12,13 +12,13 @@ import java.util.Date;
 public class JwtService {
 
     @Value("${jwt.unknow}")
-    private String unknowKey;
+    private String secretKey;
 
     @Value("${jwt.exp}")
     private Long expTime;
 
     private Key getSigningKey(){
-        return Keys.hmacShaKeyFor(unknowKey.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String createToken(Long usuarioId){

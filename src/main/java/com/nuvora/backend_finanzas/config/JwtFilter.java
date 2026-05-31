@@ -51,18 +51,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
             String rol = usuario.getRolUsuario() != null ? usuario.getRolUsuario().toUpperCase() : "USER";
 
-                // Crear autenticación y colocar en SecurityContext
+
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(userId, null, List.of(new SimpleGrantedAuthority("ROLE_" + rol)));
             SecurityContextHolder.getContext().setAuthentication(auth);
 
         } catch (Exception e) {
-            // Token inválido → 401
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        // Muy importante: continuar la cadena de filtros
+
         filterChain.doFilter(request, response);
     }
 }

@@ -4,8 +4,11 @@ import com.nuvora.backend_finanzas.dto.LeccionDTO;
 import com.nuvora.backend_finanzas.entity.Leccion;
 import com.nuvora.backend_finanzas.entity.ModuloAprendizaje;
 import com.nuvora.backend_finanzas.repository.LeccionRepository;
+import com.nuvora.backend_finanzas.repository.ProgresoLeccionUsuarioRepository;
 import com.nuvora.backend_finanzas.service.LeccionService;
 import com.nuvora.backend_finanzas.service.ModuloAprendizajeService;
+import com.nuvora.backend_finanzas.entity.Usuario;
+import com.nuvora.backend_finanzas.repository.ProgresoLeccionUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,9 @@ public class LeccionServiceImp implements LeccionService {
 
     @Autowired
     private ModuloAprendizajeService moduloAprendizajeService;
+
+    @Autowired
+    private ProgresoLeccionUsuarioRepository progresoLeccionUsuarioRepository;
 
     @Override
     public LeccionDTO createLeccion(LeccionDTO leccionDTO){
@@ -114,5 +120,42 @@ public class LeccionServiceImp implements LeccionService {
     public Leccion getLeccionEntityById(Long leccionId){
         return leccionRepository.findById(leccionId)
                 .orElseThrow(()-> new RuntimeException("Leccion no encontrada"));
+    }
+
+    @Override
+    public LeccionDTO getLeccionByIdParaUsuario(Long leccionId, Usuario usuario) {
+        validarLeccionDesbloqueada(leccionId, usuario);
+        return LeccionDTO.fromEntity(getLeccionEntityById(leccionId));
+    }
+
+    @Override
+    public void validarLeccionDesbloqueada(Long leccionId, Usuario usuario) {
+        Leccion leccion = getLeccionEntityById(leccionId);
+
+        if (Boolean.FALSE.equals(leccion.getActivo())) {
+            throw new RuntimeException("La lección no está disponible");
+        }
+
+        if ("ADMIN".equalsIgnoreCase(usuario.getRolUsuario())) {
+            return;
+        }
+
+        Leccion leccionAnterior = leccionRepository
+                .findTopByModuloAprendizajeAndActivoTrueAndOrdenLeccionLessThanOrderByOrdenLeccionDesc(
+                        leccion.getModuloAprendizaje(),
+                        leccion.getOrdenLeccion()
+                )
+                .orElse(null);
+
+        if (leccionAnterior == null) {
+            return;
+        }
+
+        boolean anteriorCompletada = progresoLeccionUsuarioRepository
+                .existsByUsuarioAndLeccionAndCompletadaTrue(usuario, leccionAnterior);
+
+        if (!anteriorCompletada) {
+            throw new RuntimeException("Debes completar la lección anterior antes de continuar");
+        }
     }
 }

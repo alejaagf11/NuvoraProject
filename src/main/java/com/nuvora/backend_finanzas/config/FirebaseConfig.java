@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class FirebaseConfig {
@@ -18,8 +20,8 @@ public class FirebaseConfig {
     @Value("${firebase.project-id}")
     private String projectId;
 
-    @Value("${firebase.service-account-path}")
-    private Resource serviceAccount;
+    @Value("${firebase.service-account-json}")
+    private String serviceAccountJson;
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
@@ -27,8 +29,12 @@ public class FirebaseConfig {
             return FirebaseApp.getInstance();
         }
 
+        GoogleCredentials credentials = GoogleCredentials.fromStream(
+                new ByteArrayInputStream(serviceAccountJson.getBytes(StandardCharsets.UTF_8))
+        );
+
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
+                .setCredentials(credentials)
                 .setProjectId(projectId)
                 .build();
 

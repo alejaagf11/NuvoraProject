@@ -2,6 +2,7 @@ package com.nuvora.backend_finanzas.service;
 
 import com.nuvora.backend_finanzas.dto.LeccionDTO;
 import com.nuvora.backend_finanzas.entity.Leccion;
+import com.nuvora.backend_finanzas.entity.Usuario;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,5 +21,9 @@ public interface LeccionService {
     void deleteLeccion(Long leccionId);
 
     Leccion getLeccionEntityById(Long leccionId);
+
+    LeccionDTO getLeccionByIdParaUsuario(Long leccionId, Usuario usuario);
+
+    void validarLeccionDesbloqueada(Long leccionId, Usuario usuario);
 
 }
