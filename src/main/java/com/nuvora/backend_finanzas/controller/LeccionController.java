@@ -35,7 +35,7 @@ public class LeccionController {
     }
 
     @GetMapping("/{leccionId}")
-    public ResponseEntity<LeccionDTO> getLeccionById(@PathVariable Long leccionId, HttpServletRequest request){
+    public ResponseEntity<?> getLeccionById(@PathVariable Long leccionId, HttpServletRequest request){
 
         try{
             Usuario usuario = getUsuarioAutenticado(request);
