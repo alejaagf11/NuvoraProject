@@ -38,24 +38,31 @@ public class AuthController {
                 usuarioDTO.getContrasenaUsuario()
         );
 
-        Long usuarioActualId = (Long) request.getAttribute("userId");
+        String header = request.getHeader("Authorization");
 
-        if (usuarioActualId != null) {
-            Usuario usuarioActual = usuarioService.getUsuarioEntityById(usuarioActualId);
+        if (header != null && header.startsWith("Bearer ")) {
+            try {
+                String tokenActual = header.substring(7);
+                Long usuarioActualId = jwtService.validateTokenAndGetUserId(tokenActual);
+                Usuario usuarioActual = usuarioService.getUsuarioEntityById(usuarioActualId);
 
-            boolean actualEsAdmin = "ADMIN".equalsIgnoreCase(usuarioActual.getRolUsuario());
-            boolean nuevoEsAdmin = "ADMIN".equalsIgnoreCase(usuarioLogin.getRolUsuario());
-            boolean esOtroUsuario = !usuarioActual.getUsuarioId().equals(usuarioLogin.getUsuarioId());
+                boolean actualEsAdmin = "ADMIN".equalsIgnoreCase(usuarioActual.getRolUsuario());
+                boolean nuevoEsAdmin = "ADMIN".equalsIgnoreCase(usuarioLogin.getRolUsuario());
+                boolean esOtroUsuario = !usuarioActual.getUsuarioId().equals(usuarioLogin.getUsuarioId());
 
-            if (actualEsAdmin && nuevoEsAdmin && esOtroUsuario) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("Ya hay una cuenta de administrador abierta en este navegador");
+                if (actualEsAdmin && nuevoEsAdmin && esOtroUsuario) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body("Ya hay una cuenta de administrador abierta en este navegador");
+                }
+            } catch (Exception ignored) {
+                // Si el token anterior está vencido o inválido, dejamos continuar el login normal.
             }
         }
 
         String token = jwtService.createToken(usuarioLogin.getUsuarioId());
         return ResponseEntity.ok(new LoginResponse(token));
     }
+
 
     public static class LoginResponse{
         private String token;
