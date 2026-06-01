@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
@@ -23,15 +24,16 @@ public class FirebaseConfig {
     @Value("${firebase.service-account-json}")
     private String serviceAccountJson;
 
+    @Value("${firebase.service-account-path:}")
+    private Resource serviceAccountPath;
+
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         if (!FirebaseApp.getApps().isEmpty()) {
             return FirebaseApp.getInstance();
         }
 
-        GoogleCredentials credentials = GoogleCredentials.fromStream(
-                new ByteArrayInputStream(serviceAccountJson.getBytes(StandardCharsets.UTF_8))
-        );
+        GoogleCredentials credentials = GoogleCredentials.fromStream(getFirebaseCredentials());
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials)
@@ -44,5 +46,13 @@ public class FirebaseConfig {
     @Bean
     public Firestore firestore(FirebaseApp firebaseApp) {
         return FirestoreClient.getFirestore(firebaseApp);
+    }
+
+    private InputStream getFirebaseCredentials() throws IOException {
+        if (serviceAccountJson != null && !serviceAccountJson.isBlank()){
+            return new ByteArrayInputStream(serviceAccountJson.getBytes(StandardCharsets.UTF_8));
+        }
+
+        return serviceAccountPath.getInputStream();
     }
 }
