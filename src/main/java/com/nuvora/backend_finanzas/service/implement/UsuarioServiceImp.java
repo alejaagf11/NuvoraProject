@@ -42,10 +42,17 @@ public class UsuarioServiceImp implements UsuarioService {
 
     @Override
     public UsuarioDTO loginUsuario ( String correoUsuario, String contrasenaUsuario){
-        Usuario usuario = usuarioRepository.findByCorreoUsuario(correoUsuario)
-                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+        if (correoUsuario == null || contrasenaUsuario == null) {
+            throw new RuntimeException("Correo y contraseña son obligatorios");
+        }
 
-        if (!passwordEncoder.matches(contrasenaUsuario, usuario.getContrasenaUsuario())){
+        String correoNormalizado = correoUsuario.trim().toLowerCase();
+        String contrasenaLimpia = contrasenaUsuario.trim();
+
+        Usuario usuario = usuarioRepository.findByCorreoUsuario(correoNormalizado)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(contrasenaLimpia, usuario.getContrasenaUsuario())) {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
