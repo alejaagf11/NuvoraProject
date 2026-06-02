@@ -4,7 +4,6 @@ import { Transaccion } from '../models/transaccion';
 import { Usuario } from '../models/usuarios';
 import { TransaccionService } from '../services/transaccion.service';
 import { UsuarioService } from '../services/usuario.service';
-import { ProfilePhotoService } from '../services/profile-photo.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,12 +30,10 @@ nombreUsuario: any;
   constructor(
     private transaccionService: TransaccionService,
     private usuarioService: UsuarioService,
-    private profilePhotoService: ProfilePhotoService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.fotoPerfil = this.profilePhotoService.getPhoto();
     this.cargarUsuario();
     this.cargarSaldo();
     this.cargarTransacciones();
@@ -46,6 +43,7 @@ nombreUsuario: any;
     this.usuarioService.getMiUsuario().subscribe({
       next: (data) => {
         this.usuario = data;
+        this.fotoPerfil = data.fotoPerfil || null;
         this.actualizarNivelBotella();
       },
       error: (err) => {

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Usuario } from '../models/usuarios';
 import { MetasAhorroService } from '../services/metas-ahorro.service';
-import { ProfilePhotoService } from '../services/profile-photo.service';
 import { TransaccionService } from '../services/transaccion.service';
 import { UsuarioService } from '../services/usuario.service';
 
@@ -31,12 +30,10 @@ export class CuentaMobileComponent implements OnInit {
     private usuarioService: UsuarioService,
     private transaccionService: TransaccionService,
     private metasAhorroService: MetasAhorroService,
-    private profilePhotoService: ProfilePhotoService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.fotoPerfil = this.profilePhotoService.getPhoto();
     this.cargarUsuario();
     this.cargarSaldo();
     this.cargarResumen();
@@ -46,6 +43,7 @@ export class CuentaMobileComponent implements OnInit {
     this.usuarioService.getMiUsuario().subscribe({
       next: (data) => {
         this.usuario = data;
+        this.fotoPerfil = data.fotoPerfil || null;
         this.errorMensaje = null;
       },
       error: (err) => {
@@ -105,21 +103,83 @@ export class CuentaMobileComponent implements OnInit {
       return;
     }
 
-    const lector = new FileReader();
-    lector.onload = () => {
-      this.fotoPerfil = lector.result as string;
-      this.profilePhotoService.savePhoto(this.fotoPerfil);
-      this.mensajeExito = 'Foto de perfil actualizada';
-      this.errorMensaje = null;
-    };
-    lector.readAsDataURL(archivo);
+    this.convertirImagenPerfil(archivo)
+      .then((foto) => {
+        this.fotoPerfil = foto;
+        this.guardarFotoPerfil(foto);
+      })
+      .catch((error) => {
+        console.error('Error al procesar foto de perfil', error);
+        this.errorMensaje = 'No se pudo procesar la imagen';
+      });
   }
 
   quitarFoto() {
-    this.fotoPerfil = null;
-    this.profilePhotoService.removePhoto();
-    this.mensajeExito = 'Foto de perfil eliminada';
-    this.errorMensaje = null;
+    this.guardarFotoPerfil(null);
+  }
+
+  private guardarFotoPerfil(fotoPerfil: string | null) {
+    const usuarioActualizado: Usuario = {
+      ...this.usuario,
+      fotoPerfil
+    };
+
+    this.usuarioService.updateMiUsuario(usuarioActualizado).subscribe({
+      next: (data) => {
+        this.usuario = data;
+        this.fotoPerfil = data.fotoPerfil || null;
+        this.mensajeExito = fotoPerfil
+          ? 'Foto de perfil actualizada'
+          : 'Foto de perfil eliminada';
+        this.errorMensaje = null;
+      },
+      error: (err) => {
+        console.error('Error al guardar foto de perfil', err);
+        this.fotoPerfil = this.usuario.fotoPerfil || null;
+        this.errorMensaje = this.obtenerMensajeError(err, 'No se pudo actualizar la foto de perfil');
+      }
+    });
+  }
+
+  private convertirImagenPerfil(archivo: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const lector = new FileReader();
+
+      lector.onload = () => {
+        const imagen = new Image();
+
+        imagen.onload = () => {
+          const maxSize = 320;
+          const escala = Math.min(maxSize / imagen.width, maxSize / imagen.height, 1);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(imagen.width * escala);
+          canvas.height = Math.round(imagen.height * escala);
+
+          const contexto = canvas.getContext('2d');
+          if (!contexto) {
+            reject(new Error('No se pudo preparar la imagen'));
+            return;
+          }
+
+          contexto.drawImage(imagen, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.72));
+        };
+
+        imagen.onerror = () => reject(new Error('Imagen invalida'));
+        imagen.src = lector.result as string;
+      };
+
+      lector.onerror = () => reject(new Error('No se pudo leer la imagen'));
+      lector.readAsDataURL(archivo);
+    });
+  }
+
+  private obtenerMensajeError(err: any, mensajePorDefecto: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    return err?.error?.message || mensajePorDefecto;
   }
 
   eliminarCuenta() {

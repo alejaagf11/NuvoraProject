@@ -1,6 +1,6 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Usuario } from '../models/usuarios';
 import { API_BASE_URL } from '../config/api.config';
@@ -70,7 +70,16 @@ export class UsuarioService {
   }
 
   login(usuario: { correoUsuario: string; contrasenaUsuario: string }): Observable<any> {
-    return this.http.post<any>(`${this.authUrl}/login`, usuario).pipe(
+    const tokenActual = this.getToken();
+    const options = tokenActual
+      ? {
+          headers: new HttpHeaders({
+            Authorization: `Bearer ${tokenActual}`
+          })
+        }
+      : {};
+
+    return this.http.post<any>(`${this.authUrl}/login`, usuario, options).pipe(
       tap((response: any) => {
         if (response.token && this.isBrowser()) {
           localStorage.setItem('authToken', response.token);

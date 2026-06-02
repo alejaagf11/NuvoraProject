@@ -30,6 +30,30 @@ export class UsuarioLoginComponent {
       return;
     }
 
+    if (this.usuarioService.getToken()) {
+      this.usuarioService.getMiUsuario().subscribe({
+        next: (usuarioActual) => {
+          const correoActual = (usuarioActual.correoUsuario || '').toLowerCase();
+          const correoIntento = (this.loginForm.value.correoUsuario || '').toLowerCase();
+
+          if (correoActual && correoActual !== correoIntento) {
+            this.loginError = `Ya hay una sesion abierta, cierrala antes de entrar con otra cuenta.`;
+            return;
+          }
+
+          this.ejecutarLogin();
+        },
+        error: () => {
+          this.ejecutarLogin();
+        }
+      });
+      return;
+    }
+
+    this.ejecutarLogin();
+  }
+
+  private ejecutarLogin() {
     this.usuarioService.login(this.loginForm.value).subscribe({
       next: () => {
         this.loginError = null;

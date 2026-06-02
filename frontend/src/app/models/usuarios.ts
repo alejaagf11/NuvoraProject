@@ -5,5 +5,5 @@ export interface Usuario {
   correoUsuario: string;
   contrasenaUsuario?: string;
   montoMensual?: number;
-  fotoPerfil?: string;
+  fotoPerfil?: string | null;
 }

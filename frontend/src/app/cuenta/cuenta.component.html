@@ -165,12 +165,12 @@
               <button class="btn btn-soft-action w-100" routerLink="/transacciones">
                 Ver mis transacciones
               </button>
-              <button class="btn btn-danger w-100" (click)="eliminarCuenta()">
+              <button class="btn btn-danger btn btn-logout w-100" (click)="logout()">
+                Cerrar sesión
+              </button>
+              <button class="btn btn-danger btn-delete w-100" (click)="eliminarCuenta()">
                 Eliminar cuenta
               </button>
-              <button class="btn btn-danger w-100" (click)="logout()">
-          Cerrar sesión
-        </button>
             </div>
           </ng-template>
         </div>

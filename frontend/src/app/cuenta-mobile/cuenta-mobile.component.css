@@ -50,11 +50,9 @@ h1 {
   font-weight: 800;
 }
 
-.logout {
-  width: auto;
-  padding: 0 12px;
-  border-radius: 16px;
-  font-size: 12px;
+.topbar-spacer {
+  width: 42px;
+  height: 42px;
 }
 
 .profile-card,
@@ -106,6 +104,7 @@ h1 {
 .soft-button,
 .card-title button,
 .primary-button,
+.logout-button,
 .delete-button {
   border: 0;
   border-radius: 16px;
@@ -199,6 +198,7 @@ input:disabled {
 }
 
 .primary-button,
+.logout-button,
 .delete-button {
   width: 100%;
   min-height: 46px;
@@ -212,6 +212,11 @@ input:disabled {
 
 .delete-button {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.logout-button {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
 }
 
 .bottom-nav {

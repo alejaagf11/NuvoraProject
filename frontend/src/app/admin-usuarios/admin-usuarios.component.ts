@@ -17,6 +17,8 @@ export class AdminUsuariosComponent implements OnInit {
   usuarioActualId: number | null = null;
 
   usuarioEditandoId: number | null = null;
+  nombreEditando = '';
+  correoEditando = '';
   rolEditando = '';
   montoMensualEditando: number | null = null;
 
@@ -59,12 +61,18 @@ export class AdminUsuariosComponent implements OnInit {
 
   iniciarEdicion(usuario: Usuario) {
     this.usuarioEditandoId = usuario.usuarioId || null;
+    this.nombreEditando = usuario.nombreUsuario;
+    this.correoEditando = usuario.correoUsuario;
     this.rolEditando = usuario.rolUsuario || 'USER';
     this.montoMensualEditando = usuario.montoMensual || 0;
+    this.errorMensaje = null;
+    this.mensajeExito = null;
   }
 
   cancelarEdicion() {
     this.usuarioEditandoId = null;
+    this.nombreEditando = '';
+    this.correoEditando = '';
     this.rolEditando = '';
     this.montoMensualEditando = null;
   }
@@ -77,21 +85,31 @@ export class AdminUsuariosComponent implements OnInit {
       return;
     }
 
+    if (!this.nombreEditando.trim() || !this.correoEditando.trim()) {
+      this.errorMensaje = 'Completa el nombre y el correo del usuario';
+      return;
+    }
+
     const payload: Usuario = {
-      ...usuario,
+      nombreUsuario: this.nombreEditando.trim(),
+      correoUsuario: this.correoEditando.trim(),
       rolUsuario: this.rolEditando,
       montoMensual: this.montoMensualEditando || 0
     };
 
     this.usuarioService.updateUsuarioAdmin(usuario.usuarioId, payload).subscribe({
-      next: () => {
+      next: (usuarioActualizado) => {
+        this.usuarios = this.usuarios.map(item =>
+          item.usuarioId === usuarioActualizado.usuarioId ? usuarioActualizado : item
+        );
         this.mensajeExito = 'Usuario actualizado correctamente';
+        this.errorMensaje = null;
         this.cancelarEdicion();
         this.cargarUsuarios();
       },
       error: (err) => {
         console.error('Error al actualizar usuario', err);
-        this.errorMensaje = err?.error || 'No se pudo actualizar el usuario';
+        this.errorMensaje = this.obtenerMensajeError(err, 'No se pudo actualizar el usuario');
       }
     });
   }
@@ -111,12 +129,17 @@ export class AdminUsuariosComponent implements OnInit {
     this.usuarioService.deleteUsuarioAdmin(id).subscribe({
       next: () => {
         this.mensajeExito = 'Usuario eliminado correctamente';
+        this.errorMensaje = null;
         this.usuarios = this.usuarios.filter(usuario => usuario.usuarioId !== id);
         this.cancelarEdicion();
       },
       error: (err) => {
         console.error('Error al eliminar usuario', err);
-        this.errorMensaje = err?.error || 'No se pudo eliminar el usuario';
+        this.errorMensaje = this.obtenerMensajeError(
+          err,
+          'No se pudo eliminar el usuario. Es posible que tenga transacciones, metas u otros datos relacionados.'
+        );
+        this.cargarUsuarios();
       }
     });
   }
@@ -135,6 +158,14 @@ export class AdminUsuariosComponent implements OnInit {
 
   trackByUsuarioId(index: number, usuario: Usuario): number {
     return usuario.usuarioId ?? index;
+  }
+
+  private obtenerMensajeError(err: any, mensajePorDefecto: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    return err?.error?.message || mensajePorDefecto;
   }
 
   logout() {

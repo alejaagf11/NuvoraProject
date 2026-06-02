@@ -5,7 +5,7 @@
       <p class="eyebrow">Perfil</p>
       <h1>Mi cuenta</h1>
     </div>
-    <button type="button" class="icon-button logout" (click)="logout()">Salir</button>
+    <span class="topbar-spacer" aria-hidden="true"></span>
   </header>
 
   <section class="profile-card">
@@ -62,6 +62,7 @@
     <input type="number" [(ngModel)]="usuario.montoMensual" [disabled]="!isEditMode">
 
     <button *ngIf="isEditMode" type="button" class="primary-button" (click)="guardarCambios()">Guardar cambios</button>
+    <button type="button" class="logout-button" (click)="logout()">Cerrar sesión</button>
     <button type="button" class="delete-button" (click)="eliminarCuenta()">Eliminar cuenta</button>
   </section>
 

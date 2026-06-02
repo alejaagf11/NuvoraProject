@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProfilePhotoService } from '../../services/profile-photo.service';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-profile-icon',
@@ -10,9 +10,16 @@ import { ProfilePhotoService } from '../../services/profile-photo.service';
 export class ProfileIconComponent implements OnInit {
   fotoPerfil: string | null = null;
 
-  constructor(private profilePhotoService: ProfilePhotoService) {}
+  constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit(): void {
-    this.fotoPerfil = this.profilePhotoService.getPhoto();
+    this.usuarioService.getMiUsuario().subscribe({
+      next: (usuario) => {
+        this.fotoPerfil = usuario.fotoPerfil || null;
+      },
+      error: (err) => {
+        console.error('Error al cargar foto de perfil', err);
+      }
+    });
   }
 }
