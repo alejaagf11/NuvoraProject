@@ -86,58 +86,66 @@ export class TransaccionesComponent implements OnInit {
     this.actualizarCategoriasFiltradas();
     this.cargarTransacciones();
   }
+actualizarCategoriasFiltradas() {
+  this.categoriasFiltradas = this.categorias.filter(
+    categoria => categoria.tipoCategoria === this.nuevaTransaccion.tipo
+  );
+}
 
-  actualizarCategoriasFiltradas() {
-    this.categoriasFiltradas = this.categorias.filter(
-      categoria => categoria.tipoCategoria === this.nuevaTransaccion.tipo
-    );
+guardarTransaccion() {
+
+  this.nuevaTransaccion.montoTransaccion = Number(
+    String(this.nuevaTransaccion.montoTransaccion).replace(/\./g, '')
+  );
+
+  if (this.categoriasFiltradas.length === 0) {
+    this.errorMensaje = `Primero debes crear una categoría de tipo ${this.nuevaTransaccion.tipo}`;
+    return;
   }
 
-  guardarTransaccion() {
-    if (this.categoriasFiltradas.length === 0) {
-      this.errorMensaje = `Primero debes crear una categoría de tipo ${this.nuevaTransaccion.tipo}`;
-      return;
-    }
+  if (
+    !this.nuevaTransaccion.montoTransaccion ||
+    !this.nuevaTransaccion.descTransaccion ||
+    !this.nuevaTransaccion.categoriaId
+  ) {
+    this.errorMensaje = 'Completa todos los campos obligatorios';
+    return;
+  }
 
-    if (
-      !this.nuevaTransaccion.montoTransaccion ||
-      !this.nuevaTransaccion.descTransaccion ||
-      !this.nuevaTransaccion.categoriaId
-    ) {
-      this.errorMensaje = 'Completa todos los campos obligatorios';
-      return;
-    }
-
-    if (this.isEditMode && this.transaccionEditandoId) {
-      this.transaccionService.update(this.transaccionEditandoId, this.nuevaTransaccion).subscribe({
-        next: () => {
-          this.mensajeExito = 'Transacción actualizada correctamente';
-          this.errorMensaje = null;
-          this.cancelarEdicion();
-          this.cargarTransacciones();
-        },
-        error: (err) => {
-          console.error('Error al actualizar transacción', err);
-          this.errorMensaje = err.error?.message || 'No se pudo actualizar la transacción';
-        }
-      });
-      return;
-    }
-
-    this.transaccionService.create(this.nuevaTransaccion).subscribe({
+  if (this.isEditMode && this.transaccionEditandoId) {
+    this.transaccionService.update(
+      this.transaccionEditandoId,
+      this.nuevaTransaccion
+    ).subscribe({
       next: () => {
-        this.mensajeExito = 'Transacción registrada correctamente';
+        this.mensajeExito = 'Transacción actualizada correctamente';
         this.errorMensaje = null;
-        this.resetFormulario();
+        this.cancelarEdicion();
         this.cargarTransacciones();
       },
       error: (err) => {
-        console.error('Error al guardar transacción', err);
-        this.errorMensaje = err.error?.message || 'No se pudo guardar la transacción';
+        console.error('Error al actualizar transacción', err);
+        this.errorMensaje =
+          err.error?.message || 'No se pudo actualizar la transacción';
       }
     });
+    return;
   }
 
+  this.transaccionService.create(this.nuevaTransaccion).subscribe({
+    next: () => {
+      this.mensajeExito = 'Transacción registrada correctamente';
+      this.errorMensaje = null;
+      this.resetFormulario();
+      this.cargarTransacciones();
+    },
+    error: (err) => {
+      console.error('Error al guardar transacción', err);
+      this.errorMensaje =
+        err.error?.message || 'No se pudo guardar la transacción';
+    }
+  });
+}
   editarTransaccion(transaccion: Transaccion) {
     this.isEditMode = true;
     this.transaccionEditandoId = transaccion.transaccionId || null;

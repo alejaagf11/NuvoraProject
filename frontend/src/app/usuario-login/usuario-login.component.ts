@@ -30,26 +30,6 @@ export class UsuarioLoginComponent {
       return;
     }
 
-    if (this.usuarioService.getToken()) {
-      this.usuarioService.getMiUsuario().subscribe({
-        next: (usuarioActual) => {
-          const correoActual = (usuarioActual.correoUsuario || '').toLowerCase();
-          const correoIntento = (this.loginForm.value.correoUsuario || '').toLowerCase();
-
-          if (correoActual && correoActual !== correoIntento) {
-            this.loginError = `Ya hay una sesion abierta, cierrala antes de entrar con otra cuenta.`;
-            return;
-          }
-
-          this.ejecutarLogin();
-        },
-        error: () => {
-          this.ejecutarLogin();
-        }
-      });
-      return;
-    }
-
     this.ejecutarLogin();
   }
 
@@ -74,8 +54,16 @@ export class UsuarioLoginComponent {
       },
       error: (err) => {
         console.error('Error de login:', err);
-        this.loginError = 'Correo o contrasena incorrectos';
+        this.loginError = this.obtenerMensajeError(err, 'Correo o contrasena incorrectos');
       }
     });
+  }
+
+  private obtenerMensajeError(err: any, mensajePorDefecto: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    return err?.error?.message || mensajePorDefecto;
   }
 }

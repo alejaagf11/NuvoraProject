@@ -16,6 +16,7 @@ export class MetasAhorroFormMobileComponent implements OnInit {
     montoObjetivo: 0,
     fechaLimite: ''
   };
+  montoObjetivoTexto = '';
 
   isEditMode = false;
   metaId: number | null = null;
@@ -47,6 +48,7 @@ export class MetasAhorroFormMobileComponent implements OnInit {
           ...data,
           fechaLimite: data.fechaLimite
         };
+         this.montoObjetivoTexto = String(data.montoObjetivo);
       },
       error: (err) => {
         console.error('Error al cargar meta', err);
@@ -56,6 +58,12 @@ export class MetasAhorroFormMobileComponent implements OnInit {
   }
 
   saveMeta(): void {
+
+     this.meta.montoObjetivo = Number(
+      this.montoObjetivoTexto.replace(/\./g, '')
+  );
+
+  this.guardando = true;
     this.guardando = true;
 
     if (this.isEditMode && this.metaId) {

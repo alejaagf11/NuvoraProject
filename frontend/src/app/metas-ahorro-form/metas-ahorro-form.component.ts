@@ -59,20 +59,23 @@ errorMensaje: string | null = null;
   }
 
   saveMeta() {
-    if (this.isEditMode && this.metaId) {
-      this.metasService.update(this.metaId, this.meta).subscribe({
-        next: () => {
-          console.log('Meta actualizada');
-          this.router.navigate(['/metas-ahorro-list']);
-        },
-        error: (err) => {
-          console.error('Error al actualizar meta', err);
-        }
-      });
-      return;
-    }
 
+  this.meta.montoObjetivo = Number(
+    String(this.meta.montoObjetivo).replace(/\./g, '')
+  );
 
+  if (this.isEditMode && this.metaId) {
+    this.metasService.update(this.metaId, this.meta).subscribe({
+      next: () => {
+        console.log('Meta actualizada');
+        this.router.navigate(['/metas-ahorro-list']);
+      },
+      error: (err) => {
+        console.error('Error al actualizar meta', err);
+      }
+    });
+    return;
+  }
 
     this.metasService.create(this.meta).subscribe({
       next: () => {

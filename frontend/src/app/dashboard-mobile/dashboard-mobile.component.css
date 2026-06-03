@@ -47,6 +47,15 @@ h1 {
   background: linear-gradient(135deg, #f4dfbd 0%, #e0b5c7 100%);
   color: #3b2034;
   font-weight: 900;
+  overflow: hidden;
+  padding: 0;
+}
+
+.avatar-button img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .balance-card {

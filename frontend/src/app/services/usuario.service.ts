@@ -72,11 +72,7 @@ export class UsuarioService {
   login(usuario: { correoUsuario: string; contrasenaUsuario: string }): Observable<any> {
     const tokenActual = this.getToken();
     const options = tokenActual
-      ? {
-          headers: new HttpHeaders({
-            Authorization: `Bearer ${tokenActual}`
-          })
-        }
+      ? { headers: new HttpHeaders({ Authorization: `Bearer ${tokenActual}` }) }
       : {};
 
     return this.http.post<any>(`${this.authUrl}/login`, usuario, options).pipe(
@@ -87,7 +83,6 @@ export class UsuarioService {
       })
     );
   }
-
   getToken(): string | null {
     if (!this.isBrowser()) {
       return null;
@@ -98,6 +93,9 @@ export class UsuarioService {
   logout(): void {
     if (this.isBrowser()) {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('token');
     }
   }
 }

@@ -131,7 +131,7 @@
               <label class="form-label small mb-2">Registrar abono</label>
 
               <div class="d-flex gap-2 flex-wrap">
-                <input type="number" class="form-control custom-input abono-input" placeholder="Monto a abonar"
+                <input type="text" class="form-control custom-input abono-input" placeholder="Monto a abonar"
                   [(ngModel)]="abonoInput[meta.metaAhorroId!]">
 
                 <button class="btn btn-custom" (click)="abonar(meta.metaAhorroId!, abonoInput[meta.metaAhorroId!])">

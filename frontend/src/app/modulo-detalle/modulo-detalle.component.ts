@@ -50,7 +50,9 @@ export class ModuloDetalleComponent implements OnInit {
 
         this.leccionService.getLeccionesByModulo(this.moduloId).subscribe({
           next: (lecciones) => {
-            this.lecciones = lecciones;
+            this.lecciones = lecciones.sort(
+              (a, b) => a.ordenLeccion - b.ordenLeccion
+            );
 
             this.progresoLeccionService.getMisLecciones().subscribe({
               next: (progreso) => {

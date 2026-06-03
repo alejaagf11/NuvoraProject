@@ -30,26 +30,6 @@ export class UsuarioLoginMobileComponent {
       return;
     }
 
-    if (this.usuarioService.getToken()) {
-      this.usuarioService.getMiUsuario().subscribe({
-        next: (usuarioActual) => {
-          const correoActual = (usuarioActual.correoUsuario || '').toLowerCase();
-          const correoIntento = (this.loginForm.value.correoUsuario || '').toLowerCase();
-
-          if (correoActual && correoActual !== correoIntento) {
-            this.loginError = `Ya hay una sesion abierta con ${usuarioActual.correoUsuario}. Cierra sesion antes de entrar con otra cuenta.`;
-            return;
-          }
-
-          this.ejecutarLogin();
-        },
-        error: () => {
-          this.ejecutarLogin();
-        }
-      });
-      return;
-    }
-
     this.ejecutarLogin();
   }
 
@@ -61,7 +41,7 @@ export class UsuarioLoginMobileComponent {
         this.usuarioService.getMiUsuario().subscribe({
           next: (usuario) => {
             if (usuario.rolUsuario === 'ADMIN') {
-              this.router.navigate(['/admin/usuarios']);
+              this.router.navigate(['/mobile/admin/usuarios']);
             } else {
               this.router.navigate(['/mobile/dashboard']);
             }
@@ -74,8 +54,16 @@ export class UsuarioLoginMobileComponent {
       },
       error: (err) => {
         console.error('Error de login:', err);
-        this.loginError = 'Correo o contrasena incorrectos';
+        this.loginError = this.obtenerMensajeError(err, 'Correo o contrasena incorrectos');
       }
     });
+  }
+
+  private obtenerMensajeError(err: any, mensajePorDefecto: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    return err?.error?.message || mensajePorDefecto;
   }
 }

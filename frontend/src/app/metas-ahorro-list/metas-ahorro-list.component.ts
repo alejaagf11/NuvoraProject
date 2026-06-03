@@ -13,7 +13,7 @@ import { UsuarioService } from '../services/usuario.service';
 export class MetasAhorroListComponent implements OnInit {
 
   metas: MetasAhorro[] = [];
-  abonoInput: { [key: number]: number } = {};
+  abonoInput: { [key: number]: string } = {};
   errorMensaje: string | null = null;
   mensajeExito: string | null = null;
 
@@ -59,26 +59,34 @@ export class MetasAhorroListComponent implements OnInit {
     });
   }
 
-  abonar(id: number, monto: number) {
-    if (!monto || monto <= 0) {
-      this.errorMensaje = 'Ingresa un monto valido';
-      return;
-    }
+  abonar(id: number, monto: string): void {
 
-    this.metasService.abonar(id, monto).subscribe({
-      next: (metaActualizada) => {
-        console.log('Abono realizado:', metaActualizada);
-        this.abonoInput[id] = 0;
-        this.mensajeExito = 'Abono realizado exitosamente';
-        this.errorMensaje = null;
-        this.loadMetas();
-      },
-      error: (err) => {
-        console.error('Error al abonar:', err);
-        this.errorMensaje = 'Error al abonar: ' + (err.error?.message || err.message || err.status);
-      }
-    });
+  const montoNumerico = Number(
+    monto.replace(/\./g, '')
+  );
+
+  if (!montoNumerico || montoNumerico <= 0) {
+    this.errorMensaje = 'Ingresa un monto válido';
+    this.mensajeExito = null;
+    return;
   }
+
+  this.metasService.abonar(id, montoNumerico).subscribe({
+    next: (metaActualizada) => {
+      console.log('Abono realizado:', metaActualizada);
+      this.abonoInput[id] = '';
+      this.mensajeExito = 'Abono realizado exitosamente';
+      this.errorMensaje = null;
+      this.loadMetas();
+    },
+    error: (err) => {
+      console.error('Error al abonar:', err);
+      this.errorMensaje =
+        'Error al abonar: ' +
+        (err.error?.message || err.message || err.status);
+    }
+  });
+}
 
   logout() {
     this.usuarioService.logout();

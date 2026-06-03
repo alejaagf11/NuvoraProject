@@ -28,6 +28,9 @@ import { AdminModulosComponent } from './admin-modulos/admin-modulos.component';
 import { AdminLeccionesComponent } from './admin-lecciones/admin-lecciones.component';
 import { MetasAhorroListMobileComponent } from './metas-ahorro-list-mobile/metas-ahorro-list-mobile.component';
 import { MetasAhorroFormMobileComponent } from './metas-ahorro-form-mobile/metas-ahorro-form-mobile.component';
+import { AdminUsuariosMobileComponent } from './admin-usuarios-mobile/admin-usuarios-mobile.component';
+import { AdminModulosMobileComponent } from './admin-modulos-mobile/admin-modulos-mobile.component';
+import { AdminLeccionesMobileComponent } from './admin-lecciones-mobile/admin-lecciones-mobile.component';
 
 
 const routes: Routes = [
@@ -48,6 +51,9 @@ const routes: Routes = [
   { path: 'mobile/aprendizaje', component: AprendizajeMobileComponent },
   { path: 'mobile/aprendizaje/modulo/:moduloId', component: ModuloDetalleMobileComponent },
   { path: 'mobile/aprendizaje/leccion/:leccionId', component: LeccionMobileComponent },
+  { path: 'mobile/admin/usuarios', component: AdminUsuariosMobileComponent },
+  { path: 'mobile/admin/modulos', component: AdminModulosMobileComponent },
+  { path: 'mobile/admin/lecciones', component: AdminLeccionesMobileComponent },
   { path: 'metas-ahorro-list', component: MetasAhorroListComponent },
   { path: 'metas-ahorro-form', component: MetasAhorroFormComponent },
   { path: 'metas-ahorro-form/:id', component: MetasAhorroFormComponent },

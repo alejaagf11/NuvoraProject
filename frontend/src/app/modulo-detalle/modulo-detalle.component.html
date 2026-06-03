@@ -21,9 +21,9 @@
     <p *ngIf="cargando" class="empty-text">Cargando lecciones...</p>
 
     <div *ngIf="!cargando" class="lecciones-grid">
-      <div class="leccion-card" *ngFor="let leccion of lecciones">
+      <div class="leccion-card" *ngFor="let leccion of lecciones; let i = index">
         <div class="leccion-top">
-          <span class="orden-chip">Leccion {{ leccion.ordenLeccion }}</span>
+          <span class="orden-chip">Leccion {{ i + 1 }}</span>
           <span class="estado-chip" [class.completed]="estaCompletada(leccion.leccionId)">
             {{ estaCompletada(leccion.leccionId) ? 'Completada' : 'Pendiente' }}
           </span>

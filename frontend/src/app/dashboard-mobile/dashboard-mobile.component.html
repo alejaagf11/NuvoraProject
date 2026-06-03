@@ -6,7 +6,10 @@
     </div>
 
     <button class="avatar-button" routerLink="/mobile/cuenta" type="button" title="Mi cuenta">
-      {{ (usuario.nombreUsuario || 'N').charAt(0).toUpperCase() }}
+      <img *ngIf="usuario.fotoPerfil; else inicialUsuario" [src]="usuario.fotoPerfil" alt="Foto de perfil">
+      <ng-template #inicialUsuario>
+        {{ (usuario.nombreUsuario || 'N').charAt(0).toUpperCase() }}
+      </ng-template>
     </button>
   </header>
 

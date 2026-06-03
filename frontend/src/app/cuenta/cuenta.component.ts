@@ -87,7 +87,12 @@ export class CuentaComponent implements OnInit {
   }
 
   guardarCambios() {
-    this.usuarioService.updateMiUsuario(this.usuario).subscribe({
+    this.usuario.montoMensual = Number(
+    String(this.usuario.montoMensual).replace(/\./g, '')
+  );
+
+  this.usuarioService.updateMiUsuario(this.usuario).subscribe({
+
       next: (data) => {
         this.usuario = data;
         this.mensajeExito = 'Datos actualizados correctamente';

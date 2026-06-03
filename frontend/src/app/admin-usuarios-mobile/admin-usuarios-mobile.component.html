@@ -1,0 +1,109 @@
+<main class="mobile-admin-page">
+  <header class="mobile-header">
+    <div>
+      <p class="eyebrow">Administracion</p>
+      <h1>Usuarios</h1>
+    </div>
+    <button type="button" class="ghost-button" (click)="logout()">Salir</button>
+  </header>
+
+  <nav class="admin-tabs" aria-label="Panel admin">
+    <a routerLink="/mobile/admin/usuarios" class="active">Usuarios</a>
+    <a routerLink="/mobile/admin/modulos">Modulos</a>
+    <a routerLink="/mobile/admin/lecciones">Lecciones</a>
+  </nav>
+
+  <section *ngIf="errorMensaje" class="message-card error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="message-card success">{{ mensajeExito }}</section>
+
+  <section class="stats-grid">
+    <article>
+      <span>Total</span>
+      <strong>{{ usuarios.length }}</strong>
+    </article>
+    <article>
+      <span>Admins</span>
+      <strong>{{ contarAdmins() }}</strong>
+    </article>
+    <article>
+      <span>Usuarios</span>
+      <strong>{{ contarUsers() }}</strong>
+    </article>
+  </section>
+
+  <section class="list-section">
+    <p *ngIf="cargando" class="empty-text">Cargando usuarios...</p>
+    <p *ngIf="!cargando && usuarios.length === 0" class="empty-text">No hay usuarios registrados.</p>
+
+    <article class="admin-card" *ngFor="let usuario of usuarios; trackBy: trackByUsuarioId">
+      <div class="card-top">
+        <div>
+          <ng-container *ngIf="usuarioEditandoId !== usuario.usuarioId; else editarNombre">
+            <h2>{{ usuario.nombreUsuario }}</h2>
+            <p>{{ usuario.correoUsuario }}</p>
+          </ng-container>
+          <ng-template #editarNombre>
+            <input class="field" type="text" [(ngModel)]="nombreEditando" placeholder="Nombre">
+            <input class="field" type="email" [(ngModel)]="correoEditando" placeholder="Correo">
+          </ng-template>
+        </div>
+
+        <span class="role-chip" [class.admin]="usuario.rolUsuario === 'ADMIN'">
+          {{ usuario.rolUsuario || 'USER' }}
+        </span>
+      </div>
+
+      <div class="card-detail" *ngIf="usuarioEditandoId !== usuario.usuarioId; else editarDatos">
+        <span>Monto mensual</span>
+        <strong>{{ usuario.montoMensual || 0 | currency }}</strong>
+      </div>
+
+      <ng-template #editarDatos>
+        <label class="label">Rol</label>
+        <select class="field" [(ngModel)]="rolEditando">
+          <option value="USER">USER</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+
+        <label class="label">Monto mensual</label>
+        <input class="field" type="number" [(ngModel)]="montoMensualEditando">
+      </ng-template>
+
+      <div class="actions">
+        <span *ngIf="esUsuarioActual(usuario)" class="current-chip">Tu cuenta</span>
+
+        <button
+          *ngIf="usuarioEditandoId !== usuario.usuarioId && !esUsuarioActual(usuario)"
+          type="button"
+          class="soft-button"
+          (click)="iniciarEdicion(usuario)">
+          Editar
+        </button>
+
+        <button
+          *ngIf="usuarioEditandoId === usuario.usuarioId && !esUsuarioActual(usuario)"
+          type="button"
+          class="main-button"
+          (click)="guardarEdicion(usuario)">
+          Guardar
+        </button>
+
+        <button
+          *ngIf="usuarioEditandoId === usuario.usuarioId && !esUsuarioActual(usuario)"
+          type="button"
+          class="soft-button"
+          (click)="cancelarEdicion()">
+          Cancelar
+        </button>
+
+        <button
+          *ngIf="!esUsuarioActual(usuario)"
+          type="button"
+          class="delete-button"
+          (click)="eliminarUsuario(usuario.usuarioId)">
+          Eliminar
+        </button>
+      </div>
+    </article>
+  </section>
+</main>

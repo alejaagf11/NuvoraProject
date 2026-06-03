@@ -1,0 +1,99 @@
+<main class="mobile-admin-page">
+  <header class="mobile-header">
+    <div>
+      <p class="eyebrow">Administracion</p>
+      <h1>Lecciones</h1>
+    </div>
+    <button type="button" class="ghost-button" (click)="logout()">Salir</button>
+  </header>
+
+  <nav class="admin-tabs" aria-label="Panel admin">
+    <a routerLink="/mobile/admin/usuarios">Usuarios</a>
+    <a routerLink="/mobile/admin/modulos">Modulos</a>
+    <a routerLink="/mobile/admin/lecciones" class="active">Lecciones</a>
+  </nav>
+
+  <section *ngIf="errorMensaje" class="message-card error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="message-card success">{{ mensajeExito }}</section>
+
+  <section class="form-card">
+    <div class="section-title">
+      <p class="eyebrow">{{ editandoId ? 'Editar' : 'Nueva' }}</p>
+      <h2>{{ editandoId ? 'Editar leccion' : 'Nueva leccion' }}</h2>
+    </div>
+
+    <label class="label">Modulo</label>
+    <select class="field" [(ngModel)]="moduloSeleccionadoId" (change)="onModuloChange()">
+      <option [ngValue]="null">Selecciona un modulo</option>
+      <option *ngFor="let modulo of modulos" [ngValue]="modulo.moduloId">
+        {{ modulo.tituloModulo }}
+      </option>
+    </select>
+
+    <div class="two-columns">
+      <div>
+        <label class="label">Orden</label>
+        <input class="field" type="number" [(ngModel)]="formulario.ordenLeccion">
+      </div>
+      <div>
+        <label class="label">Activo</label>
+        <select class="field" [(ngModel)]="formulario.activo">
+          <option [ngValue]="true">Si</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="label">Titulo</label>
+    <input class="field" type="text" [(ngModel)]="formulario.tituloLeccion">
+
+    <label class="label">Contenido</label>
+    <textarea class="field textarea" rows="5" [(ngModel)]="formulario.contenidoLeccion"></textarea>
+
+    <label class="label">Link de video</label>
+    <input class="field" type="text" [(ngModel)]="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+
+    <div class="actions">
+      <button type="button" class="main-button" (click)="guardarLeccion()">
+        {{ editandoId ? 'Guardar' : 'Crear' }}
+      </button>
+      <button type="button" class="soft-button" *ngIf="editandoId" (click)="resetFormulario(false)">
+        Cancelar
+      </button>
+    </div>
+  </section>
+
+  <section class="list-section">
+    <p *ngIf="cargando" class="empty-text">Cargando lecciones...</p>
+    <p *ngIf="!cargando && lecciones.length === 0" class="empty-text">
+      No hay lecciones registradas para este modulo.
+    </p>
+
+    <article class="admin-card" *ngFor="let leccion of lecciones; let i = index">
+      <div class="card-top">
+        <span class="order-chip">Leccion {{ i + 1 }}</span>
+        <span class="state-chip" [class.inactive]="!leccion.activo">
+          {{ leccion.activo ? 'Activa' : 'Inactiva' }}
+        </span>
+      </div>
+
+      <h2>{{ leccion.tituloLeccion }}</h2>
+      <p>
+        {{ leccion.contenidoLeccion.length > 120 ? (leccion.contenidoLeccion | slice:0:120) + '...' : leccion.contenidoLeccion }}
+      </p>
+
+      <a
+        *ngIf="obtenerVideoUrl(leccion.contenidoLeccion)"
+        class="video-link"
+        [href]="obtenerVideoUrl(leccion.contenidoLeccion)"
+        target="_blank">
+        Ver video
+      </a>
+
+      <div class="actions">
+        <button type="button" class="soft-button" (click)="editarLeccion(leccion, i + 1)">Editar</button>
+        <button type="button" class="delete-button" (click)="eliminarLeccion(leccion.leccionId)">Eliminar</button>
+      </div>
+    </article>
+  </section>
+</main>

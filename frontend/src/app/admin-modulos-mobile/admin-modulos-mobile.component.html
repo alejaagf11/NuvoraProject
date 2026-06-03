@@ -1,0 +1,77 @@
+<main class="mobile-admin-page">
+  <header class="mobile-header">
+    <div>
+      <p class="eyebrow">Administracion</p>
+      <h1>Modulos</h1>
+    </div>
+    <button type="button" class="ghost-button" (click)="logout()">Salir</button>
+  </header>
+
+  <nav class="admin-tabs" aria-label="Panel admin">
+    <a routerLink="/mobile/admin/usuarios">Usuarios</a>
+    <a routerLink="/mobile/admin/modulos" class="active">Modulos</a>
+    <a routerLink="/mobile/admin/lecciones">Lecciones</a>
+  </nav>
+
+  <section *ngIf="errorMensaje" class="message-card error">{{ errorMensaje }}</section>
+  <section *ngIf="mensajeExito" class="message-card success">{{ mensajeExito }}</section>
+
+  <section class="form-card">
+    <div class="section-title">
+      <p class="eyebrow">{{ editandoId ? 'Editar' : 'Nuevo' }}</p>
+      <h2>{{ editandoId ? 'Editar modulo' : 'Nuevo modulo' }}</h2>
+    </div>
+
+    <label class="label">Titulo</label>
+    <input class="field" type="text" [(ngModel)]="formulario.tituloModulo">
+
+    <div class="two-columns">
+      <div>
+        <label class="label">Orden</label>
+        <input class="field" type="number" [(ngModel)]="formulario.ordenModulo">
+      </div>
+      <div>
+        <label class="label">Activo</label>
+        <select class="field" [(ngModel)]="formulario.activo">
+          <option [ngValue]="true">Si</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="label">Descripcion</label>
+    <textarea class="field textarea" rows="4" [(ngModel)]="formulario.descripcionModulo"></textarea>
+
+    <div class="actions">
+      <button type="button" class="main-button" (click)="guardarModulo()">
+        {{ editandoId ? 'Guardar' : 'Crear' }}
+      </button>
+      <button type="button" class="soft-button" *ngIf="editandoId" (click)="resetFormulario()">
+        Cancelar
+      </button>
+    </div>
+  </section>
+
+  <section class="list-section">
+    <p *ngIf="cargando" class="empty-text">Cargando modulos...</p>
+    <p *ngIf="!cargando && modulos.length === 0" class="empty-text">No hay modulos registrados.</p>
+
+    <article class="admin-card" *ngFor="let modulo of modulos">
+      <div class="card-top">
+        <span class="order-chip">Modulo {{ modulo.ordenModulo }}</span>
+        <span class="state-chip" [class.inactive]="!modulo.activo">
+          {{ modulo.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+
+      <h2>{{ modulo.tituloModulo }}</h2>
+      <p>{{ modulo.descripcionModulo }}</p>
+
+      <div class="actions">
+        <button type="button" class="soft-button" (click)="editarModulo(modulo)">Editar</button>
+        <button type="button" class="soft-button" (click)="irALecciones(modulo.moduloId)">Lecciones</button>
+        <button type="button" class="delete-button" (click)="eliminarModulo(modulo.moduloId)">Eliminar</button>
+      </div>
+    </article>
+  </section>
+</main>

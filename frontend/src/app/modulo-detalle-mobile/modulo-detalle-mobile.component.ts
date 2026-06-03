@@ -49,7 +49,9 @@ export class ModuloDetalleMobileComponent implements OnInit {
         this.modulo = modulo;
         this.leccionService.getLeccionesByModulo(this.moduloId).subscribe({
           next: (lecciones) => {
-            this.lecciones = lecciones;
+            this.lecciones = lecciones.sort(
+              (a, b) => a.ordenLeccion - b.ordenLeccion
+            );
             this.progresoLeccionService.getMisLecciones().subscribe({
               next: (progreso) => {
                 this.progresoUsuario = progreso;

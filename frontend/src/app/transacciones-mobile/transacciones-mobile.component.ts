@@ -93,7 +93,11 @@ export class TransaccionesMobileComponent implements OnInit {
   }
 
   guardarTransaccion() {
-    if (this.categoriasFiltradas.length === 0) {
+  this.nuevaTransaccion.montoTransaccion = Number(
+    String(this.nuevaTransaccion.montoTransaccion).replace(/\./g, '')
+  );
+
+  if (this.categoriasFiltradas.length === 0) {
       this.errorMensaje = `Primero debes crear una categoria de tipo ${this.nuevaTransaccion.tipo}`;
       return;
     }

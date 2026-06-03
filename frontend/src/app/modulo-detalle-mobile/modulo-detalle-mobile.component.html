@@ -15,7 +15,7 @@
   </section>
 
   <section class="lesson-list">
-    <article *ngFor="let leccion of lecciones" class="lesson-card" (click)="abrirLeccion(leccion.leccionId)">
+    <article *ngFor="let leccion of lecciones; let i = index" class="lesson-card" (click)="abrirLeccion(leccion.leccionId)">
       <img
         *ngIf="obtenerVideoUrl(leccion.contenidoLeccion)"
         [src]="obtenerThumbnailYoutube(obtenerVideoUrl(leccion.contenidoLeccion))"
@@ -23,7 +23,7 @@
       >
       <div>
         <span>{{ estaCompletada(leccion.leccionId) ? 'Completada' : 'Pendiente' }}</span>
-        <h2>Leccion {{ leccion.ordenLeccion }}</h2>
+        <h2>Leccion {{ i + 1 }}</h2>
         <p>{{ leccion.tituloLeccion }}</p>
       </div>
     </article>

@@ -15,7 +15,7 @@ export class CuentaMobileComponent implements OnInit {
   usuario: Usuario = {
     nombreUsuario: '',
     correoUsuario: '',
-    montoMensual: 0
+    montoMensual: '' as any
   };
 
   errorMensaje: string | null = null;
@@ -73,6 +73,10 @@ export class CuentaMobileComponent implements OnInit {
   }
 
   guardarCambios() {
+    this.usuario.montoMensual = Number(
+  String(this.usuario.montoMensual).replace(/\./g, '')
+) as any;
+
     this.usuarioService.updateMiUsuario(this.usuario).subscribe({
       next: (data) => {
         this.usuario = data;
