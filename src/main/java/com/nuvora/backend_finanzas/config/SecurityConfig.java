@@ -74,7 +74,8 @@ public class SecurityConfig {
                                 "http://localhost",
                                 "capacitor://localhost",
                                 "http://localhost:*",
-                                "capacitor://localhost:*"
+                                "capacitor://localhost:*",
+                                "https://nuvora-project.web.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
