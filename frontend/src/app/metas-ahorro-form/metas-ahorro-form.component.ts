@@ -64,6 +64,32 @@ errorMensaje: string | null = null;
     String(this.meta.montoObjetivo).replace(/\./g, '')
   );
 
+  // Validar campos obligatorios
+  if (
+    !this.meta.nombreMeta ||
+    !this.meta.montoObjetivo ||
+    !this.meta.fechaLimite
+  ) {
+    this.errorMensaje = 'Completa todos los campos obligatorios';
+    this.mensajeExito = null;
+    return;
+  }
+
+  // Validar fecha
+  const fechaSeleccionada = new Date(this.meta.fechaLimite);
+  const hoy = new Date();
+
+  // Quitar horas para comparar solo fechas
+  hoy.setHours(0, 0, 0, 0);
+  fechaSeleccionada.setHours(0, 0, 0, 0);
+
+  if (fechaSeleccionada < hoy) {
+    this.errorMensaje =
+      'La fecha límite no puede ser una fecha anterior a la actual';
+    this.mensajeExito = null;
+    return;
+  }
+
   if (this.isEditMode && this.metaId) {
     this.metasService.update(this.metaId, this.meta).subscribe({
       next: () => {
@@ -77,16 +103,16 @@ errorMensaje: string | null = null;
     return;
   }
 
-    this.metasService.create(this.meta).subscribe({
-      next: () => {
-        console.log('Meta guardada');
-        this.router.navigate(['/metas-ahorro-list']);
-      },
-      error: (err) => {
-        console.error('Error al guardar meta', err);
-      }
-    });
-  }
+  this.metasService.create(this.meta).subscribe({
+    next: () => {
+      console.log('Meta guardada');
+      this.router.navigate(['/metas-ahorro-list']);
+    },
+    error: (err) => {
+      console.error('Error al guardar meta', err);
+    }
+  });
+}
 
 eliminarMeta(id: number) {
 

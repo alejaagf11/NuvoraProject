@@ -152,6 +152,11 @@
   color: white;
 }
 
+.alert {
+  border-radius: 12px;
+  font-weight: 500;
+}
+
 html,
 body {
   margin: 0;

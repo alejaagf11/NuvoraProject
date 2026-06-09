@@ -11,7 +11,7 @@
           <li class="mb-3" routerLink="/categorias">Categorías</li>
           <li class="mb-3" routerLink="/presupuesto">Presupuesto</li>
           <li class="mb-3" routerLink="/aprendizaje">Aprendizaje</li>
-   
+
         </ul>
       </div>
 
@@ -35,6 +35,7 @@
 
           <div class="row w-100 justify-content-center">
             <div class="col-lg-7 col-xl-6">
+
               <form (ngSubmit)="saveMeta()" class="card meta-form-card p-4 p-md-5 shadow-lg">
                 <div class="form-header mb-4">
                   <span class="pill-label">{{ isEditMode ? 'Edición' : 'Nueva meta' }}</span>
@@ -42,6 +43,14 @@
                   <p class="text-muted-custom small mb-0">
                     Define un nombre, el monto objetivo y una fecha límite alcanzable.
                   </p>
+                </div>
+
+                <div *ngIf="errorMensaje" class="alert alert-danger mb-3">
+                  {{ errorMensaje }}
+                </div>
+
+                <div *ngIf="mensajeExito" class="alert alert-success mb-3">
+                  {{ mensajeExito }}
                 </div>
 
                 <div class="mb-3">
