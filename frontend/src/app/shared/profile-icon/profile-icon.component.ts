@@ -14,11 +14,20 @@ export class ProfileIconComponent implements OnInit {
   constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit(): void {
-    const usuario = this.usuarioService.getUsuario();
+  this.loadUser();
 
-    if (usuario) {
-      this.fotoPerfil = usuario.fotoPerfil || null;
-      this.inicial = usuario.nombreUsuario?.charAt(0) || 'U';
-    }
+  // 👇 esto es clave en apps Angular
+  window.addEventListener('storage', () => {
+    this.loadUser();
+  });
+}
+
+private loadUser() {
+  const usuario = this.usuarioService.getUsuario();
+
+  if (usuario) {
+    this.fotoPerfil = usuario.fotoPerfil || null;
+    this.inicial = usuario.nombreUsuario?.charAt(0).toUpperCase() || 'U';
   }
+}
 }

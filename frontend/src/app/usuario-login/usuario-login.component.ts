@@ -33,39 +33,39 @@ export class UsuarioLoginComponent {
     this.ejecutarLogin();
   }
 
-  private ejecutarLogin() {
-    this.usuarioService.login(this.loginForm.value).subscribe({
-      next: () => {
-        this.usuarioService.getMiUsuario().subscribe({
-          next: (usuario) => {
-
-            // ✅ Guardar usuario globalmente (FIX PRINCIPAL)
-            if (this.usuarioService.isBrowser()) {
-              localStorage.setItem('usuario', JSON.stringify(usuario));
-            }
-
-            // ✅ Redirección por rol
-            if (usuario.rolUsuario === 'ADMIN') {
-              this.router.navigate(['/admin/usuarios']);
-            } else {
-              this.router.navigate(['/dashboard']);
-            }
-          },
-          error: (err) => {
-            console.error('Error al obtener usuario autenticado:', err);
-            this.loginError = 'No se pudo obtener la información del usuario';
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error de login:', err);
-        this.loginError = this.obtenerMensajeError(
-          err,
-          'Correo o contraseña incorrectos'
-        );
+ private ejecutarLogin() {
+  this.usuarioService.login(this.loginForm.value).subscribe({
+    next: (response: any) => {
+      // Guardar token siempre
+      if (response.token && this.usuarioService.isBrowser()) {
+        localStorage.setItem('authToken', response.token);
       }
-    });
-  }
+
+      // Traer usuario y guardarlo
+      this.usuarioService.getMiUsuario().subscribe({
+        next: (usuario) => {
+          if (this.usuarioService.isBrowser()) {
+            localStorage.setItem('usuario', JSON.stringify(usuario));
+          }
+
+          if (usuario.rolUsuario === 'ADMIN') {
+            this.router.navigate(['/admin/usuarios']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener usuario autenticado:', err);
+          this.loginError = 'No se pudo obtener la información del usuario';
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error de login:', err);
+      this.loginError = this.obtenerMensajeError(err, 'Correo o contraseña incorrectos');
+    }
+  });
+}
 
   private obtenerMensajeError(err: any, mensajePorDefecto: string): string {
     if (typeof err?.error === 'string' && err.error.trim()) {
