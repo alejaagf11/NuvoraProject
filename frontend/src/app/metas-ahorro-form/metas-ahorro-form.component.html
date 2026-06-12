@@ -62,7 +62,7 @@
                 <div class="mb-3">
                   <label class="form-label">Monto objetivo</label>
                   <input type="text" class="form-control custom-input" [(ngModel)]="meta.montoObjetivo"
-                    name="montoObjetivo" required placeholder="Ej: 5.000.000">
+                    name="montoObjetivo" required placeholder="Ej: 5.000.000" (input)="formatMonto($event)">
                 </div>
 
                 <div class="mb-4">

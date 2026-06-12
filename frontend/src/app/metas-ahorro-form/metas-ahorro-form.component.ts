@@ -58,6 +58,22 @@ errorMensaje: string | null = null;
     });
   }
 
+  formatMonto(event: any) {
+  let input = event.target.value;
+
+  // Eliminar todo lo que no sea número
+  input = input.replace(/\D/g, '');
+
+  // Agregar puntos cada 3 dígitos
+  const formatted = input.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // Actualizar input
+  event.target.value = formatted;
+
+  // Actualizar modelo
+  this.meta.montoObjetivo = formatted as any;
+}
+
   saveMeta() {
 
   this.meta.montoObjetivo = Number(
