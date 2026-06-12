@@ -1,4 +1,4 @@
 <button class="profile-button" routerLink="/cuenta" type="button" title="Ir a mi cuenta">
   <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Foto de perfil">
-  <span *ngIf="!fotoPerfil">U</span>
+  <span *ngIf="!fotoPerfil">{{ inicial }}</span>
 </button>

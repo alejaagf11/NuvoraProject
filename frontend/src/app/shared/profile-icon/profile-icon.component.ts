@@ -9,17 +9,16 @@ import { UsuarioService } from '../../services/usuario.service';
 })
 export class ProfileIconComponent implements OnInit {
   fotoPerfil: string | null = null;
+  inicial: string = 'U';
 
   constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit(): void {
-    this.usuarioService.getMiUsuario().subscribe({
-      next: (usuario) => {
-        this.fotoPerfil = usuario.fotoPerfil || null;
-      },
-      error: (err) => {
-        console.error('Error al cargar foto de perfil', err);
-      }
-    });
+    const usuario = this.usuarioService.getUsuario();
+
+    if (usuario) {
+      this.fotoPerfil = usuario.fotoPerfil || null;
+      this.inicial = usuario.nombreUsuario?.charAt(0) || 'U';
+    }
   }
 }
