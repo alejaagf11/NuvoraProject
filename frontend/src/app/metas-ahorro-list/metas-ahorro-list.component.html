@@ -27,11 +27,11 @@
               Crea metas, registra abonos y revisa cuánto te falta para alcanzarlas.
             </p>
           </div>
-          
+
           <button class="btn btn-custom" routerLink="/metas-ahorro-form">
             + Nueva meta
           </button>
-            <app-profile-icon class="flex-shrink-0"></app-profile-icon>
+          <app-profile-icon class="flex-shrink-0"></app-profile-icon>
         </div>
       </div>
 
@@ -132,7 +132,7 @@
 
               <div class="d-flex gap-2 flex-wrap">
                 <input type="text" class="form-control custom-input abono-input" placeholder="Monto a abonar"
-                  [(ngModel)]="abonoInput[meta.metaAhorroId!]">
+                  [(ngModel)]="abonoInput[meta.metaAhorroId!]" (input)="formatAbono($event, meta.metaAhorroId!)">
 
                 <button class="btn btn-custom" (click)="abonar(meta.metaAhorroId!, abonoInput[meta.metaAhorroId!])">
                   + Abonar

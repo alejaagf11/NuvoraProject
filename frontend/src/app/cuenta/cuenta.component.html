@@ -5,7 +5,7 @@
       <div>
         <h3 class="mb-4 fw-bold">Menu</h3>
 
-        
+
         <ul class="list-unstyled menu-links">
           <li class="mb-3" routerLink="/dashboard">Mis movimientos</li>
           <li class="mb-3" routerLink="/metas-ahorro-list">Metas de ahorro</li>
@@ -17,7 +17,7 @@
         </ul>
       </div>
 
-      
+
     </div>
 
     <div class="col-md-9 main-content p-4 p-md-5">
@@ -88,7 +88,7 @@
             </div>
           </div>
 
-        
+
         </div>
 
         <div class="account-panel mt-4">
@@ -108,26 +108,18 @@
           <div *ngIf="isEditMode; else modoVista">
             <div class="mb-3">
               <label class="form-label">Nombre</label>
-              <input
-                type="text"
-                class="form-control custom-input"
-                [(ngModel)]="usuario.nombreUsuario">
+              <input type="text" class="form-control custom-input" [(ngModel)]="usuario.nombreUsuario">
             </div>
 
             <div class="mb-3">
               <label class="form-label">Correo</label>
-              <input
-                type="email"
-                class="form-control custom-input"
-                [(ngModel)]="usuario.correoUsuario">
+              <input type="email" class="form-control custom-input" [(ngModel)]="usuario.correoUsuario">
             </div>
 
             <div class="mb-4">
               <label class="form-label">Monto mensual</label>
-              <input
-                type="text"
-                class="form-control custom-input"
-                [(ngModel)]="usuario.montoMensual">
+              <input type="text" class="form-control custom-input" [(ngModel)]="usuario.montoMensual"
+                (input)="formatMontoMensual($event)">
             </div>
 
             <div class="action-column">

@@ -45,6 +45,11 @@ export class CuentaComponent implements OnInit {
     this.usuarioService.getMiUsuario().subscribe({
       next: (data) => {
         this.usuario = data;
+        if (this.usuario.montoMensual) {
+  this.usuario.montoMensual = Number(
+    this.usuario.montoMensual
+  ).toLocaleString('es-CO') as any;
+}
         this.fotoPerfil = data.fotoPerfil || null;
         this.errorMensaje = null;
       },
@@ -54,6 +59,8 @@ export class CuentaComponent implements OnInit {
       }
     });
   }
+
+  
 
   cargarSaldo() {
     this.transaccionService.getSaldo().subscribe({
@@ -86,6 +93,21 @@ export class CuentaComponent implements OnInit {
     });
   }
 
+  formatMontoMensual(event: any) {
+  let input = event.target.value;
+
+  // Solo números
+  input = input.replace(/\D/g, '');
+
+  // Agregar puntos de miles
+  const formatted = input.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // Actualizar input
+  event.target.value = formatted;
+
+  // Actualizar modelo
+  this.usuario.montoMensual = formatted as any;
+}
   guardarCambios() {
     this.usuario.montoMensual = Number(
     String(this.usuario.montoMensual).replace(/\./g, '')

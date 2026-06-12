@@ -30,13 +30,15 @@ export class TransaccionesMobileComponent implements OnInit {
     categoriaId: 0
   };
 
+  montoTransaccionTexto = '';
+
   constructor(
     private transaccionService: TransaccionService,
     private categoriaService: CategoriaService,
     private route: ActivatedRoute,
     private usuarioService: UsuarioService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -92,12 +94,27 @@ export class TransaccionesMobileComponent implements OnInit {
     );
   }
 
-  guardarTransaccion() {
-  this.nuevaTransaccion.montoTransaccion = Number(
-    String(this.nuevaTransaccion.montoTransaccion).replace(/\./g, '')
-  );
+  formatearMonto(event: any): void {
+    let valor = event.target.value.replace(/\D/g, '');
 
-  if (this.categoriasFiltradas.length === 0) {
+    if (valor) {
+      valor = Number(valor).toLocaleString('es-CO');
+    }
+
+    this.montoTransaccionTexto = valor;
+  }
+
+  obtenerMontoNumerico(): number {
+    return Number(
+      this.montoTransaccionTexto.replace(/\./g, '')
+    );
+  }
+
+  guardarTransaccion() {
+    this.nuevaTransaccion.montoTransaccion =
+      this.obtenerMontoNumerico();
+
+    if (this.categoriasFiltradas.length === 0) {
       this.errorMensaje = `Primero debes crear una categoria de tipo ${this.nuevaTransaccion.tipo}`;
       return;
     }
@@ -141,6 +158,9 @@ export class TransaccionesMobileComponent implements OnInit {
     this.isEditMode = true;
     this.transaccionEditandoId = transaccion.transaccionId || null;
     this.nuevaTransaccion = { ...transaccion };
+
+    this.montoTransaccionTexto =
+      Number(transaccion.montoTransaccion).toLocaleString('es-CO');
     this.actualizarCategoriasFiltradas();
     this.errorMensaje = null;
     this.mensajeExito = null;
@@ -178,6 +198,7 @@ export class TransaccionesMobileComponent implements OnInit {
       tipo: this.filtroTipo || 'INGRESO',
       categoriaId: 0
     };
+      this.montoTransaccionTexto = '';
     this.actualizarCategoriasFiltradas();
   }
 

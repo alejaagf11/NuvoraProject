@@ -62,6 +62,22 @@ export class MetasAhorroListMobileComponent implements OnInit {
     });
   }
 
+  formatAbono(event: any, metaId: number): void {
+  let input = event.target.value;
+
+  // Solo números
+  input = input.replace(/\D/g, '');
+
+  // Formato con puntos
+  const formatted = input.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // Actualizar input
+  event.target.value = formatted;
+
+  // Actualizar ngModel
+  this.abonoInput[metaId] = formatted;
+}
+
   abonar(id: number, monto: string | undefined): void {
 
   const montoNumerico = Number(

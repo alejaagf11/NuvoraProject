@@ -17,9 +17,9 @@ export class UsuarioService {
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
-  private isBrowser(): boolean {
-    return isPlatformBrowser(this.platformId);
-  }
+  public isBrowser(): boolean {
+  return isPlatformBrowser(this.platformId);
+}
 
   getAll(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(`${this.baseUrl}/list`);
@@ -98,4 +98,10 @@ export class UsuarioService {
       sessionStorage.removeItem('token');
     }
   }
+
+  getUsuario(): Usuario | null {
+  if (!this.isBrowser()) return null;
+  const data = localStorage.getItem('usuario');
+  return data ? JSON.parse(data) : null;
+}
 }

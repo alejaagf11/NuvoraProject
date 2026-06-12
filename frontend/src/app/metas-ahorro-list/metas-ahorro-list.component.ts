@@ -46,6 +46,8 @@ export class MetasAhorroListComponent implements OnInit {
       return;
     }
 
+    
+
     this.metasService.delete(id).subscribe({
       next: () => {
         console.log('Meta eliminada');
@@ -58,6 +60,22 @@ export class MetasAhorroListComponent implements OnInit {
       }
     });
   }
+
+  formatAbono(event: any, metaId: number) {
+  let input = event.target.value;
+
+  // Dejar solo números
+  input = input.replace(/\D/g, '');
+
+  // Agregar puntos de miles
+  const formatted = input.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // Actualizar input visual
+  event.target.value = formatted;
+
+  // Actualizar ngModel
+  this.abonoInput[metaId] = formatted;
+}
 
   abonar(id: number, monto: string): void {
 

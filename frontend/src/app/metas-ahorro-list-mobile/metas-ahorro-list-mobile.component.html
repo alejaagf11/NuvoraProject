@@ -72,11 +72,8 @@
       </p>
 
       <div class="abono-box">
-        <input
-          type="text"
-          placeholder="Monto a abonar"
-          [(ngModel)]="abonoInput[meta.metaAhorroId!]"
-        >
+        <input type="text" placeholder="Monto a abonar" [(ngModel)]="abonoInput[meta.metaAhorroId!]"
+          (input)="formatAbono($event, meta.metaAhorroId!)">
         <button type="button" (click)="abonar(meta.metaAhorroId!, abonoInput[meta.metaAhorroId!])">
           Abonar
         </button>

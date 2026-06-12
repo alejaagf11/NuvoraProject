@@ -48,7 +48,7 @@ export class MetasAhorroFormMobileComponent implements OnInit {
           ...data,
           fechaLimite: data.fechaLimite
         };
-         this.montoObjetivoTexto = String(data.montoObjetivo);
+         this.montoObjetivoTexto = Number(data.montoObjetivo).toLocaleString('es-CO');
       },
       error: (err) => {
         console.error('Error al cargar meta', err);
@@ -56,6 +56,20 @@ export class MetasAhorroFormMobileComponent implements OnInit {
       }
     });
   }
+
+  formatMonto(event: any): void {
+  let input = event.target.value;
+
+  // Dejar solo números
+  input = input.replace(/\D/g, '');
+
+  // Agregar puntos de miles
+  const formatted = input.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // Actualizar input y variable
+  event.target.value = formatted;
+  this.montoObjetivoTexto = formatted;
+}
 
   saveMeta(): void {
 

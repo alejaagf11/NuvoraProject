@@ -36,10 +36,15 @@ export class UsuarioLoginComponent {
   private ejecutarLogin() {
     this.usuarioService.login(this.loginForm.value).subscribe({
       next: () => {
-        this.loginError = null;
-
         this.usuarioService.getMiUsuario().subscribe({
           next: (usuario) => {
+
+            // ✅ Guardar usuario globalmente (FIX PRINCIPAL)
+            if (this.usuarioService.isBrowser()) {
+              localStorage.setItem('usuario', JSON.stringify(usuario));
+            }
+
+            // ✅ Redirección por rol
             if (usuario.rolUsuario === 'ADMIN') {
               this.router.navigate(['/admin/usuarios']);
             } else {
@@ -48,13 +53,16 @@ export class UsuarioLoginComponent {
           },
           error: (err) => {
             console.error('Error al obtener usuario autenticado:', err);
-            this.loginError = 'No se pudo obtener la informacion del usuario';
+            this.loginError = 'No se pudo obtener la información del usuario';
           }
         });
       },
       error: (err) => {
         console.error('Error de login:', err);
-        this.loginError = this.obtenerMensajeError(err, 'Correo o contrasena incorrectos');
+        this.loginError = this.obtenerMensajeError(
+          err,
+          'Correo o contraseña incorrectos'
+        );
       }
     });
   }

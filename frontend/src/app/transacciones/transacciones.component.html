@@ -65,8 +65,12 @@
 
             <div class="form-block mb-3">
               <label class="form-label">Monto</label>
-              <input type="text" class="form-control custom-input" [(ngModel)]="nuevaTransaccion.montoTransaccion"
-                name="montoTransaccion" placeholder="Ej: 120.000">
+            <input type="text"
+       class="form-control custom-input"
+       [(ngModel)]="nuevaTransaccion.montoTransaccion"
+       (input)="formatMontoTransaccion($event)"
+       name="montoTransaccion"
+       placeholder="Ej: 120.000">
             </div>
 
             <div class="form-block mb-3">

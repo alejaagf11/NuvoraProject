@@ -19,7 +19,12 @@
     <input type="text" name="nombreMeta" [(ngModel)]="meta.nombreMeta" required placeholder="Ej: Viaje">
 
     <label>Monto objetivo</label>
-    <input type="text" name="montoObjetivo" [(ngModel)]="montoObjetivoTexto" required placeholder="Ej: 1.000.000">
+    <input type="text"
+       name="montoObjetivo"
+       [(ngModel)]="montoObjetivoTexto"
+       (input)="formatMonto($event)"
+       required
+       placeholder="Ej: 1.000.000">
 
     <label>Fecha limite</label>
     <input type="date" name="fechaLimite" [(ngModel)]="meta.fechaLimite" required>

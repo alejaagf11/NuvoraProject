@@ -15,12 +15,14 @@
     <h2>{{ isEditMode ? 'Editar movimiento' : 'Nuevo movimiento' }}</h2>
 
     <div class="type-switch">
-      <button type="button" [class.active]="nuevaTransaccion.tipo === 'INGRESO'" (click)="nuevaTransaccion.tipo = 'INGRESO'; onTipoChange()">Ingreso</button>
-      <button type="button" [class.active]="nuevaTransaccion.tipo === 'GASTO'" (click)="nuevaTransaccion.tipo = 'GASTO'; onTipoChange()">Gasto</button>
+      <button type="button" [class.active]="nuevaTransaccion.tipo === 'INGRESO'"
+        (click)="nuevaTransaccion.tipo = 'INGRESO'; onTipoChange()">Ingreso</button>
+      <button type="button" [class.active]="nuevaTransaccion.tipo === 'GASTO'"
+        (click)="nuevaTransaccion.tipo = 'GASTO'; onTipoChange()">Gasto</button>
     </div>
 
     <label>Monto</label>
-    <input type="text" [(ngModel)]="nuevaTransaccion.montoTransaccion" placeholder="Ej: 50000">
+    <input type="text" [(ngModel)]="montoTransaccionTexto" (input)="formatearMonto($event)" placeholder="Ej: 50.000">
 
     <label>Descripcion</label>
     <input type="text" [(ngModel)]="nuevaTransaccion.descTransaccion" placeholder="Ej: mercado">

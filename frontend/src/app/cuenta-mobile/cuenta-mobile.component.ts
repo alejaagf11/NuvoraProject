@@ -31,7 +31,7 @@ export class CuentaMobileComponent implements OnInit {
     private transaccionService: TransaccionService,
     private metasAhorroService: MetasAhorroService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarUsuario();
@@ -43,6 +43,13 @@ export class CuentaMobileComponent implements OnInit {
     this.usuarioService.getMiUsuario().subscribe({
       next: (data) => {
         this.usuario = data;
+
+        if (this.usuario.montoMensual) {
+          this.usuario.montoMensual = Number(
+            this.usuario.montoMensual
+          ).toLocaleString('es-CO') as any;
+        }
+
         this.fotoPerfil = data.fotoPerfil || null;
         this.errorMensaje = null;
       },
@@ -72,10 +79,23 @@ export class CuentaMobileComponent implements OnInit {
     });
   }
 
+  formatMontoMensual(event: any): void {
+  let input = event.target.value;
+
+  // Dejar solo números
+  input = input.replace(/\D/g, '');
+
+  // Agregar puntos
+  const formatted = input.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  event.target.value = formatted;
+  this.usuario.montoMensual = formatted as any;
+}
+
   guardarCambios() {
     this.usuario.montoMensual = Number(
-  String(this.usuario.montoMensual).replace(/\./g, '')
-) as any;
+      String(this.usuario.montoMensual).replace(/\./g, '')
+    ) as any;
 
     this.usuarioService.updateMiUsuario(this.usuario).subscribe({
       next: (data) => {
