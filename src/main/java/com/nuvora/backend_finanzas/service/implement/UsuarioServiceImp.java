@@ -94,8 +94,12 @@ public class UsuarioServiceImp implements UsuarioService {
             usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
         }
 
-        if (datosNuevos.getFotoPerfil() != null && !datosNuevos.getFotoPerfil().isBlank()) {
-            usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
+        if (datosNuevos.getFotoPerfil() != null) {
+            if (datosNuevos.getFotoPerfil().isBlank()) {
+                usuarioBD.setFotoPerfil(null);
+            } else {
+                usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
+            }
         }
 
 
@@ -150,8 +154,12 @@ public class UsuarioServiceImp implements UsuarioService {
             usuarioBD.setMontoMensual(datosNuevos.getMontoMensual());
         }
 
-        if (datosNuevos.getFotoPerfil() != null && !datosNuevos.getFotoPerfil().isBlank()) {
-            usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
+        if (datosNuevos.getFotoPerfil() != null) {
+            if (datosNuevos.getFotoPerfil().isBlank()) {
+                usuarioBD.setFotoPerfil(null);
+            } else {
+                usuarioBD.setFotoPerfil(datosNuevos.getFotoPerfil());
+            }
         }
 
         if (datosNuevos.getContrasenaUsuario() != null && !datosNuevos.getContrasenaUsuario().isEmpty()) {
