@@ -93,13 +93,17 @@ export class CuentaMobileComponent implements OnInit {
 }
 
   guardarCambios() {
-    this.usuario.montoMensual = Number(
-      String(this.usuario.montoMensual).replace(/\./g, '')
-    ) as any;
+    const usuarioActualizado: Usuario = {
+      ...this.usuario,
+      montoMensual: this.normalizarMontoMensual()
+    };
 
-    this.usuarioService.updateMiUsuario(this.usuario).subscribe({
+    this.usuarioService.updateMiUsuario(usuarioActualizado).subscribe({
       next: (data) => {
         this.usuario = data;
+        this.formatearMontoMensual();
+        this.fotoPerfil = data.fotoPerfil || null;
+        this.guardarUsuarioLocal(data);
         this.mensajeExito = 'Datos actualizados correctamente';
         this.errorMensaje = null;
         this.isEditMode = false;
@@ -145,24 +149,48 @@ export class CuentaMobileComponent implements OnInit {
   private guardarFotoPerfil(fotoPerfil: string | null) {
     const usuarioActualizado: Usuario = {
       ...this.usuario,
+      montoMensual: this.normalizarMontoMensual(),
       fotoPerfil
     };
 
     this.usuarioService.updateMiUsuario(usuarioActualizado).subscribe({
       next: (data) => {
-        this.usuario = data;
-        this.fotoPerfil = data.fotoPerfil || null;
+        const usuarioSinFotoVieja: Usuario = {
+          ...data,
+          fotoPerfil
+        };
+
+        this.usuario = usuarioSinFotoVieja;
+        this.formatearMontoMensual();
+        this.fotoPerfil = fotoPerfil;
+        this.guardarUsuarioLocal(usuarioSinFotoVieja);
+
         this.mensajeExito = fotoPerfil
           ? 'Foto de perfil actualizada'
           : 'Foto de perfil eliminada';
+
         this.errorMensaje = null;
       },
       error: (err) => {
         console.error('Error al guardar foto de perfil', err);
-        this.fotoPerfil = this.usuario.fotoPerfil || null;
         this.errorMensaje = this.obtenerMensajeError(err, 'No se pudo actualizar la foto de perfil');
       }
     });
+  }
+
+  private guardarUsuarioLocal(usuario: Usuario) {
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    window.dispatchEvent(new Event('nuvora-user-updated'));
+  }
+
+  private normalizarMontoMensual(): number {
+    return Number(String(this.usuario.montoMensual || 0).replace(/\./g, ''));
+  }
+
+  private formatearMontoMensual(): void {
+    if (this.usuario.montoMensual) {
+      this.usuario.montoMensual = Number(this.usuario.montoMensual).toLocaleString('es-CO') as any;
+    }
   }
 
   private convertirImagenPerfil(archivo: File): Promise<string> {

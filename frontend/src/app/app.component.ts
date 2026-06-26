@@ -6,8 +6,8 @@ import { filter } from 'rxjs';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  standalone: false,
-  styleUrl: './app.component.css'
+    standalone: false,
+  styleUrls: ['./app.component.css'], // CORRECTO
 })
 export class AppComponent {
   title = 'frontend';

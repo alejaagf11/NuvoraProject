@@ -5,7 +5,12 @@
       <p class="eyebrow">Educacion</p>
       <h1>Aprendizaje</h1>
     </div>
-    <button type="button" class="avatar-button" routerLink="/mobile/cuenta">N</button>
+   <button class="avatar-button" routerLink="/mobile/cuenta" type="button">
+  <img *ngIf="fotoPerfil; else inicialUsuario" [src]="fotoPerfil" />
+  <ng-template #inicialUsuario>
+    {{ inicial }}
+  </ng-template>
+</button>
   </header>
 
   <section *ngIf="cargando" class="state-card">Cargando modulos...</section>

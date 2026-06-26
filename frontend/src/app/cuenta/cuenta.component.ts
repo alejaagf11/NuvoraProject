@@ -158,32 +158,36 @@ export class CuentaComponent implements OnInit {
   }
 
   quitarFoto() {
-    this.guardarFotoPerfil(null);
-  }
+  alert('ENTRÓ A QUITAR FOTO');
+  this.guardarFotoPerfil(null);
+}
 
   private guardarFotoPerfil(fotoPerfil: string | null) {
-    const usuarioActualizado: Usuario = {
-      ...this.usuario,
-      fotoPerfil
-    };
+  const usuarioActualizado: Usuario = {
+    ...this.usuario,
+    fotoPerfil
+  };
+console.log('ENVIANDO:', JSON.stringify(usuarioActualizado, null, 2));
 
-    this.usuarioService.updateMiUsuario(usuarioActualizado).subscribe({
-      next: (data) => {
-        this.usuario = data;
-        this.fotoPerfil = data.fotoPerfil || null;
-        this.mensajeExito = fotoPerfil
-          ? 'Foto de perfil actualizada'
-          : 'Foto de perfil eliminada';
-        this.errorMensaje = null;
-      },
-      error: (err) => {
-        console.error('Error al guardar foto de perfil', err);
-        this.fotoPerfil = this.usuario.fotoPerfil || null;
-        this.errorMensaje = this.obtenerMensajeError(err, 'No se pudo actualizar la foto de perfil');
-      }
-    });
-  }
+  this.usuarioService.updateMiUsuario(usuarioActualizado).subscribe({
+    next: (data) => {
 
+      console.log('RECIBIENDO:', JSON.stringify(data, null, 2));
+
+      this.usuario = data;
+      this.fotoPerfil = data.fotoPerfil || null;
+
+      this.mensajeExito = fotoPerfil
+        ? 'Foto de perfil actualizada'
+        : 'Foto de perfil eliminada';
+
+      this.errorMensaje = null;
+    },
+    error: (err) => {
+      console.error('ERROR:', err);
+    }
+  });
+}
   private convertirImagenPerfil(archivo: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const lector = new FileReader();

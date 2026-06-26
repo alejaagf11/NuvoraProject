@@ -5,7 +5,12 @@
       <p class="eyebrow">{{ isEditMode ? 'Editar objetivo' : 'Nuevo objetivo' }}</p>
       <h1>{{ isEditMode ? 'Editar meta' : 'Crear meta' }}</h1>
     </div>
-    <button type="button" class="avatar-button" routerLink="/mobile/cuenta">N</button>
+     <button class="avatar-button" routerLink="/mobile/cuenta" type="button">
+  <img *ngIf="fotoPerfil; else inicialUsuario" [src]="fotoPerfil" />
+  <ng-template #inicialUsuario>
+    {{ inicial }}
+  </ng-template>
+</button>
   </header>
 
   <section *ngIf="errorMensaje" class="alert error">{{ errorMensaje }}</section>

@@ -38,7 +38,8 @@ import { MetasAhorroFormMobileComponent } from './metas-ahorro-form-mobile/metas
 import { AdminUsuariosMobileComponent } from './admin-usuarios-mobile/admin-usuarios-mobile.component';
 import { AdminModulosMobileComponent } from './admin-modulos-mobile/admin-modulos-mobile.component';
 import { AdminLeccionesMobileComponent } from './admin-lecciones-mobile/admin-lecciones-mobile.component';
-
+import { ProfileIconMobileComponent } from './profile-icon-mobile/profile-icon-mobile.component';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -75,16 +76,18 @@ import { AdminLeccionesMobileComponent } from './admin-lecciones-mobile/admin-le
     MetasAhorroFormMobileComponent,
     AdminUsuariosMobileComponent,
     AdminModulosMobileComponent,
-    AdminLeccionesMobileComponent
+    AdminLeccionesMobileComponent,
+    ProfileIconMobileComponent
   ],
+  
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule, 
-    HttpClientModule,
-    ReactiveFormsModule,
-    IonicModule.forRoot({})
-  ],
+  BrowserModule,
+  AppRoutingModule,
+  HttpClientModule,
+  FormsModule,
+  ReactiveFormsModule,
+  IonicModule.forRoot()
+],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

@@ -5,7 +5,16 @@
       <p class="eyebrow">Movimientos</p>
       <h1>Transacciones</h1>
     </div>
-    <button type="button" class="avatar-button" routerLink="/mobile/cuenta">N</button>
+      <button class="avatar-button" routerLink="/mobile/cuenta" type="button" title="Mi cuenta">
+        <img *ngIf="fotoPerfil; else inicialUsuario" [src]="fotoPerfil" alt="Foto de perfil">
+        <ng-template #inicialUsuario>
+          {{ inicial }}
+        </ng-template>
+      </button>
+
+      <ng-template #inicialTpl>
+        {{ inicial }}
+      </ng-template>
   </header>
 
   <section *ngIf="errorMensaje" class="alert error">{{ errorMensaje }}</section>

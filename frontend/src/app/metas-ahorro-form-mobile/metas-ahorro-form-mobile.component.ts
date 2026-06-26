@@ -11,6 +11,9 @@ import { UsuarioService } from '../services/usuario.service';
   styleUrls: ['./metas-ahorro-form-mobile.component.css'],
 })
 export class MetasAhorroFormMobileComponent implements OnInit {
+  fotoPerfil: string | null = null;
+  inicial: string = 'U';
+
   meta: MetasAhorro = {
     nombreMeta: '',
     montoObjetivo: 0,
@@ -39,6 +42,31 @@ export class MetasAhorroFormMobileComponent implements OnInit {
       this.metaId = Number(id);
       this.cargarMeta(this.metaId);
     }
+    this.cargarUsuario();
+  }
+
+  private cargarUsuario(): void {
+    const usuarioLocal = this.usuarioService.getUsuario();
+
+    if (usuarioLocal) {
+      this.fotoPerfil = usuarioLocal.fotoPerfil || null;
+      this.inicial = usuarioLocal.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+    } else {
+      this.usuarioService.getMiUsuario().subscribe({
+        next: (usuario) => {
+          this.fotoPerfil = usuario.fotoPerfil || null;
+          this.inicial = usuario.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+        },
+        error: (err) => {
+          console.error('Error al cargar usuario móvil', err);
+          this.fotoPerfil = null;
+          this.inicial = 'U';
+        }
+      });
+    }
+
+    // Escucha cambios en localStorage
+    window.addEventListener('storage', () => this.cargarUsuario());
   }
 
   cargarMeta(id: number): void {

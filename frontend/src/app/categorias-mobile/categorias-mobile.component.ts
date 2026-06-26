@@ -11,6 +11,8 @@ import { UsuarioService } from '../services/usuario.service';
   styleUrls: ['./categorias-mobile.component.css'],
 })
 export class CategoriasMobileComponent implements OnInit {
+  fotoPerfil: string | null = null;
+  inicial: string = 'U';
   categorias: Categoria[] = [];
   errorMensaje: string | null = null;
   mensajeExito: string | null = null;
@@ -26,10 +28,35 @@ export class CategoriasMobileComponent implements OnInit {
     private categoriaService: CategoriaService,
     private usuarioService: UsuarioService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarCategorias();
+    this.cargarUsuario();
+  }
+
+  private cargarUsuario(): void {
+    const usuarioLocal = this.usuarioService.getUsuario();
+
+    if (usuarioLocal) {
+      this.fotoPerfil = usuarioLocal.fotoPerfil || null;
+      this.inicial = usuarioLocal.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+    } else {
+      this.usuarioService.getMiUsuario().subscribe({
+        next: (usuario) => {
+          this.fotoPerfil = usuario.fotoPerfil || null;
+          this.inicial = usuario.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+        },
+        error: (err) => {
+          console.error('Error al cargar usuario móvil', err);
+          this.fotoPerfil = null;
+          this.inicial = 'U';
+        }
+      });
+    }
+
+    // Escucha cambios en localStorage
+    window.addEventListener('storage', () => this.cargarUsuario());
   }
 
   cargarCategorias(): void {

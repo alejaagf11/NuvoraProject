@@ -1,0 +1,10 @@
+
+<div class="profile-icon-mobile">
+  <ng-container *ngIf="fotoPerfil; else mostrarInicial">
+    <img [src]="fotoPerfil" alt="Foto de perfil" class="foto-perfil" />
+  </ng-container>
+
+  <ng-template #mostrarInicial>
+    <div class="inicial">{{ inicial }}</div>
+  </ng-template>
+</div>

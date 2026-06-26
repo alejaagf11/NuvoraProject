@@ -13,6 +13,9 @@ import { UsuarioService } from '../services/usuario.service';
   styleUrls: ['./transacciones-mobile.component.css']
 })
 export class TransaccionesMobileComponent implements OnInit {
+  fotoPerfil: string | null = null;
+  inicial: string = 'U';
+  usuario: any;
   transacciones: Transaccion[] = [];
   categorias: Categoria[] = [];
   categoriasFiltradas: Categoria[] = [];
@@ -42,6 +45,19 @@ export class TransaccionesMobileComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
+      this.usuarioService.getMiUsuario().subscribe({
+        next: (usuario) => {
+          this.usuario = usuario; // <-- esto
+          this.fotoPerfil = usuario.fotoPerfil || null;
+          this.inicial = usuario.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+        },
+        error: (err) => {
+          console.error('Error al cargar usuario', err);
+          this.usuario = { nombreUsuario: 'U', fotoPerfil: null };
+          this.fotoPerfil = null;
+          this.inicial = 'U';
+        }
+      });
       const tipo = params['tipo'];
       if (tipo === 'INGRESO' || tipo === 'GASTO') {
         this.filtroTipo = tipo;
@@ -198,7 +214,7 @@ export class TransaccionesMobileComponent implements OnInit {
       tipo: this.filtroTipo || 'INGRESO',
       categoriaId: 0
     };
-      this.montoTransaccionTexto = '';
+    this.montoTransaccionTexto = '';
     this.actualizarCategoriasFiltradas();
   }
 

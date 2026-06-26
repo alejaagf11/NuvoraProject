@@ -11,6 +11,9 @@ import { UsuarioService } from '../services/usuario.service';
   styleUrls: ['./metas-ahorro-list-mobile.component.css'],
 })
 export class MetasAhorroListMobileComponent implements OnInit {
+  fotoPerfil: string | null = null;
+  inicial: string = 'U';
+
   metas: MetasAhorro[] = [];
   abonoInput: { [key: number]: string } = {};
   errorMensaje: string | null = null;
@@ -25,6 +28,31 @@ export class MetasAhorroListMobileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMetas();
+    this.cargarUsuario();
+  }
+
+  private cargarUsuario(): void {
+    const usuarioLocal = this.usuarioService.getUsuario();
+
+    if (usuarioLocal) {
+      this.fotoPerfil = usuarioLocal.fotoPerfil || null;
+      this.inicial = usuarioLocal.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+    } else {
+      this.usuarioService.getMiUsuario().subscribe({
+        next: (usuario) => {
+          this.fotoPerfil = usuario.fotoPerfil || null;
+          this.inicial = usuario.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+        },
+        error: (err) => {
+          console.error('Error al cargar usuario móvil', err);
+          this.fotoPerfil = null;
+          this.inicial = 'U';
+        }
+      });
+    }
+
+    // Escucha cambios en localStorage
+    window.addEventListener('storage', () => this.cargarUsuario());
   }
 
   loadMetas(): void {

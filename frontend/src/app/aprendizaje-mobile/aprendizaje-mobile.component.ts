@@ -11,6 +11,8 @@ import { UsuarioService } from '../services/usuario.service';
   styleUrls: ['./aprendizaje-mobile.component.css'],
 })
 export class AprendizajeMobileComponent implements OnInit {
+  fotoPerfil: string | null = null;
+inicial: string = 'U';
   modulos: ModuloProgresoResumen[] = [];
   cargando = true;
   errorMensaje: string | null = null;
@@ -22,8 +24,25 @@ export class AprendizajeMobileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.cargarUsuario();
     this.cargarModulos();
   }
+
+  private cargarUsuario(): void {
+  this.usuarioService.getMiUsuario().subscribe({
+    next: (usuario) => {
+      this.fotoPerfil = usuario.fotoPerfil || null;
+      this.inicial = usuario.nombreUsuario?.charAt(0).toUpperCase() || 'U';
+    },
+    error: (err) => {
+      console.error('Error al cargar usuario móvil', err);
+      this.fotoPerfil = null;
+      this.inicial = 'U';
+    }
+  });
+
+  window.addEventListener('storage', () => this.cargarUsuario());
+}
 
   cargarModulos() {
     this.cargando = true;

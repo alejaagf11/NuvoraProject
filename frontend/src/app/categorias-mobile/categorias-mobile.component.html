@@ -1,10 +1,21 @@
 <main class="mobile-page">
   <header class="mobile-header">
-    <button type="button" class="ghost-button" routerLink="/mobile/dashboard">Volver</button>
+    <button type="button" class="ghost-button" routerLink="/mobile/dashboard">‹</button>
     <div>
       <p class="eyebrow">Organizacion</p>
       <h1>Categorias</h1>
     </div>
+    <button class="avatar-button" routerLink="/mobile/cuenta" type="button">
+        <img *ngIf="fotoPerfil; else inicialUsuario" [src]="fotoPerfil" />
+        <ng-template #inicialUsuario>
+          {{ inicial }}
+        </ng-template>
+      </button>
+
+       <ng-template #inicialTpl>
+        {{ inicial }}
+      </ng-template>
+
   </header>
 
   <section *ngIf="errorMensaje" class="message-card error">{{ errorMensaje }}</section>

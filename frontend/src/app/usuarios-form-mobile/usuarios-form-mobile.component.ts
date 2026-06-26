@@ -32,6 +32,7 @@ export class UsuariosFormMobileComponent {
       return;
     }
 
+    this.usuarioService.logout();
     this.cargando = true;
     this.errorMensaje = null;
 
